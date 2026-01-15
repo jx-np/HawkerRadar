@@ -336,3 +336,7 @@ export async function disableAccount(userId) {
         return internalError(null, error.message);
     }
 }
+
+export async function testfunction123(params) {
+    return params;
+}
