@@ -41,7 +41,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 /* ================================
-   Export database utilities
+    Export database utilities
 ================================ */
 export {
     db,
