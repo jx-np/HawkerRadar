@@ -1,9 +1,0 @@
-.banner {
-    position: relative;
-    display: flex;
-    align-items: center;
-    padding: 16px 40px;
-    border-bottom: 1px solid #ccc;
-    background: linear-gradient(to bottom, #C00000, #ff3333);
-    color: #ffffff;
-}
