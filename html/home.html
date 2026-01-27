@@ -5,13 +5,11 @@
     <title>Hawker Centre Management System</title>
 
     <!-- CSS -->
-    <link rel="stylesheet" href="../css/Essential/navbar.css">
-    <link rel="stylesheet" href="../css/home/main_featured.css">
-    <link rel="stylesheet" href="../css/home/main_hawkercentre.css">
-    <link rel="stylesheet" href="../css/Essential/featstall.css">
-    <link rel="stylesheet" href="../css/Essential/footer.css">
 
 </head>
+
+<!--main_featured.css ↓↓-->
+
 <body>
   <div class="container">
     
@@ -84,6 +82,10 @@
         </div>
       </div>
     </section>
+    <!--main_featured.css ↑↑-->
+
+
+    <!--main_hawkercentre.css ↓↓-->
 
     <!-- Advertisement Banner-->
     <section class="ad-banner">
@@ -91,6 +93,7 @@
     </section>
 
     <section class="hawkercentre results">
+      
       <!-- Filter Bar-->
       <div class="filter-bar">
         <label for="region">Filter by:</label>
@@ -107,6 +110,17 @@
       </div>
     </section>
 
+    <!--Selection-->
+    <section class="hawkercentre selection">
+      <h2>Results</h2>
+    </section>
+
+    <div class="hc-grid" id="hcGrid"></div>
+    
+    <button id="backToTop" title="Back to top">↑ Top</button>
+
+
+    <!--main_hawkercentre.css ↑↑-->
     
     <!-- Footer -->
     <footer class="site-footer">
@@ -117,4 +131,5 @@
       <a href="#">NEA Info</a>
     </footer>
   </div>
+  <script src="js/hawker.js"></script>
 </body>

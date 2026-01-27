@@ -62,3 +62,24 @@
 .filter-bar button:hover {
     background: #CFCFCF;
 }
+
+/*Selection*/
+.hawkercentre.selection {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 32px 0;
+}
+
+.hawkercentre.selection h2 {
+    margin: 0;
+    white-space: nowrap;
+}
+
+/* the line */
+.hawkercentre.selection::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #ccc;
+}
