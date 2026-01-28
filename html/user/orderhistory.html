@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hawker Centre Management System</title>
+
+    <!-- CSS -->
+
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="site-header">
+        <div class="logo">
+            <div class="logo-box"></div>
+            <div>
+            <h1>Hawker Centre</h1>
+            <span>Management System</span>
+            </div>
+        </div>
+
+        <nav class="nav-links">
+            <div class="nav-center">
+            <a href="#">Home</a>
+            <a href="#">Hawker Centres</a>
+            <a href="#">Order History</a>
+            </div>
+
+            <div class="nav-right">
+            <a href="#">Login / Register</a>
+            </div>
+        </nav>
+
+        </header>
+        <!--End of Header = MAKE SURE TO COPY-->
+
+        <!-- Banner Section -->
+        <section class="banner">
+        <div class="banner-text">
+            <h2>Order History</h2>
+        </div>
+
+        <div class="filter-bar">
+            <label for="hawkerFilter">Filter by:</label>
+
+            <select id="hawkerFilter" name="hawkerFilter">
+            <option value="">All Hawker Centres</option>
+            <!-- Options populated dynamically by JS -->
+            </select>
+            
+            <!-- Time Filter -->
+            <select id="time" name="time">
+                <option value="">All Time</option>
+                <option value="7">Last 7 days</option>
+                <option value="30">Last 30 days</option>
+                <option value="90">Last 3 months</option>
+            </select>
+
+            <button type="button" id="applyFilter">Filter</button>
+        </div>
+        </section>
+    </div>
+</body>
