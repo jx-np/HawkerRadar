@@ -5,12 +5,17 @@
 }
 
 .site-footer {
-  margin-top: auto; /* THIS makes it stick to bottom */
-  padding: 20px;
-  text-align: center;
-  background: linear-gradient(to bottom, #CBCBCB, #EEEEEE); 
-  font-size: 14px;
+    position: fixed;             /* fix at bottom */
+    bottom: 0;                   /* stick to bottom */
+    left: 0;
+    width: 100%;
+    z-index: 1000;               /* stay above content */
+    padding: 20px;
+    text-align: center;
+    background: linear-gradient(to bottom, #CBCBCB, #EEEEEE);
+    font-size: 14px;
 }
+
 
 
 .site-footer a {

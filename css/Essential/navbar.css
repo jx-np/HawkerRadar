@@ -1,37 +1,35 @@
-@media (max-width: 768px) {
-  .container {
-    padding: 0 10px; /* reduce side padding on small screens */
-  }
-  
-}
-
 .site-header {
-    position: relative;
+    position: fixed;             /* fix at top */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
     display: flex;
     align-items: center;
+    justify-content: space-between; /* use space-between instead of absolute nav-center */
     padding: 16px 40px;
     border-bottom: 1px solid #ccc;
     background: linear-gradient(to bottom, #C00000, #ff3333);
     color: #ffffff;
+    box-sizing: border-box;
 }
 
+/* Logo */
 .logo {
     display: flex;
     align-items: center;
     gap: 12px;
-    flex-shrink: 0; /* ⬅️ prevents logo from being squashed */
+    flex-shrink: 0;
 }
-
 
 .logo-box {
     width: 67px;
     height: 67px;
-    background-image: url("../../img/HawkRadar\ Logo.png");
+    background-image: url("../../img/HawkRadar Logo.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
 }
-
 
 .logo h1 {
     margin: 0;
@@ -42,6 +40,23 @@
     font-size: 14px;
 }
 
+/* Nav links aligned with flex now */
+.nav-links {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    font-size: 18px;
+    transition: color 0.3s;
+    color: #ffffff;
+}
+
+.nav-links a:hover {
+    color: #F6CE71;
+}
 
 .nav-center {
     position: absolute;
@@ -52,53 +67,52 @@
     align-items: center;
 }
 
-/* Flex container for links */
-.nav-links {
-    display: flex;
-    gap: 24px;
-    align-items: center;
-    flex: 1;
-}
-
-/* Individual links */
-.nav-links a {
-    text-decoration: none;  /* remove underline */        
-    font-size: 18px;
-    transition: color 0.3s;
-    color: #ffffff;
-}
-
 .nav-center a:hover {
     color: #F6CE71;          /* highlight on hover */
 }
 
-/* Right button */
+/* Right button stays at the right */
 .nav-right {
-    margin-left: auto;       /* push to the right */
     padding: 14px 24px;
     border: 2px solid #ffffff;
-    background: linear-gradient(to bottom, #C00000, #ff3333);     /* red background */
+    background: linear-gradient(to bottom, #C00000, #ff3333);
     border-radius: 15px;
     cursor: pointer;
-    transition: all 0.3s;    /* smooth transition for background and text */
+    transition: all 0.3s;
     text-align: center;
 }
 
-/* Style the <a> inside the button */
 .nav-right a {
-    display: block;           /* makes entire button area clickable */
-    color: #ffffff;           /* default text white */
+    display: block;
+    color: #ffffff;
     font-weight: bold;
     text-decoration: none;
-    transition: color 0.3s;   /* smooth text color change */
+    transition: color 0.3s;
 }
 
-/* Hover effect */
 .nav-right:hover {
-    background: #ffffff;      /* box turns white */
+    background: #ffffff;
 }
 
 .nav-right:hover a {
-    color: #C00000;           /* text turns red */
+    color: #C00000;
 }
 
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .site-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px 20px;
+    }
+
+    .nav-links {
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 8px;
+    }
+
+    .nav-right {
+        margin-top: 8px;
+    }
+}

@@ -5,8 +5,8 @@ html, body {
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #f5f5f5;
-
+  background: #fff;
+  padding-top:100px;
   display: flex;
   flex-direction: column;
 }
@@ -31,10 +31,12 @@ body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    border-radius: 0 0 8px 8px;
     display: flex;
     justify-content: space-between; /* space between text and buttons */
     align-items: center;
     padding: 0 80px; /* left and right padding */
+    padding-top: 40;
     box-sizing: border-box;
 }
 
@@ -81,6 +83,85 @@ body {
     border-bottom: 1px solid #ccc;
     padding-bottom: 8px;
 }
+
+.feature-stall-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.feature-stall-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #d0d0d0;
+    background: linear-gradient(to bottom, #C00000, #ff3333); 
+    border-radius: 8px;
+    overflow: hidden;   /* ensures image and info stay within rounded edges */
+    height: 300px;      /* fixed height for consistency */
+}
+
+.feature-stall-image {
+    height: 180px;       /* fixed image height */
+    background-size: cover;
+    background-position: center;
+}
+
+.feature-stall-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;              /* take remaining space */
+    padding: 16px;
+}
+
+.feature-stall-info strong {
+    font-size: 19px;
+    display: block;
+    color: #fff;
+    margin-bottom: 8px;   /* small spacing from em */
+}
+
+.feature-stall-info em {
+    font-size: 15px;
+    color: #fff;
+    margin-top: auto;     /* pushes em + button to bottom */
+}
+
+.feature-stall-info button {
+    margin-top: 8px;
+    padding: 6px 12px;
+    background: linear-gradient(to bottom, #FFE08F, #F9E7B2);
+    border: 1.5px solid #FFF1CB;
+    cursor: pointer;
+    border-radius: 15px;
+    font-weight: bold;
+    align-self: flex-start; /* optional: keeps button aligned left */
+    transition: all 0.3s;
+}
+
+.feature-stall-info button:hover {
+    background: #FFF1CB;
+}
+
+
+.feature-stall-image[data-stall="Maxwell"] {
+  background-image: url("../../img/HPEmAfesLHnuUZk0.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.feature-stall-image[data-stall="Satay"] {
+  background-image: url("../../img/515930329_10162933466149785_2533293475021182030_n.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.feature-stall-image[data-stall="Crawford"] {
+  background-image: url("../../img/Hill_Street_Tai_Hwa_Pork_Noodle.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 
 
 @media (max-width: 768px) {
