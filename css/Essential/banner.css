@@ -1,9 +1,19 @@
-.banner {
-    position: relative;
-    display: flex;
-    align-items: center;
+.Banner {
+    height: 160px;
+    display: flex;             /* enables flexbox */
+    align-items: center;       /* vertical centering */
     padding: 16px 40px;
+    border-radius: 0 0 8px 8px;
     border-bottom: 1px solid #ccc;
     background: linear-gradient(to bottom, #C00000, #ff3333);
     color: #ffffff;
+    text-align: left;          /* keep text left-aligned */
+}
+
+.Banner-text h2 {
+    font-size: 25px;
+}
+
+.Banner-text span {
+    font-size: 17px;
 }

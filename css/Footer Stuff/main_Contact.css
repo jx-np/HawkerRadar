@@ -1,0 +1,146 @@
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  padding-top:100px;
+  display: flex;
+  flex-direction: column;
+}
+.container {
+  width: min(100%, 1500px);
+  margin: 0 auto;
+  box-sizing: border-box;
+
+  flex: 1; /* pushes footer down */
+  display: flex;
+  flex-direction: column;
+
+  background: #fff;
+}
+
+.contact-wrapper {
+  display: flex;
+  gap: 40px;
+  padding: 60px 40px;
+  background: #fff;
+}
+
+.ContactInfo,
+.ContactForm {
+  flex: 1;
+}
+
+/* vertical divider */
+.ContactForm {
+  border-left: 1px solid #ccc;
+  padding-left: 40px;
+}
+
+.Contact-image {
+  height: 200px;
+  background-image: url("../../img/close-up-prudential-building-boston.jpg");
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  margin-bottom: 32px;
+}
+
+.CIHeader,
+.CFHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.CIHeader h2,
+.CFHeader h2 {
+  margin: 0;
+  font-size: 22px;
+  white-space: nowrap;
+}
+
+.CIHeader::after,
+.CFHeader::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #999;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.contact-form textarea {
+  height: 140px;
+}
+
+.contact-form button {
+  width: fit-content;
+  padding: 12px 28px;
+  background: #C00000;   /* red background */
+  color: #ffffff;         /* white text */
+  border: 1px solid #C00000;  /* small border matching bg */
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;  /* smooth hover */
+  font-weight: bold;
+}
+
+.contact-form button:hover {
+  background: #ffffff;    /* invert background */
+  color: #C00000;         /* invert text color */
+  border: 1px solid #C00000; /* maintain 1px outline */
+}
+
+
+.Info {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.Info-item {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: 20px;
+  color: #333;
+}
+
+.Map-icon,
+.Mail-icon,
+.Phone-icon {
+    width: 36px;
+    height: 36px;
+
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    flex-shrink: 0; /* prevents squashing */
+}
+
+.Map-icon {
+  background-image: url(../../img/MapIcon.png);
+}
+.Mail-icon {
+  background-image: url(../../img/MailIcon.png) ;
+}
+.Phone-icon {
+  background-image: url(../../img/PhoneIcon.png);
+}
