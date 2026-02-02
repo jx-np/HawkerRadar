@@ -1,8 +1,83 @@
 <html>
     <head>
-        <link rel="stylesheet" href="">
         <meta name="author" content="Neo You Sheng Xavier">
         <title>Feedback</title>
         <link rel="icon" href="">
+        <link rel="stylesheet" href="../../css/feedback/feedback.css">
+        <link rel="stylesheet" href="../../css/Essential/navbar.css">
+        <link rel="stylesheet" href="../../css/Essential/footer.css">
     </head>
+    <body>
+        <header class="site-header">
+        <div class="logo">
+            <div class="logo-box"></div>
+            <div>
+            <h1>Hawker Centre</h1>
+            <span>Management System</span>
+            </div>
+        </div>
+
+        <nav class="nav-links">
+            <div class="nav-center">
+                <a href="#">Home</a>
+                <a href="#">Hawker Centres</a>
+                <a href="#">Order History</a>
+            </div>
+
+            <div class="nav-right">
+                <a href="#">Login / Register</a>
+            </div>
+        </nav>
+        </header>
+
+        <!-- HEADER -->
+        <section class="page-header">
+            <h1>Feedback</h1>
+            <p>Give us feedback to improve!</p>
+        </section>
+
+        <!--Content of feedback form-->
+        <main class="feedback-container">
+            <form id="feedbackForm">
+
+                <label>Food Stall:</label>
+                <input type="text" id="foodStall" name="foodStall" placeholder="Enter Food Stall name">
+
+
+                <label>Hawker Centre:</label>
+                <input type="text" id="hawkerCentre" name="hawkerCentre" placeholder="Enter Hawker Centre name">
+
+                <label>Overall Rating:</label>
+                <div class="rating">
+                    <span class="star" data-value="1">☆</span>
+                    <span class="star" data-value="2">☆</span>
+                    <span class="star" data-value="3">☆</span>
+                    <span class="star" data-value="4">☆</span>
+                    <span class="star" data-value="5">☆</span>
+                    <span class="rating-text"> /5</span>
+                </div>
+
+                <label>Comments:</label>
+                <textarea placeholder="Description"></textarea>
+
+                <input type="hidden" id="ratingValue" name="rating">
+
+                <button type="submit" class="submit-btn">Submit Feedback</button>
+            </form>
+        </main>
+        
+        <!--Footer-->
+        <footer class="site-footer">
+        <a href="#">Contact Us</a>
+        <span>|</span>
+        <a href="#">FAQs</a>
+        <span>|</span>
+        <a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">
+            NEA Info
+        </a>
+        </footer>
+
+        <!--Javascript-->
+        <script src="/HawkerRadar/js/feedback/feedback.js"></script>
+    </body>
 </html>
