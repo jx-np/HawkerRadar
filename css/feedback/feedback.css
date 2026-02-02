@@ -1,0 +1,70 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+}
+
+/* HEADER */
+.page-header {
+    background-color: #e0e0e0;
+    padding: 40px;
+}
+
+.page-header h1 {
+    margin-top: 70px;
+    font-size: 64px;
+}
+
+.page-header p {
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+/* FORM */
+.feedback-container {
+    padding: 50px 80px;
+}
+
+label {
+    display: block;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+input[type="text"],
+textarea {
+    width: 400px;
+    padding: 10px;
+    margin-top: 8px;
+    background-color: #e0e0e0;
+    border: none;
+    font-size: 16px;
+}
+
+textarea {
+    width: 600px;
+    height: 180px;
+    resize: none;
+}
+
+/* STAR RATING */
+.rating {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.star {
+    font-size: 32px;
+    cursor: pointer;
+}
+
+.star.active {
+    color: black;
+}
+
+.rating-text {
+    font-size: 18px;
+    margin-left: 10px;
+}
