@@ -66,18 +66,19 @@ textarea {
 }
 
 .category:hover .box {
-    background-color: #cfcfcf;
+    background-color: #ccc;
 }
 
 .box {
     width: 18px;
     height: 18px;
-    background-color: #e0e0e0;
+    background-color: white;
+    border: 1px solid #ccc;
     position: relative;
 }
 
 .category.selected .box {
-    background-color: #bdbdbd;
+    background-color: white;
 }
 
 .category.selected .box::after {
