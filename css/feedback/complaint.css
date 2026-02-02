@@ -46,6 +46,8 @@ textarea {
 }
 
 textarea {
+    width: 600px;
+    height: 180px;
     resize: none;
 }
 
@@ -89,10 +91,15 @@ textarea {
 
 #othersInput {
     margin-left: 30px;
-    background-color: #e0e0e0;
-    border: none;
+    background-color: white;
+    border: 1px solid #ccc;
     padding: 8px;
     width: 300px;
+}
+
+#incidentDate {
+    width: 160px;
+    padding: 6px 8px;
 }
 
 .text {
