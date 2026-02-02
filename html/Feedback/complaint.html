@@ -1,11 +1,11 @@
 <html>
     <head>
-        <link rel="stylesheet" href="">
         <meta name="author" content="Neo You Sheng Xavier">
         <title>Complaints</title>
         <link rel="icon" href="">
         <link rel="stylesheet" href="../../css/Essential/navbar.css">
         <link rel="stylesheet" href="../../css/Essential/footer.css">
+        <link rel="stylesheet" href="../../css/feedback/complaint.css">
     </head>
     <body>
         <!--Nav-->
@@ -31,6 +31,65 @@
         </nav>
         </header>
 
+        <!--Content of complaint form-->
+        <section class="page-header">
+            <h1>Complaint</h1>
+            <p>We hope </p>
+        </section>
+
+        <main class="complaint-container">
+            <form id="complaintForm">
+                <label>Food Stall:</label>
+                <input type="text" id="foodStall" required>
+
+                <label>Hawker Centre:</label>
+                <input type="text" id="hawkerCentre" required>
+
+                <label>Complaint Category:</label>
+                <div class="category-container">
+                    <div class="category" data-value="Poor Hygiene">
+                        <span class="box"></span>
+                        <span class="text">Poor Hygiene</span>
+                    </div>
+
+                    <div class="category" data-value="Food Safety Issue">
+                        <span class="box"></span>
+                        <span class="text">Food Safety Issue</span>
+                    </div>
+
+                    <div class="category" data-value="Unsatisfactory Service">
+                        <span class="box"></span>
+                        <span class="text">Unsatisfactory Service</span>
+                    </div>
+
+                    <div class="category" data-value="Overcharging">
+                        <span class="box"></span>
+                        <span class="text">Overcharging</span>
+                    </div>
+
+                    <div class="category" data-value="Others" id="othersCategory">
+                        <span class="box"></span>
+                        <span class="text">Others</span>
+                    </div>
+
+                    <input
+                        type="text"
+                        id="othersInput"
+                        placeholder="Please specify..."
+                        style="display: none;"
+                    />
+                </div>
+
+                <label>Date of Incident:</label>
+                <input type="date" id="incidentDate" required>
+
+                <label>Description of Issue:</label>
+                <textarea id="description" rows="6" required></textarea>
+
+                <button type="submit" class="submit-btn">Submit Complaint</button>
+            </form>
+        </main>
+
         <!--Footer-->
         <footer class="site-footer">
         <a href="#">Contact Us</a>
@@ -41,5 +100,8 @@
             NEA Info
         </a>
         </footer>
+
+        <!--Complaint Javascript-->
+        <script src="/HawkerRadar/js/feedback/complaint.js"></script>
     </body>
 </html>
