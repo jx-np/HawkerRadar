@@ -11,20 +11,43 @@ stars.forEach(star => {
     });
 });
 
-//hover effect
 stars.forEach(star => {
     star.addEventListener("mouseenter", () => {
-        updateStars(star.dataset.value);
+        highlightHover(star.dataset.value);
     });
 
     star.addEventListener("mouseleave", () => {
-        updateStars(currentRating);
+        clearHover();
+        highlightSelected();
+    });
+
+    star.addEventListener("click", () => {
+        currentRating = Number(star.dataset.value);
+        ratingInput.value = currentRating;
+        ratingText.textContent = `${currentRating}/5`;
+        highlightSelected();
     });
 });
 
-function updateStars(rating) {
+// Hover effect
+function highlightHover(rating) {
     stars.forEach(star => {
-        star.textContent =
-            star.dataset.value <= rating ? "★" : "☆";
+        star.classList.toggle(
+            "hover",
+            star.dataset.value <= rating
+        );
+    });
+}
+
+function clearHover() {
+    stars.forEach(star => star.classList.remove("hover"));
+}
+
+function highlightSelected() {
+    stars.forEach(star => {
+        star.classList.toggle(
+            "selected",
+            star.dataset.value <= currentRating
+        );
     });
 }

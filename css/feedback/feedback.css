@@ -50,6 +50,24 @@ textarea {
 }
 
 /* STAR RATING */
+.star {
+    font-size: 32px;
+    cursor: pointer;
+    user-select: none;
+    color: black;                 /* default (unselected) */
+    transition: color 0.2s ease;
+}
+
+/* Hovered stars */
+.star.hover {
+    color: #f4c430;              /* light gold */
+}
+
+/* Selected stars */
+.star.selected {
+    color: #e0a800;              /* darker gold */
+}
+
 .rating {
     margin-top: 10px;
     display: flex;
@@ -57,16 +75,31 @@ textarea {
     gap: 8px;
 }
 
-.star {
-    font-size: 32px;
-    cursor: pointer;
-}
-
-.star.active {
-    color: yellow;
-}
-
 .rating-text {
     font-size: 18px;
     margin-left: 10px;
+}
+
+.submit-btn {
+    margin-top: 40px;
+    font-size: 16px;
+    width: fit-content;
+    padding: 12px 28px;
+    background: #C00000;
+    color: #ffffff;
+    border: 1px solid #C00000;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+    cursor: pointer;
+    display: block;
+    width: 200px;  
+    margin-bottom: 40px;
+}
+
+.submit-btn:hover {
+    background: #ffffff;
+    color: #C00000;    
+    border: 1px solid #C00000;
 }
