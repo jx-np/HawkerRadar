@@ -1,5 +1,8 @@
 const stars = document.querySelectorAll(".star");
 const ratingText = document.querySelector(".rating-text");
+const ratingInput = document.getElementById("ratingValue");
+const form = document.getElementById("feedbackForm");
+
 let currentRating = 0;
 
 //Handle click
@@ -8,6 +11,7 @@ stars.forEach(star => {
         currentRating = Number(star.dataset.value);
         updateStars(currentRating);
         ratingText.textContent = `${currentRating}/5`;
+        ratingInput.value = currentRating;
     });
 });
 
@@ -51,3 +55,44 @@ function highlightSelected() {
         );
     });
 }
+
+// Form submit
+form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    if (currentRating === 0) {
+        alert("Please select a rating.");
+        return;
+    }
+
+    const data = {
+        foodStall: document.getElementById("foodStall").value,
+        hawkerCentre: document.getElementById("hawkerCentre").value,
+        rating: currentRating,
+        comments: document.getElementById("comments").value
+    };
+
+    fetch("/api/feedback", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Failed to submit feedback");
+        }
+        return response.json();
+    })
+    .then(result => {
+        alert("Feedback submitted successfully!");
+        form.reset();
+        updateStars(0);
+        ratingText.textContent = "__/5";
+    })
+    .catch(error => {
+        console.error(error);
+        alert("Error submitting feedback.");
+    });
+});
