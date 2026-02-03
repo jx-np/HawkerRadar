@@ -21,9 +21,9 @@ body {
 .hero-section {
     height: 300px;
     background-color: #d9d9d9;
-    /* background-image: url('placeholder.jpg'); */
     background-size: cover;
-    background-position: center;
+    background-image: url('../../img/Hill_Street_Tai_Hwa_Pork_Noodle.jpg');
+    background-position: top;
     position: relative;
     border-radius: 8px; 
     margin-top: 120px; /* Space from top of screen/nav */
@@ -42,7 +42,7 @@ body {
 
 .back-arrow {
     font-size: 2rem;
-    color: #333;
+    color: white;
     text-decoration: none;
     width: fit-content;
 }
@@ -56,14 +56,14 @@ body {
 .stall-name {
     font-size: 2.5rem;
     font-weight: 600;
-    color: #333;
+    color: white;
     margin: 0;
 }
 
 .stall-rating-summary {
     font-size: 1.8rem;
     font-weight: bold;
-    color: #333;
+    color: white;
     display: flex;
     align-items: center;
     gap: 8px;
