@@ -11,23 +11,34 @@ body {
 }
 
 .container {
-    max-width: 800px;
+    max-width: 800px; /* Increased from 800px to match the wider layout */
     margin: 0 auto;
-    padding: 20px;
-    margin-top: 130px;
-    margin-bottom: 50px;
+    width: 95%;
+    margin-bottom: 70px;
 }
 
 /* Header Section */
 .stall-header {
-    height: 250px;
+    background-color: #d9d9d9;
+    height: 320px;
     position: relative;
-    border: 1px solid #999;
-    margin-bottom: 30px;
-    /* We add overflow hidden so the image doesn't stick out if it's too big */
-    overflow: hidden; 
-    /* Flex is no longer strictly needed for centering if we use absolute positioning for text, 
-       but we can keep the structure simple. */
+    background-size: cover;
+    background-image: url('../../img/Hill_Street_Tai_Hwa_Pork_Noodle.jpg');
+    background-position: top;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    overflow: hidden;
+    margin-top: 120px;
+}
+
+.stall-title {
+    position: absolute;
+    bottom: 25px;
+    left: 30px;
+    font-size: 36px;
+    font-weight: 600;
+    color: white;
+    z-index: 2;
 }
 
 .header-bg {
@@ -44,18 +55,16 @@ body {
     top: 20px;
     left: 20px;
     font-size: 24px;
-    font-weight: bold;
+    color: white;
+    z-index: 2;
     cursor: pointer;
-    color: white; /* Change to white for visibility */
 }
 
-.stall-title {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    font-size: 32px;
+.section-title h2 {
+    font-size: 20px;
     font-weight: bold;
-    color: black; 
+    color: #333;
+    margin-right: 15px;
 }
 
 /* Complaints Section */

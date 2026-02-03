@@ -1,11 +1,11 @@
 <html>
     <head>
-        <link rel="stylesheet" href="">
         <meta name="author" content="Neo You Sheng Xavier">
         <title>Reviews</title>
         <link rel="icon" href="">
         <link rel="stylesheet" href="../../css/Essential/navbar.css">
         <link rel="stylesheet" href="../../css/Essential/footer.css">
+        <link rel="stylesheet" href="../../css/feedback/review.css">
     </head>
     <body>
         <!--Nav-->
@@ -31,7 +31,45 @@
         </nav>
         </header>
 
-        <!--Content of -->
+        <!--Content of reviews-->
+        <main>
+            <section class="container hero-section">
+                <div class="hero-overlay">
+                    <div class="back-arrow">&lt;&lt;</div>
+                    <div class="hero-content">
+                        <h1 class="stall-name">XYZ Stall</h1>
+                        <div class="stall-rating-summary">
+                            <i class="fa-regular fa-star"></i>
+                            <span id="hero-rating-val">0.0</span> 
+                            <span id="hero-review-count">(0)</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="container reviews-wrapper">
+                <div class="reviews-header">
+                    <h2>Reviews</h2>
+                    <hr>
+                </div>
+
+                <div class="filter-container">
+                    <span class="filter-label">Filter by:</span>
+                    <select id="star-filter">
+                        <option value="all">All Star Ratings</option>
+                        <option value="5">5 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="2">2 Stars</option>
+                        <option value="1">1 Star</option>
+                    </select>
+                    <button id="btn-filter" class="btn-filter">Filter</button>
+                </div>
+
+                <div id="review-list">
+                    </div>
+            </section>
+        </main>
 
         <!--Footer-->
         <footer class="site-footer">
@@ -43,5 +81,8 @@
             NEA Info
         </a>
         </footer>
+
+        <!--JS-->
+        <script src="../../js/feedback/review.js"></script>
     </body>
 </html>
