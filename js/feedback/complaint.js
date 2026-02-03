@@ -1,3 +1,5 @@
+import { addComplaint } from '../firebase/wrapper.js';
+
 const selectedCategories = new Set();
 const othersCategory = document.getElementById("othersCategory");
 const othersInput = document.getElementById("othersInput");
@@ -51,13 +53,13 @@ document.getElementById("complaintForm").addEventListener("submit", async (e) =>
     };
 
     try {
-        const response = await fetch("/submitComplaint", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        });
+        const complaintID = `complaint_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        
+        const categoryString = categories.join(", ");
 
-        if (response.ok) {
+        const complaintSuccess = await addComplaint(complaintID, categoryString);
+
+        if (complaintSuccess) {
             alert("Complaint submitted successfully.");
             document.getElementById("complaintForm").reset();
             selectedCategories.clear();
@@ -67,6 +69,7 @@ document.getElementById("complaintForm").addEventListener("submit", async (e) =>
             alert("Error submitting complaint.");
         }
     } catch (err) {
+        console.error('Error submitting complaint:', err);
         alert("Server error.");
     }
 });

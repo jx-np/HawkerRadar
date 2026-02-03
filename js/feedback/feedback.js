@@ -1,3 +1,5 @@
+import { addFeedback } from '../firebase/wrapper.js';
+
 const stars = document.querySelectorAll(".star");
 const ratingText = document.querySelector(".rating-text");
 const ratingInput = document.getElementById("ratingValue");
@@ -57,7 +59,7 @@ function highlightSelected() {
 }
 
 // Form submit
-form.addEventListener("submit", (e) => {
+form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     if (currentRating === 0) {
@@ -72,27 +74,29 @@ form.addEventListener("submit", (e) => {
         comments: document.getElementById("comments").value
     };
 
-    fetch("/api/feedback", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Failed to submit feedback");
+    try {
+        const feedbackID = `feedback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+        // entry to db
+        const feedbackSuccess = await addFeedback(
+            feedbackID,
+            data.comments,
+            new Date().toISOString(),
+            data.rating,
+            "anonymous",
+            data.foodStall
+        );
+
+        if (feedbackSuccess) {
+            alert("Feedback submitted successfully!");
+            form.reset();
+            updateStars(0);
+            ratingText.textContent = "__/5";
+        } else {
+            alert("Error submitting feedback.");
         }
-        return response.json();
-    })
-    .then(result => {
-        alert("Feedback submitted successfully!");
-        form.reset();
-        updateStars(0);
-        ratingText.textContent = "__/5";
-    })
-    .catch(error => {
+    } catch (error) {
         console.error(error);
         alert("Error submitting feedback.");
-    });
+    }
 });
