@@ -6,6 +6,7 @@
         <link rel="icon" href="">
         <link rel="stylesheet" href="../../css/Essential/navbar.css">
         <link rel="stylesheet" href="../../css/Essential/footer.css">
+        <link rel="stylesheet" href="../../css/feedback/complaint_vendor.css">
     </head>
     <body>
         <!--Nav-->
@@ -31,6 +32,39 @@
         </nav>
         </header>
 
+        <main class="container">
+            <header class="stall-header">
+                <div class="back-arrow">&lt;&lt;</div>
+                
+                <img src="https://via.placeholder.com/800x400" alt="Stall Banner" class="header-bg">
+                
+                <h1 class="stall-title">XYZ Stall</h1>
+            </header>
+
+            <section class="complaints-section">
+                <div class="section-title">
+                    <h2>Complaints</h2>
+                    <div class="line-separator"></div>
+                </div>
+
+                <div class="filter-controls">
+                    <label for="issue-filter">Filter by:</label>
+                    <select id="issue-filter">
+                        <option value="All">All Issues</option>
+                        <option value="Poor Hygiene">Poor Hygiene</option>
+                        <option value="Food Safety Issue">Food Safety Issue</option>
+                        <option value="Unsatisfactory Service">Unsatisfactory Service</option>
+                        <option value="Overcharging">Overcharging</option>
+                        <option value="Others">Others</option>
+                    </select>
+                    <button id="filter-btn">Filter</button>
+                </div>
+
+                <div id="complaints-list">
+                    </div>
+            </section>
+        </main>
+
         <!--Footer-->
         <footer class="site-footer">
         <a href="#">Contact Us</a>
@@ -41,5 +75,7 @@
             NEA Info
         </a>
         </footer>
+
+        <script src="../../js/feedback/complaint_vendor.js"></script>
     </body>
 </html>
