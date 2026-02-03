@@ -11,9 +11,9 @@ body {
 }
 
 .container {
-    max-width: 800px; /* Matches the width for both sections */
-    margin: 0 auto;   /* Centers the boxes in the middle of the screen */
-    width: 95%;       /* Ensures mobile responsiveness */
+    max-width: 800px;
+    margin: 0 auto; /* Centers the boxes in the middle of the screen */
+    width: 95%; /* Ensures mobile responsiveness */
     margin-bottom: 15px;
 }
 

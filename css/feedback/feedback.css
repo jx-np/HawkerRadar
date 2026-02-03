@@ -54,18 +54,18 @@ textarea {
     font-size: 32px;
     cursor: pointer;
     user-select: none;
-    color: black;                 /* default (unselected) */
+    color: black;
     transition: color 0.2s ease;
 }
 
 /* Hovered stars */
 .star.hover {
-    color: #f4c430;              /* light gold */
+    color: #f4c430;
 }
 
 /* Selected stars */
 .star.selected {
-    color: #e0a800;              /* darker gold */
+    color: #e0a800;
 }
 
 .rating {

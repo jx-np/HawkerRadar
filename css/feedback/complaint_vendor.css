@@ -11,7 +11,7 @@ body {
 }
 
 .container {
-    max-width: 800px; /* Increased from 800px to match the wider layout */
+    max-width: 800px;
     margin: 0 auto;
     width: 95%;
     margin-bottom: 70px;
@@ -150,7 +150,7 @@ body {
 }
 
 .issue-type {
-    margin-right: auto; /* Pushes the date to the right */
+    margin-right: auto;
     color: #333;
 }
 
