@@ -12,29 +12,141 @@
 </head>
 
 <body>
-  <div class="container">
+    <div class="container">
     
-    <!-- Header -->
-    <header class="site-header">
-      <div class="logo">
-        <div class="logo-box"></div>
-        <div>
-          <h1>Hawker Centre</h1>
-          <span>Management System</span>
-        </div>
-      </div>
-
-      <nav class="nav-links">
-        <div class="nav-center">
-          <a href="#">Home</a>
-          <a href="#">Hawker Centres</a>
-          <a href="#">Order History</a>
+        <!-- Header -->
+        <header class="site-header">
+        <div class="logo">
+            <div class="logo-box"></div>
+            <div>
+            <h1>Hawker Centre</h1>
+            <span>Management System</span>
+            </div>
         </div>
 
-        <div class="nav-right">
-          <a href="#">Login / Register</a>
-        </div>
-      </nav>
+        <nav class="nav-links">
+            <div class="nav-center">
+            <a href="../../html/home/home.html">Home</a>
+            <a href="#">Hawker Centres</a>
+            <a href="#">Order History</a>
+            </div>
 
-    </header>
-    <!--End of Header = MAKE SURE TO COPY-->
+            <div class="nav-right">
+            <a href="#">Login / Register</a>
+            </div>
+        </nav>
+
+        </header>
+        <!--End of Header = MAKE SURE TO COPY-->
+
+        <!--Banner Section-->
+        <section class="Banner">
+            <div class="Banner-text">
+                <h2>Frequently Asked Questions</h2>
+                <span>Find quick answers to common questions.</span>
+            </div>
+        </section>
+
+        <section class="faq-page">
+
+            <!-- Search bar at the top -->
+            <div class="faq-search">
+                <input type="text" placeholder="Search FAQs...">
+            </div>
+
+            <!-- Flex container for left + right -->
+            <div class="faq-main">
+                <!-- Left: categories -->
+                <aside class="faq-categories">
+                    <button class="faq-btn active" data-category="general">General Questions</button>
+                    <button class="faq-btn" data-category="account">Account & Login</button>
+                    <button class="faq-btn" data-category="services">Services</button>
+                    <button class="faq-btn" data-category="technical">Technical</button>
+                </aside>
+
+                <!-- Right: FAQ content -->
+                <div class="faq-content">
+                    <div class="faq-list">
+
+                        <!-- General Questions -->
+                        <div class="faq-group" data-category="general">
+                            <div class="faq-item">
+                                <h4>What is this system about?</h4>
+                                <p>This system helps users browse hawker centres and order food.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h4>Do I need an account to order?</h4>
+                                <p>You can order as a guest, but registered users get extra features.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h4>Can I cancel an order?</h4>
+                                <p>Orders can only be cancelled before the vendor accepts them.</p>
+                            </div>
+                        </div>
+
+                        <!-- Account & Login -->
+                        <div class="faq-group" data-category="account" hidden>
+                            <div class="faq-item">
+                                <h4>How do I create an account?</h4>
+                                <p>Click on the Register button and fill in your details.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h4>I forgot my password. What should I do?</h4>
+                                <p>Use the “Forgot Password” link on the login page to reset it.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h4>Can I change my email address?</h4>
+                                <p>Yes, you can update your email in the account settings.</p>
+                            </div>
+                        </div>
+
+                        <!-- Services -->
+                        <div class="faq-group" data-category="services" hidden>
+                            <div class="faq-item">
+                                <h4>What services are available?</h4>
+                                <p>Food ordering, stall reviews, and order tracking.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h4>Are there promotions or discounts?</h4>
+                                <p>Yes, vendors may run discounts; check the promotions section.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h4>Can I like or review a stall?</h4>
+                                <p>Yes, registered users can rate and submit feedback for stalls.</p>
+                            </div>
+                        </div>
+
+                        <!-- Technical -->
+                        <div class="faq-group" data-category="technical" hidden>
+                            <div class="faq-item">
+                                <h4>The website is not loading. What should I do?</h4>
+                                <p>Try refreshing the page or clearing your browser cache.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h4>Why are images not showing?</h4>
+                                <p>Check your internet connection and browser settings.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h4>Who can I contact for technical support?</h4>
+                                <p>Use the contact form or email us at info@example.com.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer - MAKE SURE TO COPY!-->
+        <footer class="site-footer">
+            <a href="ContactUs.html">Contact Us</a>
+            <span>|</span>
+            <a href="#">FAQs</a>
+            <span>|</span>
+            <a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">
+                NEA Info
+            </a>
+        </footer>
+    </div>
+<script src="../../js/faq.js"></script>
+</body>

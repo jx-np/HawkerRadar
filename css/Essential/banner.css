@@ -1,12 +1,12 @@
 .Banner {
-    height: 160px;
+    font-family: 'Satoshi', sans-serif;
+    height: 100px;
     display: flex;             /* enables flexbox */
     align-items: center;       /* vertical centering */
     padding: 16px 40px;
     border-radius: 0 0 8px 8px;
     border-bottom: 1px solid #ccc;
-    background: linear-gradient(to bottom, #C00000, #ff3333);
-    color: #ffffff;
+    background: #EAEFEF;
     text-align: left;          /* keep text left-aligned */
 }
 
@@ -16,4 +16,28 @@
 
 .Banner-text span {
     font-size: 17px;
+}
+
+/* ==========================
+   FONTS
+========================== */
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-BlackItalic.woff2') format('woff2');
+    font-weight: 900;
+    font-style: italic;
 }

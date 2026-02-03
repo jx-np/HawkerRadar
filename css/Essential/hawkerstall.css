@@ -1,0 +1,40 @@
+.stall-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.stall-card {
+    border: 1px solid #d0d0d0;
+    background: linear-gradient(to bottom, #C00000, #ff3333); 
+    border-radius: 4px;
+}
+
+.stall-image {
+    height: 140px;
+    background: #d0d0d0;
+}
+
+.stall-info {
+    padding: 16px;
+}
+
+.stall-info strong {
+    display: block;
+    color: #fff;
+}
+
+.stall-info em {
+    font-size: 13px;
+    color: #fff;
+}
+
+.stall-info button {
+    margin-top: 12px;
+    padding: 6px 12px;
+    background: linear-gradient(to bottom, #FFE08F, #F9E7B2);
+    border: 1.5px solid #FFF1CB;
+    cursor: pointer;
+    border-radius: 15px;
+    font-weight: bold;
+}

@@ -1,8 +1,3 @@
-@media (max-width: 768px) {
-  .container {
-    padding: 0 10px; /* reduce side padding on small screens */
-  }
-}
 
 
 /* Advertisement Banner */
@@ -27,6 +22,16 @@
     color: #fff;
     padding: 16px 24px;
     text-shadow: 0 1px 5px rgba(0,0,0,0.6);
+}
+
+.selection h2 {
+    margin-bottom: 24px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 8px;
+    font-size: 28px;           /* match featured h2 */
+    color: #FF3838;            /* match featured h2 color */
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
 /*Filter*/
