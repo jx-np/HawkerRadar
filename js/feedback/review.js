@@ -105,3 +105,5 @@ filterBtn.addEventListener('click', () => {
 updateHeroStats(feedbackData);
 // Show all reviews initially
 renderReviews(feedbackData);
+
+console.log("Complaint JS loaded");

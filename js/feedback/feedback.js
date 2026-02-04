@@ -1,4 +1,4 @@
-import { addFeedback } from '../firebase/wrapper.js';
+import { addFeedback } from '/js/firebase/wrapper.js';
 
 const stars = document.querySelectorAll(".star");
 const ratingText = document.querySelector(".rating-text");
@@ -100,3 +100,5 @@ form.addEventListener("submit", async (e) => {
         alert("Error submitting feedback.");
     }
 });
+
+console.log("Complaint JS loaded");
