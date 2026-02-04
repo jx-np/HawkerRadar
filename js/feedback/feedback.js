@@ -1,4 +1,4 @@
-import { addFeedback } from '../firebase/wrapper.js';
+import { addFeedback } from '/js/firebase/wrapper.js';
 
 const stars = document.querySelectorAll(".star");
 const ratingText = document.querySelector(".rating-text");
@@ -77,7 +77,6 @@ form.addEventListener("submit", async (e) => {
     try {
         const feedbackID = `feedback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-        // entry to db
         const feedbackSuccess = await addFeedback(
             feedbackID,
             data.comments,
@@ -100,3 +99,5 @@ form.addEventListener("submit", async (e) => {
         alert("Error submitting feedback.");
     }
 });
+
+console.log("Complaint JS loaded");
