@@ -1,43 +1,45 @@
+/* ==========================
+   FOOTER
+========================== */
 .site-footer {
-    position: fixed;                 /* fixed to viewport */
-    bottom: 0;                       /* stick to bottom */
-    left: 50%;                        /* center horizontally */
-    transform: translateX(-50%);      /* perfect horizontal centering */
-    width: min(100%, 1400px);         /* align with main content */
-    background: #FF3838;              /* site color */
-    color: #fff;
-    font-size: 14px;
-    padding: 20px;                        /* no extra padding */
+    padding: 15px 0; /* 15px top & bottom */
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;                     /* stay above content */
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(100%, 1400px);
+    background: #FF3838;
+    color: #fff;
+    font-size: 14px;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
+    z-index: 1000;
 }
+
 
 .site-footer a,
 .site-footer span {
-    color: #fff;
+    font-family: 'Satoshi', sans-serif;
+    color: #FFF1CB;
     text-decoration: none;
     margin: 0 8px;
-    white-space: nowrap;               /* prevent stacking */
+    white-space: nowrap;
     transition: color 0.3s;
 }
 
 .site-footer a:hover {
-    color: #F9E7B2;
+    color: #ffffff;
 }
 
-
-@media (max-width: 768px) {
-    .site-footer {
-        padding: 16px 0;
-        font-size: 13px;
-    }
-
-    .site-footer a {
-        display: block;
-        margin: 4px 0;
-    }
+/* ==========================
+   FONTS
+========================== */
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-Regular.otf') format('woff2');
+    font-weight: 400;
+    font-style: normal;
 }

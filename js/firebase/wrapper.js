@@ -50,16 +50,26 @@ export async function getAllOperators() {
 // HAWKER CENTRE FUNCTIONS
 // ============================================
 
-export async function addHawkerCentre(HawkerCentreID, HCName, HCAddress, OperatorID) {
+export async function addHawkerCentre(HawkerCentreID, HCName, HCAddress, OperatorID, PriceRange, Region, ImageURL) {
     try {
         const centreRef = ref(db, `hawkerCentre/${HawkerCentreID}`);
-        await set(centreRef, { HawkerCentreID, HCName, HCAddress, OperatorID });
+        await set(centreRef, { 
+            HawkerCentreID, 
+            HCName, 
+            HCAddress, 
+            OperatorID, 
+            PriceRange,
+            Region,
+            ImageURL  
+        });
         return true;
     } catch (error) {
         console.error('Error adding hawker centre:', error);
         return false;
     }
 }
+
+
 
 export async function getHawkerCentre(HawkerCentreID) {
     try {

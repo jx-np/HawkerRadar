@@ -92,9 +92,9 @@ body {
 .contact-form button {
   width: fit-content;
   padding: 12px 28px;
-  background: #C00000;   /* red background */
+  background: #008BFF;   /* red background */
   color: #ffffff;         /* white text */
-  border: 1px solid #C00000;  /* small border matching bg */
+  border: 1px solid #008BFF;  /* small border matching bg */
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s;  /* smooth hover */
@@ -103,8 +103,8 @@ body {
 
 .contact-form button:hover {
   background: #ffffff;    /* invert background */
-  color: #C00000;         /* invert text color */
-  border: 1px solid #C00000; /* maintain 1px outline */
+  color: #008BFF;         /* invert text color */
+  border: 1px solid #008BFF; /* maintain 1px outline */
 }
 
 
