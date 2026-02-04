@@ -77,7 +77,6 @@ form.addEventListener("submit", async (e) => {
     try {
         const feedbackID = `feedback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-        // entry to db
         const feedbackSuccess = await addFeedback(
             feedbackID,
             data.comments,
