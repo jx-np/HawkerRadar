@@ -1,4 +1,4 @@
-import { addFeedback } from '/js/firebase/wrapper.js';
+import { addFeedback, getAllFeedback } from '/js/firebase/wrapper.js';
 
 const stars = document.querySelectorAll(".star");
 const ratingText = document.querySelector(".rating-text");
@@ -7,41 +7,37 @@ const form = document.getElementById("feedbackForm");
 
 let currentRating = 0;
 
-//Handle click
+// Unified Event Listeners (Fixes duplicate click & missing updateStars)
 stars.forEach(star => {
-    star.addEventListener("click", () => {
-        currentRating = Number(star.dataset.value);
-        updateStars(currentRating);
-        ratingText.textContent = `${currentRating}/5`;
-        ratingInput.value = currentRating;
-    });
-});
-
-stars.forEach(star => {
+    // 1. Handle Hover (Mouse Enter)
     star.addEventListener("mouseenter", () => {
         highlightHover(star.dataset.value);
     });
 
+    // 2. Handle Hover End (Mouse Leave)
     star.addEventListener("mouseleave", () => {
         clearHover();
-        highlightSelected();
+        highlightSelected(); // Restores the visual selection
     });
 
+    // 3. Handle Click (Selection)
     star.addEventListener("click", () => {
+        // Update State
         currentRating = Number(star.dataset.value);
+        
+        // Update Form Inputs
         ratingInput.value = currentRating;
         ratingText.textContent = `${currentRating}/5`;
-        highlightSelected();
+        
+        // Update Visuals (Replaces the missing updateStars function)
+        highlightSelected(); 
     });
 });
 
-// Hover effect
+// Hover Visuals
 function highlightHover(rating) {
     stars.forEach(star => {
-        star.classList.toggle(
-            "hover",
-            star.dataset.value <= rating
-        );
+        star.classList.toggle("hover", star.dataset.value <= rating);
     });
 }
 
@@ -49,16 +45,14 @@ function clearHover() {
     stars.forEach(star => star.classList.remove("hover"));
 }
 
+// Selected Visuals
 function highlightSelected() {
     stars.forEach(star => {
-        star.classList.toggle(
-            "selected",
-            star.dataset.value <= currentRating
-        );
+        star.classList.toggle("selected", star.dataset.value <= currentRating);
     });
 }
 
-// Form submit
+// Form Submit
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -67,29 +61,36 @@ form.addEventListener("submit", async (e) => {
         return;
     }
 
-    const data = {
-        foodStall: document.getElementById("foodStall").value,
-        hawkerCentre: document.getElementById("hawkerCentre").value,
-        rating: currentRating,
-        comments: document.getElementById("comments").value
-    };
-
     try {
-        const feedbackID = `feedback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        // --- NEW ID GENERATION LOGIC ---
+        
+        // Fetch all existing feedback
+        const allFeedbackData = await getAllFeedback();
+        
+        // Count them. 
+        // If data exists, count the keys. If null (empty db), count is 0.
+        const currentCount = allFeedbackData ? Object.keys(allFeedbackData).length : 0;
+        
+        // Generate ID (e.g., 0 -> 701, 15 -> 716)
+        const nextNumber = currentCount + 1;
+        const feedbackID = `7${String(nextNumber).padStart(2, '0')}`;
+        
+        // -------------------------------
 
         const feedbackSuccess = await addFeedback(
             feedbackID,
-            data.comments,
+            document.getElementById("comments").value, // Assuming you accessed values directly or via data obj
             new Date().toISOString(),
-            data.rating,
-            "anonymous",
-            data.foodStall
+            currentRating,
+            "501",
+            document.getElementById("foodStall").value
         );
 
         if (feedbackSuccess) {
             alert("Feedback submitted successfully!");
             form.reset();
-            updateStars(0);
+            currentRating = 0;
+            highlightSelected(); 
             ratingText.textContent = "__/5";
         } else {
             alert("Error submitting feedback.");
