@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Satoshi', sans-serif;
     background-color: #ffffff;
 }
 
@@ -25,6 +25,7 @@ body {
 /* FORM */
 .feedback-container {
     padding: 50px 80px;
+    max-width: 800px;
 }
 
 label {
@@ -41,6 +42,9 @@ textarea {
     background-color: white;
     border: 1px solid #ccc;
     font-size: 16px;
+    width: 100%;
+    max-width: 600px;
+    box-sizing: border-box;
 }
 
 textarea {
@@ -54,18 +58,18 @@ textarea {
     font-size: 32px;
     cursor: pointer;
     user-select: none;
-    color: black;                 /* default (unselected) */
+    color: black;
     transition: color 0.2s ease;
 }
 
 /* Hovered stars */
 .star.hover {
-    color: #f4c430;              /* light gold */
+    color: #f4c430;
 }
 
 /* Selected stars */
 .star.selected {
-    color: #e0a800;              /* darker gold */
+    color: #e0a800;
 }
 
 .rating {
@@ -102,4 +106,28 @@ textarea {
     background: #ffffff;
     color: #C00000;    
     border: 1px solid #C00000;
+}
+
+/* ==========================
+   FONTS
+========================== */
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-Regular.otf') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-Bold.otf') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-BlackItalic.otf') format('woff2');
+    font-weight: 900;
+    font-style: italic;
 }

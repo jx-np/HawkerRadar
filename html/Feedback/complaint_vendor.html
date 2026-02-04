@@ -1,45 +1,76 @@
 <html>
     <head>
-        <link rel="stylesheet" href="">
         <meta name="author" content="Neo You Sheng Xavier">
         <title>Complaints review</title>
         <link rel="icon" href="">
         <link rel="stylesheet" href="../../css/Essential/navbar.css">
         <link rel="stylesheet" href="../../css/Essential/footer.css">
+        <link rel="stylesheet" href="../../css/feedback/complaint_vendor.css">
     </head>
     <body>
         <!--Nav-->
         <header class="site-header">
-        <div class="logo">
-            <div class="logo-box"></div>
-            <div>
-            <h1>Hawker Centre</h1>
-            <span>Management System</span>
+            <div class="logo">
+                <a href="../../html/home/home.html" class="link-wrapper">
+                <div class="logo-box"></div>
+                </a>
             </div>
-        </div>
 
         <nav class="nav-links">
             <div class="nav-center">
-                <a href="#">Home</a>
-                <a href="#">Hawker Centres</a>
-                <a href="#">Order History</a>
+            <a href="../../html/home/home.html">Home</a>
+            <a href="#">Hawker Centres</a>
+            <a href="#">Order History</a>
             </div>
 
             <div class="nav-right">
-                <a href="#">Login / Register</a>
+            <a href="#">Login / Register</a>
             </div>
         </nav>
         </header>
 
+        <!--Content of complaint (visible to vendor)-->
+        <main class="container">
+            <header class="stall-header">
+                <div class="back-arrow">&lt;&lt;</div>
+                <h1 class="stall-title">XYZ Stall</h1>
+            </header>
+
+            <section class="complaints-section">
+                <div class="section-title">
+                    <h2>Complaints</h2>
+                    <div class="line-separator"></div>
+                </div>
+
+                <div class="filter-controls">
+                    <label for="issue-filter">Filter by:</label>
+                    <select id="issue-filter">
+                        <option value="All">All Issues</option>
+                        <option value="Poor Hygiene">Poor Hygiene</option>
+                        <option value="Food Safety Issue">Food Safety Issue</option>
+                        <option value="Unsatisfactory Service">Unsatisfactory Service</option>
+                        <option value="Overcharging">Overcharging</option>
+                        <option value="Others">Others</option>
+                    </select>
+                    <button id="filter-btn">Filter</button>
+                </div>
+
+                <div id="complaints-list">
+                    </div>
+            </section>
+        </main>
+
         <!--Footer-->
         <footer class="site-footer">
-        <a href="#">Contact Us</a>
-        <span>|</span>
-        <a href="#">FAQs</a>
-        <span>|</span>
-        <a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">
-            NEA Info
-        </a>
+            <a href="../../html/Footer Stuff/ContactUs.html">Contact Us</a>
+            <span>|</span>
+            <a href="../../html/Footer Stuff/FAQ.html">FAQs</a>
+            <span>|</span>
+            <a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">
+                NEA Info
+            </a>
         </footer>
+
+        <script src="../../js/feedback/complaint_vendor.js"></script>
     </body>
 </html>
