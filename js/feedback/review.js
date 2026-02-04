@@ -44,7 +44,7 @@ function updateHeroStats(reviews) {
     }
 
     // Sum up all ratings
-    const sum = reviews.reduce((acc, curr) => acc + curr.rating, 0);
+    const sum = reviews.reduce((acc, curr) => acc + curr.FbkRating, 0);
     const average = (sum / totalReviews).toFixed(1); // One decimal place (e.g., 4.5)
 
     // Update HTML
