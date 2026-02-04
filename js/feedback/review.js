@@ -3,14 +3,14 @@ import { getAllFeedback, getAllCustomers, getCustomer } from "/js/firebase/wrapp
 let feedbackDataRaw = await getAllFeedback();
 let customerDataRaw = await getAllCustomers();
 
-// 1. Convert customers to an array first so we can search them
+// Convert customers to an array first so we can search them
 const customersArray = feedbackDataRaw ? Object.values(feedbackDataRaw) : [];
 
-// 2. Create the complaints array and merge the customer name into it
+// Create the complaints array and merge the customer name into it
 let feedbackData = [];
 
 if (feedbackDataRaw) {
-    // A. Create an array of Promises
+    // Create an array of Promises
     const processingPromises = Object.values(feedbackDataRaw).map(async (feedback) => {
         // Now we can use await here safely because the callback is async
         let customer = await getCustomer(feedback.CustomerID);
@@ -21,7 +21,7 @@ if (feedbackDataRaw) {
         };
     });
 
-    // B. Wait for ALL promises to finish before continuing
+    // Wait for ALL promises to finish before continuing
     feedbackData = await Promise.all(processingPromises);
 }
 
@@ -33,7 +33,7 @@ const filterSelect = document.getElementById('star-filter');
 const heroRatingVal = document.getElementById('hero-rating-val');
 const heroReviewCount = document.getElementById('hero-review-count');
 
-// 2. LOGIC: Calculate Average Rating & Count for Hero Section
+// Calculate Average Rating & Count for Hero Section
 function updateHeroStats(reviews) {
     const totalReviews = reviews.length;
     
@@ -52,7 +52,7 @@ function updateHeroStats(reviews) {
     heroReviewCount.textContent = `(${totalReviews})`; // e.g. (150)
 }
 
-// 3. LOGIC: Render Review Cards
+// Render Review Cards
 function renderReviews(reviewsToRender) {
     reviewListContainer.innerHTML = ''; // Clear existing list
 
@@ -87,14 +87,13 @@ function renderReviews(reviewsToRender) {
     });
 }
 
-// 4. LOGIC: Filter Functionality
+// Filter Functionality
 filterBtn.addEventListener('click', () => {
     const filterValue = filterSelect.value;
     
     if (filterValue === "all") {
         renderReviews(feedbackData);
     } else {
-        // Filter logic: Check if the rounded rating matches the filter
         // Math.floor(4.5) = 4, so 4.5 stars will show up under "4 Stars" filter
         const filteredData = feedbackData.filter(item => Math.floor(item.FbkRating) == filterValue);
         renderReviews(filteredData);

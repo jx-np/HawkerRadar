@@ -3,14 +3,14 @@ import { getAllFeedback, getAllCustomers, getAllComplaints, getCustomer } from "
 let feedbackDataRaw = await getAllFeedback();
 let customerDataRaw = await getAllCustomers();
 
-// 1. Convert customers to an array first so we can search them
+// Convert customers to an array first so we can search them
 const customersArray = feedbackDataRaw ? Object.values(feedbackDataRaw) : [];
 
-// 2. Create the complaints array and merge the customer name into it
+// Create the complaints array and merge the customer name into it
 let feedbackData = [];
 
 if (feedbackDataRaw) {
-    // A. Create an array of Promises
+    // Create an array of Promises
     const processingPromises = Object.values(feedbackDataRaw).map(async (feedback) => {
         // Now we can use await here safely because the callback is async
         let customer = await getCustomer(feedback.CustomerID);
@@ -21,7 +21,7 @@ if (feedbackDataRaw) {
         };
     });
 
-    // B. Wait for ALL promises to finish before continuing
+    // Wait for ALL promises to finish before continuing
     feedbackData = await Promise.all(processingPromises);
 }
 
@@ -29,7 +29,7 @@ if (feedbackDataRaw) {
 const complaintsList = document.getElementById('complaints-list');
 const filterBtn = document.getElementById('filter-btn');
 const issueFilter = document.getElementById('issue-filter');
-// 2. Function to Render Complaints
+// Function to Render Complaints
 function renderComplaints(data) {
     // Clear existing content
     complaintsList.innerHTML = '';
@@ -62,7 +62,7 @@ function renderComplaints(data) {
     });
 }
 
-// 3. Filter Logic
+// Filter Logic
 filterBtn.addEventListener('click', () => {
     const selectedIssue = issueFilter.value;
 
