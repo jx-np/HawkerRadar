@@ -113,6 +113,8 @@ export async function loginUser(email, password) {
         let foundUser = null;
         let foundUserId = null;
 
+        console.log("??")
+
         snapshot.forEach((childSnap) => {
             const user = childSnap.val();
             if (user.email === email) {
