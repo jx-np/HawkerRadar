@@ -1,3 +1,5 @@
+import { getAllComplaints } from "/js/firebase/wrapper";
+
 const complaintsData = [
     {
         id: 1,
@@ -40,6 +42,7 @@ const complaintsData = [
         description: "The fork provided had dried food stuck to it."
     }
 ];
+
 
 // Select DOM elements
 const complaintsList = document.getElementById('complaints-list');
