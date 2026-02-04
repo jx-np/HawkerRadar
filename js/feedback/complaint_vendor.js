@@ -1,54 +1,35 @@
-import { getAllComplaints } from "/js/firebase/wrapper";
+import { getAllFeedback, getAllCustomers, getAllComplaints, getCustomer } from "/js/firebase/wrapper.js";
 
-const complaintsData = [
-    {
-        id: 1,
-        name: "John Doe",
-        issueType: "Poor Hygiene",
-        date: "23 Jan 2024",
-        title: "Lorem ipsum dolor sit amet.",
-        description: "The tables were not cleaned properly and there were used napkins left behind."
-    },
-    {
-        id: 2,
-        name: "Jane Smith",
-        issueType: "Food Safety Issue",
-        date: "22 Jan 2024",
-        title: "Undercooked chicken served.",
-        description: "consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    },
-    {
-        id: 3,
-        name: "Alice Brown",
-        issueType: "Unsatisfactory Service",
-        date: "20 Jan 2024",
-        title: "Staff was rude.",
-        description: "The staff member ignored my request for water three times."
-    },
-    {
-        id: 4,
-        name: "Bob White",
-        issueType: "Overcharging",
-        date: "19 Jan 2024",
-        title: "Charged for extra items.",
-        description: "My receipt shows 3 drinks but I only ordered 2."
-    },
-    {
-        id: 5,
-        name: "Charlie Green",
-        issueType: "Poor Hygiene",
-        date: "18 Jan 2024",
-        title: "Dirty utensils.",
-        description: "The fork provided had dried food stuck to it."
-    }
-];
+let feedbackDataRaw = await getAllFeedback();
+let customerDataRaw = await getAllCustomers();
+let complaintsDataRaw = await getAllComplaints();
 
+// 1. Convert customers to an array first so we can search them
+const customersArray = feedbackDataRaw ? Object.values(feedbackDataRaw) : [];
+
+// 2. Create the complaints array and merge the customer name into it
+let feedbackData = [];
+
+if (feedbackDataRaw) {
+    // A. Create an array of Promises
+    const processingPromises = Object.values(feedbackDataRaw).map(async (feedback) => {
+        // Now we can use await here safely because the callback is async
+        let customer = await getCustomer(feedback.CustomerID);
+        console.log(customer)
+        return {
+            ...feedback,
+            customername: customer ? customer.CustName : "Unknown User"
+        };
+    });
+
+    // B. Wait for ALL promises to finish before continuing
+    feedbackData = await Promise.all(processingPromises);
+}
 
 // Select DOM elements
 const complaintsList = document.getElementById('complaints-list');
 const filterBtn = document.getElementById('filter-btn');
 const issueFilter = document.getElementById('issue-filter');
-
 // 2. Function to Render Complaints
 function renderComplaints(data) {
     // Clear existing content
@@ -67,14 +48,13 @@ function renderComplaints(data) {
         card.innerHTML = `
             <div class="card-header">
                 <div class="avatar"></div>
-                <span class="user-name">${complaint.name}</span>
-                <span class="issue-type"><span class="issue-label">Issue Type:</span> ${complaint.issueType}</span>
-                <span class="date">${complaint.date}</span>
+                <span class="user-name">${complaint.customername}</span>
+                <span class="issue-type"><span class="issue-label">Issue Type:</span> ${complaint.categories}</span>
+                <span class="date">${complaint.FbkDateTime}</span>
             </div>
             <div class="card-body">
-                <h3>${complaint.title}</h3>
                 <ul>
-                    <li>${complaint.description}</li>
+                    <li>${complaint.FbkComment}</li>
                 </ul>
             </div>
         `;
@@ -89,13 +69,17 @@ filterBtn.addEventListener('click', () => {
 
     if (selectedIssue === "All") {
         // Show all data
-        renderComplaints(complaintsData);
+        renderComplaints(feedbackData);
     } else {
         // Filter the array based on the Issue Type
-        const filteredData = complaintsData.filter(item => item.issueType === selectedIssue);
+        const filteredData = feedbackData.filter(item =>
+            item.categories.includes(selectedIssue)
+        );
         renderComplaints(filteredData);
     }
 });
 
 // Initial Render (Show all on load)
-renderComplaints(complaintsData);
+renderComplaints(feedbackData);
+
+console.log("Complaint JS loaded");
