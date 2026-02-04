@@ -101,6 +101,18 @@ body {
   align-items: center;
 }
 
+.toggle-password {
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: #777;
+  cursor: pointer;
+}
+
+.toggle-password:hover {
+  color: #1677ff;
+}
+
 .forgot-password {
   text-align: right;
   margin-bottom: 28px;
