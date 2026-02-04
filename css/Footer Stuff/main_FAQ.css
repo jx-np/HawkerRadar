@@ -1,23 +1,219 @@
+/* ==========================
+   FAQ PAGE
+========================== */
+
+/* Global container and layout */
 html, body {
   height: 100%;
 }
 
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f5f5f5;
-  padding-top:100px;
+  font-family: 'Satoshi', sans-serif;
+  background: #fff;
+  padding-top: 100px;
   display: flex;
   flex-direction: column;
 }
+
 .container {
   width: min(100%, 1500px);
   margin: 0 auto;
   box-sizing: border-box;
-
-  flex: 1; /* pushes footer down */
+  flex: 1;
   display: flex;
   flex-direction: column;
+  background: #fff;  /* solid white */
+  padding: 0 20px;
+}
 
+
+/* ==========================
+   Search Bar
+========================== */
+.faq-search {
+  padding-top: 60px;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.faq-search input {
+  width: 100%;
+  max-width: 500px;
+  padding: 16px 20px; /* bigger padding */
+  font-size: 16px;
+  border: 1.5px solid #FF3838;
+  border-radius: 30px;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.faq-search input:focus {
+  border-color: #FF6B6B;
+  box-shadow: 0 4px 12px rgba(255,56,56,0.2);
+}
+
+/* ==========================
+   FAQ Main Layout
+========================== */
+.faq-main {
+  display: flex;
+  gap: 50px; /* larger gap for spacing */
+  margin-bottom: 60px;
+  flex-wrap: wrap;
   background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+/* Categories (left sidebar) */
+.faq-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 0 0 280px;
+}
+
+/* Buttons */
+.faq-btn {
+  flex: 1; /* make equal width inside flex container */
+  padding: 16px 20px;
+  background: #fff;
+  color: #FF3838;
+  font-weight: 700;
+  border: 2px solid #FF3838;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center; /* center text */
+  transition: all 0.3s;
+  font-size: 16px;
+}
+
+.faq-btn:hover,
+.faq-btn.active {
+  background: #FF3838;
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(255,56,56,0.2);
+}
+
+/* FAQ content (right column) */
+.faq-content {
+  flex: 1;
+  min-width: 300px;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.faq-item {
+  background: #fff;
+  border-left: 4px solid #FF3838;
+  border-radius: 8px;
+  padding: 20px 24px;
+  transition: all 0.3s;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.faq-item:hover {
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.faq-item h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #FF3838;
+}
+
+.faq-item p {
+  margin-top: 10px;
+  font-size: 15px;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* ==========================
+   Responsive adjustments
+========================== */
+@media (max-width: 992px) {
+  .faq-main {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .faq-categories {
+    flex-direction: row;
+    gap: 12px;
+    overflow-x: hidden;  /* prevent horizontal scroll */
+  }
+
+  .faq-btn {
+    flex: 1 1 0; /* equal width buttons across row */
+    white-space: nowrap;
+    font-size: 15px;
+    padding: 14px 0; /* vertical padding larger, horizontal auto */
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .faq-categories {
+    flex-direction: column;
+  }
+
+  .faq-btn {
+    flex: none;
+    width: 100%; /* stack full width on phones */
+  }
+}
+
+@media (max-width: 768px) {
+  .Banner h2 {
+    font-size: 28px;
+  }
+
+  .Banner span {
+    font-size: 16px;
+  }
+
+  .faq-search input {
+    max-width: 100%;
+  }
+
+  .faq-item h4 {
+    font-size: 16px;
+  }
+
+  .faq-item p {
+    font-size: 14px;
+  }
+}
+
+/* ==========================
+   Fonts
+========================== */
+@font-face {
+  font-family: 'Satoshi';
+  src: url('../../fonts/Satoshi-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('../../fonts/Satoshi-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('../../fonts/Satoshi-BlackItalic.woff2') format('woff2');
+  font-weight: 900;
+  font-style: italic;
 }

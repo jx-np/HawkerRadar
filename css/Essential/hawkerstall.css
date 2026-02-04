@@ -1,0 +1,94 @@
+/* ==========================
+   HAWKER CENTRE GRID
+========================== */
+.hc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* min width 300px, max 1fr */
+    gap: 24px;
+    justify-content: center; /* center smaller grids */
+    max-width: 1400px;       /* matches main container width */
+    margin: 0 auto;
+    padding-bottom: 6.7%;
+}
+
+/* Card */
+.hc-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #FF3838;
+    height: 320px;
+    position: relative;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
+
+.hc-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+}
+
+/* Image */
+.hc-image {
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+    border-bottom: 2px solid rgba(255,255,255,0.3);
+    transition: transform 0.4s;
+}
+
+.hc-card:hover .hc-image {
+    transform: scale(1.05);
+}
+
+
+
+/* ==========================
+   FONT IMPORTS
+========================== */
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-Regular.otf') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-Bold.otf') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-BlackItalic.otf') format('woff2');
+    font-weight: 900;
+    font-style: italic;
+}
+
+/* ==========================
+   LIMIT MAX ROWS
+========================== */
+.hc-grid {
+    grid-auto-rows: 320px;   /* ensures uniform height */
+}
+
+@media (min-width: 1024px) {
+    .hc-grid {
+        grid-template-columns: repeat(3, 1fr); /* max 3 per row on large screens */
+    }
+}
+
+@media (max-width: 1023px) and (min-width: 768px) {
+    .hc-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 per row medium screens */
+    }
+}
+
+@media (max-width: 767px) {
+    .hc-grid {
+        grid-template-columns: 1fr; /* 1 per row small screens */
+    }
+}

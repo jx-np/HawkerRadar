@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Satoshi', sans-serif;
     background-color: #ffffff;
     margin: 0;
 }
@@ -23,6 +23,7 @@ body {
 
 .complaint-container {
     padding: 50px 80px;
+    max-width: 800px;
 }
 
 form {
@@ -43,6 +44,9 @@ textarea {
     background-color: white;
     border: 1px solid #ccc;
     font-size: 16px;
+    width: 100%;
+    max-width: 600px;
+    box-sizing: border-box;
 }
 
 textarea {
@@ -84,10 +88,13 @@ textarea {
 .category.selected .box::after {
     content: "✔";
     position: absolute;
-    left: 3px;
-    top: -1px;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 14px;
     font-weight: bold;
+    color: #C00000;
 }
 
 #othersInput {
@@ -129,4 +136,28 @@ textarea {
     background: #ffffff;
     color: #C00000;    
     border: 1px solid #C00000;
+}
+
+/* ==========================
+   FONTS
+========================== */
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-Regular.otf') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-Bold.otf') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-BlackItalic.otf') format('woff2');
+    font-weight: 900;
+    font-style: italic;
 }

@@ -1,0 +1,479 @@
+/* ==========================
+   GLOBAL STYLES
+========================== */
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: 'Satoshi', sans-serif;
+    background: #fff;
+    padding-top: 100px;        /* header space */
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    width: min(100%, 1400px);  /* max width aligned with footer/featured */
+    margin: 0 auto;
+    box-sizing: border-box;
+    flex: 1;                    /* pushes footer down */
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+}
+
+/* ==========================
+   HERO SECTION
+========================== */
+.hero {
+    height: 400px;
+    background-image: url(../../img/ethan-hu-NRTptNBkLLw-unsplash.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 0 0 8px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px 80px 0 80px;
+    box-sizing: border-box;
+}
+
+.hero-text h1 {
+    font-size: 64px;
+    color: #fff;
+    margin: 0;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+}
+
+.hero-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.hero-buttons button {
+    padding: 14px 44px;
+    border: 2px solid #fff;
+    background: #FF3838;
+    color: #fff;
+    border-radius: 15px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.hero-buttons button:hover {
+    background: #fff;
+    color: #FF3838;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+}
+
+/* ==========================
+   FEATURED SECTION
+========================== */
+.featured {
+    background: #fff;
+    padding: 40px;
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.02);
+}
+
+.featured h2 {
+    margin-bottom: 32px;
+    border-bottom: 2px solid #FF3838;
+    padding-bottom: 12px;
+    font-size: 28px;
+    color: #FF3838;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.feature-stall-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+}
+
+.feature-stall-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #FF3838;
+    height: 320px;
+    position: relative;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
+
+.feature-stall-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+}
+
+.feature-stall-image {
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+    border-bottom: 2px solid rgba(255,255,255,0.3);
+    transition: transform 0.4s;
+}
+
+.feature-stall-card:hover .feature-stall-image {
+    transform: scale(1.05);
+}
+
+.feature-stall-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 16px;
+    color: #fff;
+    position: relative;
+}
+
+.feature-stall-info strong {
+    font-size: 20px;
+    display: block;
+    margin-bottom: 6px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.feature-stall-info em {
+    font-size: 15px;
+    margin-top: auto;
+    display: block;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.feature-stall-info button {
+    margin-top: 12px;
+    padding: 8px 16px;
+    background: linear-gradient(to bottom, #FFE08F, #F9E7B2);
+    border: 1.5px solid #FFF1CB;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.feature-stall-info button:hover {
+    background: #FFF1CB;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+.feature-stall-image[data-stall="Maxwell"] {
+  background-image: url("../../img/HPEmAfesLHnuUZk0.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.feature-stall-image[data-stall="Satay"] {
+  background-image: url("../../img/515930329_10162933466149785_2533293475021182030_n.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.feature-stall-image[data-stall="Crawford"] {
+  background-image: url("../../img/Hill_Street_Tai_Hwa_Pork_Noodle.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* ==========================
+   ADVERTISEMENT BANNER
+========================== */
+.ad-banner {
+    height: 150px;
+    background-image: url("../../img/CNYHorse_Ad_Banner.png"); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 24px 40px;
+    border-radius: 8px;
+}
+
+.ad-banner h2 {
+    font-size: 26px;
+    font-weight: 600;
+    color: #fff;
+    padding: 16px 24px;
+    text-shadow: 0 1px 5px rgba(0,0,0,0.6);
+}
+
+/* ==========================
+   HAWKER CENTRE / SELECTION
+========================== */
+.selection {
+    padding: 40px;
+}
+
+.selection h2 {
+    margin-bottom: 32px;
+    border-bottom: 2px solid #FF3838;
+    padding-bottom: 12px;
+}
+
+
+/* ==========================
+   FILTER BAR
+========================== */
+.filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 12px 40px;
+}
+
+.filter-bar label {
+    font-weight: 600;
+    font-size: 17px;
+}
+
+.filter-bar select {
+    padding: 6px 10px;
+    font-size: 17px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.filter-bar button {
+    padding: 6px 16px;
+    font-size: 17px;
+    border: none;
+    background: #E0E0E0;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.filter-bar button:hover {
+    background: #CFCFCF;
+}
+/* ==========================
+   HAWKER CENTRE GRID
+========================== */
+.hc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    justify-content: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-bottom: 6.7%; /* spacing above fixed footer */
+}
+
+/* ==========================
+   HAWKER CENTRE CARD
+========================== */
+.hc-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #FF3838;
+    height: 320px;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.hc-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+}
+
+/* ==========================
+   HAWKER CENTRE IMAGE
+========================== */
+.hc-image {
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+    border-bottom: 2px solid rgba(255,255,255,0.3);
+    transition: transform 0.4s ease;
+}
+
+.hc-card:hover .hc-image {
+    transform: scale(1.05);
+}
+
+/* ==========================
+   HAWKER CENTRE INFO
+========================== */
+.hc-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 16px;
+    color: #fff;
+}
+
+.hc-info-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.hc-info-top strong {
+    font-size: 20px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Price range – intentionally more prominent than featured */
+.hc-price {
+    font-size: 18px;
+    font-weight: 700;
+    background: rgba(255,255,255,0.25);
+    padding: 6px 12px;
+    border-radius: 16px;
+    white-space: nowrap;
+}
+
+.hc-info em {
+    font-size: 15px;
+    margin-top: auto;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.hc-info button {
+    margin-top: 12px;
+    padding: 8px 16px;
+    background: linear-gradient(to bottom, #FFE08F, #F9E7B2);
+    border: 1.5px solid #FFF1CB;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.hc-info button:hover {
+    background: #FFF1CB;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+/* ==========================
+   BACK TO TOP BUTTON
+========================== */
+#backToTop {
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 10px 0 80px 0; 
+    transition: color 0.3s;
+}
+
+#backToTop:hover {
+    color: #C00000;
+}
+
+
+/* ==========================
+   FONTS
+========================== */
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-Regular.otf') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-Bold.otf') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-BlackItalic.otf') format('woff2');
+    font-weight: 900;
+    font-style: italic;
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 10px;
+    }
+
+    .hero {
+        flex-direction: column;
+        height: auto;
+        padding: 20px;
+    }
+
+    .hero-text h1 {
+        font-size: 42px;
+        text-align: center;
+    }
+
+    .hero-buttons {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .featured, .ad-banner, .filter-bar {
+        margin: 0 10px;
+    }
+
+    .feature-stall-grid, .hc-grid {
+        grid-template-columns: 1fr; /* stack cards */
+    }
+
+    .selection h2, .featured h2 {
+        font-size: 24px;
+        text-align: center;
+    }
+}
+
+/* ==========================
+   HAWKER CENTRE GRID (CLEAN)
+========================== */
+.hc-grid {
+    display: grid;
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Desktop: max 3 cards */
+@media (min-width: 1024px) {
+    .hc-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Tablet: 2 cards */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .hc-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile: 1 card */
+@media (max-width: 767px) {
+    .hc-grid {
+        grid-template-columns: 1fr;
+    }
+}

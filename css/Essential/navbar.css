@@ -1,46 +1,46 @@
+/* ===========================
+   SITE HEADER
+   =========================== */
 .site-header {
-    position: fixed;             /* fix at top */
+    position: fixed;             /* fix header at top of page */
     top: 0;
     left: 0;
     width: 100%;
     z-index: 1000;
     display: flex;
     align-items: center;
-    justify-content: space-between; /* use space-between instead of absolute nav-center */
+    justify-content: space-between; /* space between logo, nav, and right button */
     padding: 16px 40px;
     border-bottom: 1px solid #ccc;
-    background: linear-gradient(to bottom, #C00000, #ff3333);
+    background: #FF3838;
     color: #ffffff;
     box-sizing: border-box;
 }
 
-/* Logo */
+/* ===========================
+   LOGO
+   =========================== */
 .logo {
     display: flex;
     align-items: center;
-    gap: 12px;
     flex-shrink: 0;
+    margin-left: 20px; /* move logo slightly off the edge */
 }
 
+
+/* Logo image container */
 .logo-box {
-    width: 67px;
-    height: 67px;
-    background-image: url("../../img/HawkRadar Logo.png");
+    width: 140px;                /* logo width */
+    height: 70px;                /* logo height */
+    background-image: url("../../img/HawkRadar\ Logo\ V2.png");
     background-size: contain;
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: left center;
 }
 
-.logo h1 {
-    margin: 0;
-    font-size: 18px;
-}
-
-.logo span {
-    font-size: 14px;
-}
-
-/* Nav links aligned with flex now */
+/* ===========================
+   NAVIGATION LINKS
+   =========================== */
 .nav-links {
     display: flex;
     gap: 24px;
@@ -52,12 +52,15 @@
     font-size: 18px;
     transition: color 0.3s;
     color: #ffffff;
+    font-size: clamp(14px, 1.2vw, 16px);
+    white-space: nowrap;   /* prevent text wrapping */
 }
 
 .nav-links a:hover {
-    color: #F6CE71;
+    color: #F9E7B2;
 }
 
+/* Centered nav (absolute positioning) */
 .nav-center {
     position: absolute;
     left: 50%;
@@ -68,37 +71,43 @@
 }
 
 .nav-center a:hover {
-    color: #F6CE71;          /* highlight on hover */
+    color: #F9E7B2;          /* highlight on hover */
 }
 
-/* Right button stays at the right */
+/* ===========================
+   RIGHT BUTTON (Login/Register)
+   =========================== */
 .nav-right {
     padding: 14px 24px;
+    margin-right: 20px; /* move button slightly off the edge */
     border: 2px solid #ffffff;
-    background: linear-gradient(to bottom, #C00000, #ff3333);
+    background: #ffffff;
     border-radius: 15px;
     cursor: pointer;
     transition: all 0.3s;
     text-align: center;
 }
 
+
 .nav-right a {
     display: block;
-    color: #ffffff;
+    color: #FF3838;
     font-weight: bold;
     text-decoration: none;
     transition: color 0.3s;
 }
 
 .nav-right:hover {
-    background: #ffffff;
+    background: #FF3838;;
 }
 
 .nav-right:hover a {
-    color: #C00000;
+    color: #ffffff;
 }
 
-/* Responsive adjustments */
+/* ===========================
+   RESPONSIVE ADJUSTMENTS
+   =========================== */
 @media (max-width: 768px) {
     .site-header {
         flex-direction: column;

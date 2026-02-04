@@ -1,4 +1,5 @@
-import { addComplaint } from '../firebase/wrapper.js';
+import { addComplaint } from '/js/firebase/wrapper.js';
+import { addFeedback } from '/js/firebase/wrapper.js';
 
 const selectedCategories = new Set();
 const othersCategory = document.getElementById("othersCategory");
@@ -57,7 +58,8 @@ document.getElementById("complaintForm").addEventListener("submit", async (e) =>
         
         const categoryString = categories.join(", ");
 
-        const complaintSuccess = await addComplaint(complaintID, categoryString);
+        const complaintSuccess = await addFeedback(complaintID, )
+        addComplaint(complaintID, categoryString);
 
         if (complaintSuccess) {
             alert("Complaint submitted successfully.");
@@ -73,3 +75,5 @@ document.getElementById("complaintForm").addEventListener("submit", async (e) =>
         alert("Server error.");
     }
 });
+
+console.log("Complaint JS loaded");

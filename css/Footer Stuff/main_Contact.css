@@ -4,8 +4,8 @@ html, body {
 
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f5f5f5;
+  font-family: 'Satoshi', sans-serif;
+  background: #fff;
   padding-top:100px;
   display: flex;
   flex-direction: column;
@@ -92,9 +92,9 @@ body {
 .contact-form button {
   width: fit-content;
   padding: 12px 28px;
-  background: #C00000;   /* red background */
+  background: #008BFF;   /* red background */
   color: #ffffff;         /* white text */
-  border: 1px solid #C00000;  /* small border matching bg */
+  border: 1px solid #008BFF;  /* small border matching bg */
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s;  /* smooth hover */
@@ -103,8 +103,8 @@ body {
 
 .contact-form button:hover {
   background: #ffffff;    /* invert background */
-  color: #C00000;         /* invert text color */
-  border: 1px solid #C00000; /* maintain 1px outline */
+  color: #008BFF;         /* invert text color */
+  border: 1px solid #008BFF; /* maintain 1px outline */
 }
 
 
@@ -143,4 +143,28 @@ body {
 }
 .Phone-icon {
   background-image: url(../../img/PhoneIcon.png);
+}
+
+/* ==========================
+   FONTS
+========================== */
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-BlackItalic.woff2') format('woff2');
+    font-weight: 900;
+    font-style: italic;
 }
