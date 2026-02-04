@@ -5,83 +5,89 @@ const hcGrid = document.getElementById("hcGrid");
 
 // Function to render hawker centre cards
 function renderHawkerCentres(centres) {
-    hcGrid.innerHTML = ""; // clear previous cards
+  hcGrid.innerHTML = ""; // clear previous cards
 
-    Object.values(centres).forEach(centre => {
-        hcGrid.innerHTML += `
-        <div class="hc-card">
-            <div class="hc-image" style="background-image: url('${centre.ImageURL}');"></div>
-            <div class="hc-info">
-                <div class="hc-info-top">
-                    <strong>${centre.HCName}</strong>
-                    <span class="hc-price">${centre.PriceRange}</span>
-                    <button>View Menu</button>
-                </div>
-                <em>${centre.Region}</em>
-            </div>
+  Object.entries(centres).forEach(([hcId, centre]) => {
+    const realHcId = String(
+    centre.HawkerCentreID ?? centre.HCId ?? centre.HCID ?? hcId
+  );
+    hcGrid.innerHTML += `
+      <div class="hc-card" data-hc-id="${realHcId}">
+        <div class="hc-image" style="background-image: url('${centre.ImageURL}');"></div>
+        <div class="hc-info">
+          <div class="hc-info-top">
+            <strong>${centre.HCName}</strong>
+            <span class="hc-price">${centre.PriceRange}</span>
+            <button class="hc-view-menu" type="button">View Menu</button>
+          </div>
+          <em>${centre.Region}</em>
         </div>
-        `;
-    });
+      </div>
+    `;
+  });
 }
+
 
 // Initialize: fetch data and render
 async function init() {
-    const centres = await getAllHawkerCentres();
-    if (!centres) return; // fail safe
+  const centres = await getAllHawkerCentres();
+  if (!centres) return;
 
-    renderHawkerCentres(centres);
+  renderHawkerCentres(centres);
 
-    // Region filter
-    const regionSelect = document.getElementById("region");
-    const filterButton = document.querySelector(".filter-bar button");
+  const filterButton = document.querySelector(".filter-bar button");
+  filterButton?.addEventListener("click", () => {
+    const selectedRegion = (regionSelect?.value || "").toLowerCase();
 
-    filterButton.addEventListener("click", () => {
-      const selectedRegion = regionSelect.value.toLowerCase();
+    const filtered = Object.fromEntries(
+      Object.entries(centres).filter(([, centre]) => {
+        if (!selectedRegion) return true;
+        return (centre.Region || "").toLowerCase() === selectedRegion;
+      })
+    );
 
-      const filtered = Object.fromEntries(
-          Object.entries(centres).filter(([id, centre]) =>
-              !selectedRegion || centre.Region.toLowerCase() === selectedRegion
-          )
-      );
-
-      renderHawkerCentres(filtered);
+    renderHawkerCentres(filtered);
   });
-
-  }
+}
 
 init();
 
-// Select the button and the banner
+// ✅ Smooth scroll (only if elements exist)
 const searchButton = document.querySelector(".hero-buttons button:first-child");
 const banner = document.querySelector(".ad-banner");
 
-searchButton.addEventListener("click", () => {
-    const headerOffset = 120; // adjust this to match your fixed header height
-    const bannerPosition = banner.getBoundingClientRect().top + window.pageYOffset;
-    const offsetPosition = bannerPosition - headerOffset;
-
-    window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth"
-    });
+searchButton?.addEventListener("click", () => {
+  if (!banner) return;
+  const headerOffset = 120;
+  const bannerPosition = banner.getBoundingClientRect().top + window.pageYOffset;
+  window.scrollTo({ top: bannerPosition - headerOffset, behavior: "smooth" });
 });
 
-// Get the button element
+// ✅ Back to top (only if element exists)
 const backToTopBtn = document.getElementById("backToTop");
 
-// Show the button when the user scrolls down 300px
 window.addEventListener("scroll", () => {
-  if (window.scrollY > 300) {
-    backToTopBtn.style.display = "block";
-  } else {
-    backToTopBtn.style.display = "none";
-  }
+  if (!backToTopBtn) return;
+  backToTopBtn.style.display = window.scrollY > 300 ? "block" : "none";
 });
 
-// Scroll smoothly to the top when button is clicked
-backToTopBtn.addEventListener("click", () => {
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
+backToTopBtn?.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
 });
+
+hcGrid?.addEventListener("click", (e) => {
+  const btn = e.target.closest(".hc-view-menu");
+  if (!btn) return;
+
+  const card = btn.closest(".hc-card");
+  const hcId = card?.dataset?.hcId;
+  if (!hcId) return;
+
+  sessionStorage.setItem("selectedHcId", hcId);
+
+  // robust path (no ../)
+  const url = new URL("/html/stall/stall.html", window.location.origin);
+  url.searchParams.set("hc", hcId);
+  window.location.href = url.href;
+});
+
