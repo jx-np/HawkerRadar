@@ -2,7 +2,6 @@ import { getAllFeedback, getAllCustomers, getAllComplaints, getCustomer } from "
 
 let feedbackDataRaw = await getAllFeedback();
 let customerDataRaw = await getAllCustomers();
-let complaintsDataRaw = await getAllComplaints();
 
 // 1. Convert customers to an array first so we can search them
 const customersArray = feedbackDataRaw ? Object.values(feedbackDataRaw) : [];

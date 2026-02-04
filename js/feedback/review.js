@@ -1,5 +1,31 @@
+import { getAllFeedback, getAllCustomers, getCustomer } from "/js/firebase/wrapper.js";
 
+let feedbackDataRaw = await getAllFeedback();
+let customerDataRaw = await getAllCustomers();
 
+// 1. Convert customers to an array first so we can search them
+const customersArray = feedbackDataRaw ? Object.values(feedbackDataRaw) : [];
+
+// 2. Create the complaints array and merge the customer name into it
+let feedbackData = [];
+
+if (feedbackDataRaw) {
+    // A. Create an array of Promises
+    const processingPromises = Object.values(feedbackDataRaw).map(async (feedback) => {
+        // Now we can use await here safely because the callback is async
+        let customer = await getCustomer(feedback.CustomerID);
+        console.log(customer)
+        return {
+            ...feedback,
+            customername: customer ? customer.CustName : "Unknown User"
+        };
+    });
+
+    // B. Wait for ALL promises to finish before continuing
+    feedbackData = await Promise.all(processingPromises);
+}
+
+console.log(feedbackData)
 // DOM Elements
 const reviewListContainer = document.getElementById('review-list');
 const filterBtn = document.getElementById('btn-filter');
@@ -41,17 +67,16 @@ function renderReviews(reviewsToRender) {
             <div class="review-card">
                 <div class="card-header">
                     <div class="avatar-circle"></div>
-                    <span class="user-name">${review.name}</span>
+                    <span class="user-name">${review.customername}</span>
                     <div class="star-display">
                         <i class="fa-regular fa-star"></i>
-                        <span>${review.rating.toFixed(1)}</span>
+                        <span>${review.FbkRating.toFixed(1)}</span>
                     </div>
                 </div>
                 <div class="review-body">
-                    <div class="review-title">${review.title}</div>
                     <div class="review-content">
                         <ul>
-                            <li>${review.content}</li>
+                            <li>${review.FbkComment}</li>
                         </ul>
                     </div>
                 </div>
@@ -67,17 +92,17 @@ filterBtn.addEventListener('click', () => {
     const filterValue = filterSelect.value;
     
     if (filterValue === "all") {
-        renderReviews(dbReviews);
+        renderReviews(feedbackData);
     } else {
         // Filter logic: Check if the rounded rating matches the filter
         // Math.floor(4.5) = 4, so 4.5 stars will show up under "4 Stars" filter
-        const filteredData = dbReviews.filter(item => Math.floor(item.rating) == filterValue);
+        const filteredData = feedbackData.filter(item => Math.floor(item.FbkRating) == filterValue);
         renderReviews(filteredData);
     }
 });
 
 // 5. INITIALIZATION: Run on page load
 // Calculate stats based on the FULL database
-updateHeroStats(dbReviews);
+updateHeroStats(feedbackData);
 // Show all reviews initially
-renderReviews(dbReviews);
+renderReviews(feedbackData);
