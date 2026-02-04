@@ -1,4 +1,4 @@
-import { getAllHawkerCentres } from '../js/firebase/wrapper.js';
+import { getAllHawkerCentres } from '/js/firebase/wrapper.js';
 
 const regionSelect = document.getElementById("region");
 const hcGrid = document.getElementById("hcGrid");
