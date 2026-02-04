@@ -40,7 +40,7 @@ body {
 ========================== */
 .form-wrapper {
   width: 100%;
-  max-width: 420px;
+  max-width: 500px;
 }
 
 .form-wrapper h1 {
@@ -99,18 +99,6 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.toggle-password {
-  background: none;
-  border: none;
-  font-size: 18px;
-  color: #777;
-  cursor: pointer;
-}
-
-.toggle-password:hover {
-  color: #1677ff;
 }
 
 .forgot-password {
