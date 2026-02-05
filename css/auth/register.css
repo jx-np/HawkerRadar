@@ -1,0 +1,252 @@
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Satoshi', sans-serif;
+  background: #fff;
+}
+
+/* ==========================
+   AUTH LAYOUT
+========================== */
+.auth-page {
+  display: flex;
+  min-height: 100vh;
+  background: #fff;
+  font-size: 26px;
+}
+
+.auth-visual {
+  flex: 1;
+  background-image: url("../../img/login/9102422.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.auth-form {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  padding: 80px 40px;
+}
+
+/* ==========================
+   FORM WRAPPER
+========================== */
+.form-wrapper {
+  width: 100%;
+  max-width: 500px;
+}
+
+.form-wrapper h1 {
+  font-size: 40px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.signup-text {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 36px;
+}
+
+.signup-text a {
+  color: #1677ff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.signup-text a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================
+   FORM ELEMENTS
+========================== */
+.form-wrapper label {
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.form-wrapper input,
+.form-wrapper select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 18px;
+  margin-bottom: 22px;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  background-color: #fff;
+}
+
+/* Focus */
+.form-wrapper input:focus,
+.form-wrapper select:focus {
+  outline: none;
+  border-color: #1677ff;
+  box-shadow: 0 0 0 3px rgba(22, 119, 255, 0.12);
+}
+
+/* ==========================
+   SELECT (ROLE)
+========================== */
+#role {
+    width: 50%;
+    padding: 12px 14px;
+    font-size: 18px;
+    border-radius: 10px;
+    border: 1.5px solid #ddd;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    transition: 
+        border-color 0.3s,
+        box-shadow 0.3s,
+        background-color 0.3s;
+    font-weight: bold;
+}
+
+#role:focus {
+    outline: none;
+}
+
+/* CUSTOMER – Red */
+#role:has(option[value="customer"]:checked) {
+    border-color: #FF3838;
+    background-color: #fff5f5;
+    color: #FF3838;
+}
+
+/* STALL OWNER – Gold */
+#role:has(option[value="stallOwner"]:checked) {
+    border-color: #ffa928;
+    background-color: #fff9e6;
+    color: #ffa928;
+}
+
+/* OPERATOR – Blue */
+#role:has(option[value="operator"]:checked) {
+    border-color: #1677ff;
+    background-color: #f2f6ff;
+    color: #1677ff;
+}
+
+
+
+/* ==========================
+   SOCIAL LOGIN
+========================== */
+.social-login {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  margin-top: 24px;
+}
+
+.social {
+  flex: 1;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  background-color: #fafafa;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 20px;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.15s;
+}
+
+.social:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-1px);
+}
+
+/* Icons */
+.social.google {
+  background-image: url("../../img/login/icons/Google__G__logo.svg.png");
+}
+
+.social.apple {
+  background-image: url("../../img/login/icons/logo-apple-icon-lg.png");
+}
+
+.social.facebook {
+  background-image: url("../../img/login/icons/Facebook_Logo_2023.png");
+}
+
+.social.twitter {
+  background-image: url("../../img/login/icons/x_logo_PNG11.png");
+}
+
+/* ==========================
+   PRIMARY BUTTON
+========================== */
+.login-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 999px;
+  background: #1677ff;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.15s;
+}
+
+.login-btn:hover {
+  background: #0f5ed7;
+  transform: translateY(-1px);
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+@media (max-width: 768px) {
+  .auth-page {
+    flex-direction: column;
+  }
+
+  .auth-visual {
+    display: none;
+  }
+
+  .auth-form {
+    padding: 60px 24px;
+  }
+
+  .form-wrapper h1 {
+    font-size: 28px;
+  }
+}
+
+/* ==========================
+   FONTS
+========================== */
+@font-face {
+  font-family: 'Satoshi';
+  src: url('../../fonts/Satoshi-Regular.otf') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('../../fonts/Satoshi-Bold.otf') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('../../fonts/Satoshi-BlackItalic.otf') format('woff2');
+  font-weight: 900;
+  font-style: italic;
+}
