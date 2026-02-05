@@ -80,9 +80,9 @@ form.addEventListener("submit", async (e) => {
         const feedbackSuccess = await addFeedback(
             feedbackID,
             document.getElementById("comments").value, // Assuming you accessed values directly or via data obj
-            new Date().toISOString(),
+            new Date().toISOString().replace('T', ' ').slice(0, 19),
             currentRating,
-            "501",
+            501,
             document.getElementById("foodStall").value
         );
 
