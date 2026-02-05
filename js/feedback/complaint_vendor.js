@@ -1,6 +1,7 @@
 import { getAllFeedback, getAllCustomers, getAllComplaints, getCustomer } from "/js/firebase/wrapper.js";
 
 let feedbackDataRaw = await getAllFeedback();
+let complaintsDataRaw = await getAllComplaints();
 let customerDataRaw = await getAllCustomers();
 
 // Convert customers to an array first so we can search them
@@ -14,10 +15,12 @@ if (feedbackDataRaw) {
     const processingPromises = Object.values(feedbackDataRaw).map(async (feedback) => {
         // Now we can use await here safely because the callback is async
         let customer = await getCustomer(feedback.CustomerID);
+        let complaintInfo = complaintsDataRaw ? complaintsDataRaw[feedback.FbkID] : null;
         console.log(customer)
         return {
             ...feedback,
-            customername: customer ? customer.CustName : "Unknown User"
+            customername: customer ? customer.CustName : "Unknown User",
+            categories: complaintInfo ? complaintInfo.Category : "General"
         };
     });
 
@@ -26,6 +29,7 @@ if (feedbackDataRaw) {
 }
 
 // Select DOM elements
+const dateFilter = document.getElementById('date-filter');
 const complaintsList = document.getElementById('complaints-list');
 const filterBtn = document.getElementById('filter-btn');
 const issueFilter = document.getElementById('issue-filter');
@@ -63,19 +67,39 @@ function renderComplaints(data) {
 }
 
 // Filter Logic
-filterBtn.addEventListener('click', () => {
-    const selectedIssue = issueFilter.value;
+// filterBtn.addEventListener('click', () => {
+//     const selectedIssue = issueFilter.value;
 
-    if (selectedIssue === "All") {
-        // Show all data
-        renderComplaints(feedbackData);
-    } else {
-        // Filter the array based on the Issue Type
-        const filteredData = feedbackData.filter(item =>
-            item.categories.includes(selectedIssue)
-        );
-        renderComplaints(filteredData);
-    }
+//     if (selectedIssue === "All") {
+//         // Show all data
+//         renderComplaints(feedbackData);
+//     } else {
+//         // Filter the array based on the Issue Type
+//         const filteredData = feedbackData.filter(item =>
+//             item.categories.includes(selectedIssue)
+//         );
+//         renderComplaints(filteredData);
+//     }
+// });
+
+filterBtn.addEventListener('click', () => {
+    const selectedCategory = issueFilter.value;
+
+    const selectedDate = dateFilter.value; // Gets date as "YYYY-MM-DD"
+
+    const filteredData = feedbackData.filter(item => {
+        // Your existing category check
+        const categoryMatch = selectedCategory === 'All' || item.issue === selectedCategory;
+
+        // If no date is selected (!selectedDate), it returns true (shows all).
+        // Otherwise, it checks if the dates match exactly.
+        const dateMatch = !selectedDate || item.date === selectedDate;
+
+        // Return items that match BOTH category AND date
+        return categoryMatch && dateMatch;
+    });
+
+    renderComplaints(filteredData);
 });
 
 // Initial Render (Show all on load)
