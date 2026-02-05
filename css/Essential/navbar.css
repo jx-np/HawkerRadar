@@ -107,21 +107,66 @@
 
 /* ===========================
    RESPONSIVE ADJUSTMENTS
-   =========================== */
+=========================== */
+@media (max-width: 1024px) {
+    .nav-center {
+        gap: 16px; /* reduce gap for medium screens */
+    }
+
+    .nav-links a {
+        font-size: clamp(14px, 1.2vw, 16px); /* allow font to shrink */
+    }
+
+    .nav-right {
+        padding: 10px 16px; /* slightly smaller padding */
+    }
+}
+
 @media (max-width: 768px) {
     .site-header {
         flex-direction: column;
         align-items: flex-start;
-        padding: 16px 20px;
+        padding: 12px 20px;
     }
 
     .nav-links {
         flex-wrap: wrap;
         gap: 12px;
         margin-top: 8px;
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .nav-center {
+        position: static; /* prevent overlap */
+        transform: none;
+        margin-top: 8px;
     }
 
     .nav-right {
         margin-top: 8px;
+        width: 100%; /* full width button to avoid overlap */
+        text-align: center;
+        padding: 10px 0;
+    }
+
+    .nav-right a {
+        display: block;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-links a {
+        font-size: 14px; /* smaller text for tiny screens */
+    }
+
+    .nav-right {
+        font-size: 14px;
+        padding: 8px 0;
+    }
+
+    .nav-center {
+        gap: 8px; /* reduce gap for very small screens */
     }
 }
