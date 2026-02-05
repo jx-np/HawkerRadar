@@ -494,3 +494,6 @@ body{
     grid-template-columns: var(--heart-col) var(--dish-thumb-w) 1fr 180px;
   }
 }
+
+.dish-row { cursor: pointer; }
+.dish-row [data-action] { cursor: pointer; }
