@@ -32,6 +32,18 @@ applyHeaderOffset();
 window.addEventListener("resize", applyHeaderOffset);
 window.addEventListener("load", applyHeaderOffset);
 
+// ✅ Back arrow behavior
+function smartBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+    return;
+  }
+
+  // fallback if no history
+  window.location.href = new URL("/html/home/home.html", window.location.origin).href;
+}
+document.getElementById("pageBackBtn")?.addEventListener("click", smartBack);
+
 function getHcId() {
   const url = new URL(window.location.href);
   return url.searchParams.get("hc") || sessionStorage.getItem("selectedHcId") || "";
@@ -116,7 +128,7 @@ function renderGrid({ hcId, stalls, favSet, stallToCuisine, gridEl, emptyEl }) {
     const card = el.tpl.content.firstElementChild.cloneNode(true);
     card.dataset.stallId = sid;
 
-    // name/unit/cuisine (matches your template)
+    // name/unit/cuisine
     const nameEl = card.querySelector(".stall-card__name");
     const unitEl = card.querySelector(".stall-card__unit");
     const cuisineEl = card.querySelector(".stall-card__cuisine");
@@ -127,7 +139,7 @@ function renderGrid({ hcId, stalls, favSet, stallToCuisine, gridEl, emptyEl }) {
     const cset = stallToCuisine.get(sid);
     if (cuisineEl) cuisineEl.textContent = cset && cset.size ? [...cset].join(", ") : "Cuisine Type";
 
-    // image is a DIV in your template -> set background image
+    // image (DIV background)
     const imgDiv = card.querySelector(".stall-card__img");
     if (imgDiv) {
       imgDiv.style.backgroundImage = `url("../../images/stalls/${sid}.jpg")`;
@@ -179,8 +191,6 @@ function renderGrid({ hcId, stalls, favSet, stallToCuisine, gridEl, emptyEl }) {
     getAllMenuItemCuisines().catch(() => null),
   ]);
 
-  console.log("[stall] stallsObj sample =", stallsObj ? Object.values(stallsObj)[0] : null);
-
   // hero
   if (hc) {
     if (el.hcName) el.hcName.textContent = hc.HCName || "Hawker Centre";
@@ -192,9 +202,6 @@ function renderGrid({ hcId, stalls, favSet, stallToCuisine, gridEl, emptyEl }) {
 
   const allStallsRaw = Object.values(stallsObj || {}).filter(Boolean);
   const stallsForHc = allStallsRaw.filter((s) => String(getStallHcId(s)) === String(hcId));
-
-  console.log("[stall] total stalls =", allStallsRaw.length);
-  console.log("[stall] stallsForHc =", stallsForHc.length);
 
   const { stallToCuisine } = buildCuisineMaps(cuisinesObj, micObj);
 
@@ -254,6 +261,5 @@ function renderGrid({ hcId, stalls, favSet, stallToCuisine, gridEl, emptyEl }) {
   }
 
   refresh();
-
   el.filterBtn?.addEventListener("click", refresh);
 })();

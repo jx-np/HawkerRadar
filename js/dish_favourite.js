@@ -64,6 +64,27 @@ function applyHeaderOffset() {
 applyHeaderOffset();
 window.addEventListener("resize", applyHeaderOffset);
 window.addEventListener("load", applyHeaderOffset);
+/* ---------------- Back + Go to Cart ---------------- */
+
+// Back arrow on stall_dish
+function smartBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+    return;
+  }
+  window.location.href = new URL("/html/home/home.html", window.location.origin).href;
+}
+document.getElementById("pageBackBtn")?.addEventListener("click", smartBack);
+
+// Cart navigation (your cart is at ../user/cart.html)
+document.getElementById("view-cart")?.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  // so Cart back arrow can return here
+  sessionStorage.setItem("cart:returnTo", window.location.href);
+
+  window.location.href = new URL("../user/cart.html", window.location.href).href;
+});
 
 /* ---------------- Helpers ---------------- */
 function getStallId() {
