@@ -13,16 +13,17 @@ function renderHawkerCentres(centres) {
   );
     hcGrid.innerHTML += `
       <div class="hc-card" data-hc-id="${realHcId}">
-        <div class="hc-image" style="background-image: url('${centre.ImageURL}');"></div>
-        <div class="hc-info">
-          <div class="hc-info-top">
-            <strong>${centre.HCName}</strong>
-            <span class="hc-price">${centre.PriceRange}</span>
-            <button class="hc-view-menu" type="button">View Menu</button>
+          <div class="hc-image" style="background-image: url('${centre.ImageURL}');"></div>
+          <div class="hc-info">
+              <div class="hc-info-top">
+                  <strong>${centre.HCName}</strong>
+                  <span class="hc-price">${centre.PriceRange}</span>
+              </div>
+              <em>${centre.Region}</em>
+              <button class="hc-view-menu" type="button">View Menu</button>
           </div>
-          <em>${centre.Region}</em>
-        </div>
       </div>
+
     `;
   });
 }

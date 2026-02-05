@@ -2,19 +2,27 @@
    SITE HEADER
    =========================== */
 .site-header {
-    position: fixed;             /* fix header at top of page */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 1000;
     display: flex;
     align-items: center;
-    justify-content: space-between; /* space between logo, nav, and right button */
-    padding: 16px 40px;
+    justify-content: space-between; /* left & right fixed, center auto-centered */
+    padding: 8px 36px;
     border-bottom: 1px solid #ccc;
     background: #FF3838;
     color: #ffffff;
     box-sizing: border-box;
+    transition: all 0.3s ease; 
+}
+
+/* Sticky state */
+.site-header.sticky {
+    position: absolute;
+    top: auto;
+    left: 0;
 }
 
 /* ===========================
@@ -23,63 +31,49 @@
 .logo {
     display: flex;
     align-items: center;
-    flex-shrink: 0;
-    margin-left: 20px; /* move logo slightly off the edge */
+    flex-shrink: 0; 
+    margin-left: 20px;
 }
 
-
-/* Logo image container */
 .logo-box {
-    width: 140px;                /* logo width */
-    height: 70px;                /* logo height */
+    width: 140px;
+    height: 70px;
     background-image: url("../../img/HawkRadar\ Logo\ V2.png");
     background-size: contain;
     background-repeat: no-repeat;
-    background-position: left center;
+    background-position: center;
 }
 
 /* ===========================
-   NAVIGATION LINKS
+   NAVIGATION LINKS (Center)
    =========================== */
-.nav-links {
+.nav-center {
     display: flex;
-    gap: 24px;
+    justify-content: center; /* true center */
     align-items: center;
+    gap: 24px;
+    flex: 1; /* allows dynamic space */
 }
 
-.nav-links a {
+.nav-center a {
     text-decoration: none;
-    font-size: 18px;
-    transition: color 0.3s;
     color: #ffffff;
     font-size: clamp(14px, 1.2vw, 16px);
-    white-space: nowrap;   /* prevent text wrapping */
-}
-
-.nav-links a:hover {
-    color: #F9E7B2;
-}
-
-/* Centered nav (absolute positioning) */
-.nav-center {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 24px;
-    align-items: center;
+    white-space: nowrap;
+    transition: color 0.3s;
 }
 
 .nav-center a:hover {
-    color: #F9E7B2;          /* highlight on hover */
+    color: #F9E7B2;
 }
 
 /* ===========================
-   RIGHT BUTTON (Login/Register)
+   RIGHT BUTTON
    =========================== */
 .nav-right {
+    flex-shrink: 0;
     padding: 14px 24px;
-    margin-right: 20px; /* move button slightly off the edge */
+    margin-right: 20px;
     border: 2px solid #ffffff;
     background: #ffffff;
     border-radius: 15px;
@@ -87,7 +81,6 @@
     transition: all 0.3s;
     text-align: center;
 }
-
 
 .nav-right a {
     display: block;
@@ -98,7 +91,7 @@
 }
 
 .nav-right:hover {
-    background: #FF3838;;
+    background: #FF3838;
 }
 
 .nav-right:hover a {
@@ -108,65 +101,66 @@
 /* ===========================
    RESPONSIVE ADJUSTMENTS
 =========================== */
+
+/* Medium screens (unchanged) */
 @media (max-width: 1024px) {
     .nav-center {
-        gap: 16px; /* reduce gap for medium screens */
+        gap: 16px;
     }
 
-    .nav-links a {
-        font-size: clamp(14px, 1.2vw, 16px); /* allow font to shrink */
+    .nav-center a {
+        font-size: clamp(14px, 1vw, 16px);
     }
 
     .nav-right {
-        padding: 10px 16px; /* slightly smaller padding */
+        padding: 10px 16px;
     }
 }
 
+/* Small screens */
 @media (max-width: 768px) {
     .site-header {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
         padding: 12px 20px;
     }
 
-    .nav-links {
+    .nav-center {
+        justify-content: flex-start;
         flex-wrap: wrap;
         gap: 12px;
-        margin-top: 8px;
-        justify-content: flex-start;
-        width: 100%;
-    }
-
-    .nav-center {
-        position: static; /* prevent overlap */
-        transform: none;
         margin-top: 8px;
     }
 
     .nav-right {
-        margin-top: 8px;
-        width: 100%; /* full width button to avoid overlap */
+        width: 100%;
         text-align: center;
+        margin-top: 8px;
         padding: 10px 0;
     }
 
     .nav-right a {
-        display: block;
         width: 100%;
     }
 }
 
+/* Extra small screens — hide logo and center nav links */
 @media (max-width: 480px) {
-    .nav-links a {
-        font-size: 14px; /* smaller text for tiny screens */
+    .logo {
+        display: none; /* hide logo */
+    }
+
+    .nav-center {
+        justify-content: center; /* center links perfectly */
+        gap: 8px;
+    }
+
+    .nav-center a {
+        font-size: 14px;
     }
 
     .nav-right {
         font-size: 14px;
         padding: 8px 0;
-    }
-
-    .nav-center {
-        gap: 8px; /* reduce gap for very small screens */
     }
 }

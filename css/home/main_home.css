@@ -9,7 +9,7 @@ body {
     margin: 0;
     font-family: 'Satoshi', sans-serif;
     background: #fff;
-    padding-top: 100px;        /* header space */
+    padding-top: 90px;        /* header space */
     display: flex;
     flex-direction: column;
 }
@@ -84,7 +84,7 @@ body {
 
 .featured h2 {
     margin-bottom: 32px;
-    border-bottom: 2px solid #FF3838;
+    border-bottom: 2px solid #FF3838; /* red as accent */
     padding-bottom: 12px;
     font-size: 28px;
     color: #FF3838;
@@ -98,28 +98,30 @@ body {
     gap: 24px;
 }
 
+/* Stall cards with lighter background, red as accent */
 .feature-stall-card {
     display: flex;
     flex-direction: column;
     border-radius: 12px;
     overflow: hidden;
-    background: #FF3838;
+    background: #FFD6D6; /* light pastel red instead of full red */
     height: 320px;
     position: relative;
     transition: transform 0.3s, box-shadow 0.3s;
     cursor: pointer;
+    border: 1px solid #FFD6D6; /* subtle outline for structure */
 }
 
 .feature-stall-card:hover {
     transform: translateY(-6px) scale(1.02);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
 }
 
 .feature-stall-image {
     height: 180px;
     background-size: cover;
     background-position: center;
-    border-bottom: 2px solid rgba(255,255,255,0.3);
+    border-bottom: 2px solid rgba(255,56,56,0.3); /* red border accent */
     transition: transform 0.4s;
 }
 
@@ -132,7 +134,7 @@ body {
     flex-direction: column;
     flex: 1;
     padding: 16px;
-    color: #fff;
+    color: #333; /* dark text on light card for readability */
     position: relative;
 }
 
@@ -140,15 +142,18 @@ body {
     font-size: 20px;
     display: block;
     margin-bottom: 6px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    color: #FF3838; /* red for stall name emphasis */
 }
 
 .feature-stall-info em {
     font-size: 15px;
     margin-top: auto;
     display: block;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    font-style: normal;  
+    font-weight: 400;    
+    color: #666;       
 }
+
 
 .feature-stall-info button {
     margin-top: 12px;
@@ -167,6 +172,7 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0,0,0,0.2);
 }
+
 
 .feature-stall-image[data-stall="Maxwell"] {
   background-image: url("../../img/HPEmAfesLHnuUZk0.jpg");
@@ -232,34 +238,55 @@ body {
 .filter-bar {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin: 12px 40px;
+    gap: 16px; /* slightly more spacing for clarity */
+    margin: 16px 40px;
+    flex-wrap: wrap; /* ensures responsiveness on smaller screens */
 }
 
+/* Label styling */
 .filter-bar label {
     font-weight: 600;
     font-size: 17px;
+    color: #333; /* dark for readability */
 }
 
+/* Select dropdowns */
 .filter-bar select {
-    padding: 6px 10px;
+    padding: 8px 12px;          /* larger click area */
     font-size: 17px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid #FFB2B2;  /* soft red border to match theme */
+    border-radius: 8px;          /* rounded edges */
+    background: #FFF5F5;         /* light red background */
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
+.filter-bar select:hover,
+.filter-bar select:focus {
+    border-color: #FF3838;       /* accent red on hover/focus */
+    outline: none;
+    box-shadow: 0 2px 6px rgba(255,56,56,0.2);
+}
+
+/* Buttons */
 .filter-bar button {
-    padding: 6px 16px;
+    padding: 8px 18px;            /* slightly larger click area */
     font-size: 17px;
     border: none;
-    background: #E0E0E0;
+    background: linear-gradient(to bottom, #FFE08F, #F9E7B2);
+    border-radius: 20px;          /* match stall buttons */
+    font-weight: bold;
     cursor: pointer;
-    border-radius: 4px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .filter-bar button:hover {
-    background: #CFCFCF;
+    background: #FFF1CB;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
 }
+
 /* ==========================
    HAWKER CENTRE GRID
 ========================== */
@@ -281,16 +308,17 @@ body {
     flex-direction: column;
     border-radius: 12px;
     overflow: hidden;
-    background: #FF3838;
+    background: #FFD6D6; /* softer red background */
     height: 320px;
     position: relative;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
+    border: 1px solid #FFB2B2; /* subtle card outline */
 }
 
 .hc-card:hover {
     transform: translateY(-6px) scale(1.02);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15); /* same hover as featured */
 }
 
 /* ==========================
@@ -300,7 +328,7 @@ body {
     height: 180px;
     background-size: cover;
     background-position: center;
-    border-bottom: 2px solid rgba(255,255,255,0.3);
+    border-bottom: 2px solid rgba(255,56,56,0.3);
     transition: transform 0.4s ease;
 }
 
@@ -316,7 +344,7 @@ body {
     flex-direction: column;
     flex: 1;
     padding: 16px;
-    color: #fff;
+    color: #333; /* dark text for readability */
 }
 
 .hc-info-top {
@@ -328,10 +356,10 @@ body {
 
 .hc-info-top strong {
     font-size: 20px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    color: #FF3838; /* red accent for stall name */
+    font-weight: 700;
 }
 
-/* Price range – intentionally more prominent than featured */
 .hc-price {
     font-size: 18px;
     font-weight: 700;
@@ -339,12 +367,18 @@ body {
     padding: 6px 12px;
     border-radius: 16px;
     white-space: nowrap;
+    flex-shrink: 0; /* keeps price visible */
+    min-width: 80px;
+    text-align: center;
 }
 
 .hc-info em {
     font-size: 15px;
     margin-top: auto;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    display: block;
+    font-style: normal; /* no italics */
+    font-weight: 400;   /* normal weight */
+    color: #666;        /* darker grey */
 }
 
 .hc-info button {
@@ -356,14 +390,15 @@ body {
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    box-shadow: none; /* removed shadow to match featured stalls */
 }
 
 .hc-info button:hover {
     background: #FFF1CB;
     transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    box-shadow: none; /* removed hover shadow */
 }
+
 
 /* ==========================
    BACK TO TOP BUTTON
