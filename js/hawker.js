@@ -1,16 +1,17 @@
-import { getAllHawkerCentres } from '/js/firebase/wrapper.js';
+// /js/hawker.js
+import { getAllHawkerCentres, getAllFoodStalls } from "/js/firebase/wrapper.js";
 
 const regionSelect = document.getElementById("region");
 const hcGrid = document.getElementById("hcGrid");
 
 // Function to render hawker centre cards
 function renderHawkerCentres(centres) {
+  if (!hcGrid) return;
   hcGrid.innerHTML = ""; // clear previous cards
 
   Object.entries(centres).forEach(([hcId, centre]) => {
-    const realHcId = String(
-    centre.HawkerCentreID ?? centre.HCId ?? centre.HCID ?? hcId
-  );
+    const realHcId = String(centre.HawkerCentreID ?? centre.HCId ?? centre.HCID ?? hcId);
+
     hcGrid.innerHTML += `
       <div class="hc-card" data-hc-id="${realHcId}">
           <div class="hc-image" style="background-image: url('${centre.ImageURL}');"></div>
@@ -27,7 +28,6 @@ function renderHawkerCentres(centres) {
     `;
   });
 }
-
 
 // Initialize: fetch data and render
 async function init() {
@@ -76,6 +76,7 @@ backToTopBtn?.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
+// ✅ Hawker Centre "View Menu" -> stall.html?hc=...
 hcGrid?.addEventListener("click", (e) => {
   const btn = e.target.closest(".hc-view-menu");
   if (!btn) return;
@@ -86,9 +87,54 @@ hcGrid?.addEventListener("click", (e) => {
 
   sessionStorage.setItem("selectedHcId", hcId);
 
-  // robust path (no ../)
+  // robust absolute path
   const url = new URL("/html/stall/stall.html", window.location.origin);
   url.searchParams.set("hc", hcId);
   window.location.href = url.href;
 });
 
+// ✅ Featured Stalls "View Menu" -> stall_dish.html?stall=...
+// Requires featured buttons to have class="feature-view-menu"
+// Best: set data-stall-id="123"
+// Fallback: set data-stall-name="Exact StallName in Firebase"
+const featuredGrid = document.querySelector(".feature-stall-grid");
+
+featuredGrid?.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".feature-view-menu");
+  if (!btn) return;
+
+  // Prefer direct StallID from HTML
+  let stallId = (btn.dataset.stallId || "").trim();
+
+  // Fallback: match by stall name in Firebase
+  if (!stallId) {
+    const wantedName = (
+      btn.dataset.stallName ||
+      btn.closest(".feature-stall-card")?.querySelector("strong")?.textContent ||
+      ""
+    )
+      .trim()
+      .toLowerCase();
+
+    if (wantedName) {
+      const stallsObj = await getAllFoodStalls();
+      const allStalls = Object.values(stallsObj || {}).filter(Boolean);
+
+      const match = allStalls.find(
+        (s) => String(s?.StallName || "").trim().toLowerCase() === wantedName
+      );
+
+      stallId = match?.StallID ? String(match.StallID) : "";
+    }
+  }
+
+  if (!stallId) {
+    console.warn("[home] Could not resolve featured stall to a StallID.");
+    return;
+  }
+
+  // Go to stall menu page (adjust path if your project uses a different folder)
+  const url = new URL("/html/stall/stall_dish.html", window.location.origin);
+  url.searchParams.set("stall", stallId);
+  window.location.href = url.href;
+});

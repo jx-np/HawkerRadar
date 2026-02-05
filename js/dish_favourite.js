@@ -64,6 +64,27 @@ function applyHeaderOffset() {
 applyHeaderOffset();
 window.addEventListener("resize", applyHeaderOffset);
 window.addEventListener("load", applyHeaderOffset);
+/* ---------------- Back + Go to Cart ---------------- */
+
+// Back arrow on stall_dish
+function smartBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+    return;
+  }
+  window.location.href = new URL("/html/home/home.html", window.location.origin).href;
+}
+document.getElementById("pageBackBtn")?.addEventListener("click", smartBack);
+
+// Cart navigation (your cart is at ../user/cart.html)
+document.getElementById("view-cart")?.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  // so Cart back arrow can return here
+  sessionStorage.setItem("cart:returnTo", window.location.href);
+
+  window.location.href = new URL("../user/cart.html", window.location.href).href;
+});
 
 /* ---------------- Helpers ---------------- */
 function getStallId() {
@@ -434,12 +455,55 @@ function syncHearts(likedSet) {
     itemsArr.sort((a, b) => String(a.ItemCode).localeCompare(String(b.ItemCode)));
 
     // Load cart first so we can render qty correctly
-    const cart = loadCart();
+    let cart = loadCart();
     updateCartBar(cart);
 
     // Render dishes
     const dishMap = new Map();
     renderDishRows({ stallId, items: itemsArr, dishMap, cart });
+
+// ---------------- Dish navigation (row click + favorite card click) ----------------
+const openDishPage = (itemCode) => {
+  if (!itemCode) return;
+  const url = new URL("./dish.html", window.location.href);
+  url.searchParams.set("stall", String(stallId));
+  url.searchParams.set("item", String(itemCode));
+  sessionStorage.setItem("dish:returnTo", window.location.href);
+  window.location.href = url.href;
+};
+
+// Click a dish row (ignore clicks on favorite/plus/minus buttons)
+document.getElementById(cfg.ids.dishList)?.addEventListener("click", (e) => {
+  if (e.target.closest("[data-action]")) return;
+
+  const row = e.target.closest('li.dish-row[data-item-code]');
+  if (!row) return;
+
+  openDishPage(row.getAttribute("data-item-code"));
+});
+
+// Click a favorite-card in the scroller (ignore favorite button itself)
+document.getElementById(cfg.ids.favoritesScroller)?.addEventListener("click", (e) => {
+  if (e.target.closest("[data-action]")) return;
+
+  const card = e.target.closest('article.favorite-card[data-item-code]');
+  if (!card) return;
+
+  openDishPage(card.getAttribute("data-item-code"));
+});
+
+// ✅ When returning from dish.html or cart.html (bfcache/pageshow), refresh cart + row qty from storage
+    function refreshCartUI() {
+      cart = loadCart();
+      updateCartBar(cart);
+      $$(`#${cfg.ids.dishList} [data-item-code]`).forEach((row) => {
+        const code = row.getAttribute("data-item-code");
+        const k = cartItemKey(stallId, code);
+        const qty = cart.items[k]?.qty ?? 0;
+        setRowQtyUI(row, qty);
+      });
+    }
+    window.addEventListener("pageshow", refreshCartUI);
 
     // Load favorites
     let likedCodes = [];
@@ -500,6 +564,8 @@ function syncHearts(likedSet) {
       }
 
       // -------- Cart plus/minus --------
+      // Always reload from localStorage first (fixes stale cart when coming back from other pages)
+      cart = loadCart();
       const dish = dishMap.get(itemCode);
       if (!dish) return;
 

@@ -120,6 +120,28 @@ body {
     background-color: #c0c0c0;
 }
 
+.filter-controls input[type="date"] {
+    padding: 7px; /* 7px aligns vertically better with select's 8px usually */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: 'Satoshi', sans-serif;
+    color: #333;
+}
+
+/* Optional: Add a little spacing if the labels feel too tight */
+.filter-label-spacing {
+    margin-left: 10px;
+}
+
+/* Update: Allow controls to wrap on smaller screens so it doesn't break */
+.filter-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap; /* Added this to prevent layout breaking on mobile */
+}
+
 /* Complaint Card */
 .complaint-card {
     border: 2px solid #aaa;
