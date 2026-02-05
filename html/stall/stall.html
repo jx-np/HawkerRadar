@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="author" content="Javier Lum Dong Yee" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stalls</title>
+
+    <link rel="stylesheet" href="../../css/Essential/navbar.css" />
+    <link rel="stylesheet" href="../../css/Essential/footer.css" />
+    <link rel="stylesheet" href="../../css/Stall/stall.css" />
+
+    <!-- Material Symbols (full set - safest for dev) -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+  </head>
+
+  <body>
+    <!-- Header -->
+    <header class="site-header">
+      <div class="logo">
+        <a href="../../html/home/home.html" class="link-wrapper">
+          <div class="logo-box"></div>
+        </a>
+      </div>
+
+      <nav class="nav-links">
+        <div class="nav-center">
+          <a href="../../html/home/home.html">Home</a>
+          <a href="#">Hawker Centres</a>
+          <a href="#">Order History</a>
+        </div>
+
+        <div class="nav-right">
+          <a href="../../html/auth/login.html">Login / Register</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="stalls-page">
+      <!-- Hero -->
+      <section class="hc-hero">
+        <!-- ✅ shell so back button can sit OUTSIDE banner -->
+        <div class="hc-hero__banner-shell">
+          <button class="page-back-btn" id="pageBackBtn" type="button" aria-label="Back">
+            <span class="material-symbols-outlined" aria-hidden="true">arrow_back_2</span>
+          </button>
+
+          <div class="hc-hero__banner">
+            <img id="hcBanner" class="hc-hero__img" src="" alt="Hawker Centre banner" />
+          </div>
+        </div>
+
+        <h1 id="hcName" class="hc-hero__title">Loading…</h1>
+        <p id="hcAddress" class="hc-hero__subtitle"></p>
+      </section>
+
+      <!-- Filter -->
+      <section class="stall-filter">
+        <span class="stall-filter__label">Filter by:</span>
+        <select id="cuisineSelect" class="stall-filter__select">
+          <option value="">All Cuisines</option>
+        </select>
+        <button id="filterBtn" class="stall-filter__btn" type="button">Filter</button>
+      </section>
+
+      <!-- Favorites -->
+      <section class="stall-section">
+        <h2 class="stall-section__title">Favorites</h2>
+        <p id="favEmpty" class="stall-empty">No stalls to show.</p>
+        <div id="favGrid" class="stall-grid"></div>
+      </section>
+
+      <!-- Results -->
+      <section class="stall-section">
+        <h2 class="stall-section__title">Results</h2>
+        <p id="resultsEmpty" class="stall-empty">No stalls to show.</p>
+        <div id="resultsGrid" class="stall-grid"></div>
+      </section>
+
+      <!-- Card template -->
+      <template id="tpl-stall-card">
+        <article class="stall-card" data-stall-id="">
+          <div class="stall-card__img" aria-hidden="true"></div>
+
+          <div class="stall-card__body">
+            <div class="stall-card__top">
+              <h3 class="stall-card__name"></h3>
+
+              <button class="stall-card__fav" type="button" aria-pressed="false" aria-label="Favorite stall">
+                <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
+              </button>
+            </div>
+
+            <p class="stall-card__meta">
+              <span class="stall-card__unit"></span>
+              <span class="stall-card__dot">•</span>
+              <span class="stall-card__cuisine"></span>
+            </p>
+
+            <button class="stall-card__btn" type="button">View Menu</button>
+          </div>
+        </article>
+      </template>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <a href="../../html/Footer Stuff/ContactUs.html">Contact Us</a>
+      <span>|</span>
+      <a href="../../html/Footer Stuff/FAQ.html">FAQs</a>
+      <span>|</span>
+      <a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">
+        NEA Info
+      </a>
+    </footer>
+
+    <script type="module" src="/js/stall_page.js"></script>
+  </body>
+</html>
