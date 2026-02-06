@@ -1,63 +1,121 @@
-import { getAllFeedback, getAllCustomers, getAllComplaints, getCustomer } from "/js/firebase/wrapper.js";
+import { listStallComplaints, getUser, getStall } from "/js/firebase/wrapper.js";
 
-let feedbackDataRaw = await getAllFeedback();
-let complaintsDataRaw = await getAllComplaints();
-let customerDataRaw = await getAllCustomers();
+// --- Get Stall ID from URL ---
+const urlParams = new URLSearchParams(window.location.search);
+const STALL_ID = urlParams.get('id'); 
 
-// Convert customers to an array first so we can search them
-const customersArray = feedbackDataRaw ? Object.values(feedbackDataRaw) : [];
-
-// Create the complaints array and merge the customer name into it
-let feedbackData = [];
-
-if (feedbackDataRaw) {
-    // Create an array of Promises
-    const processingPromises = Object.values(feedbackDataRaw).map(async (feedback) => {
-        // Now we can use await here safely because the callback is async
-        let customer = await getCustomer(feedback.CustomerID);
-        let complaintInfo = complaintsDataRaw ? complaintsDataRaw[feedback.FbkID] : null;
-        console.log(customer)
-        return {
-            ...feedback,
-            customername: customer ? customer.CustName : "Unknown User",
-            categories: complaintInfo ? complaintInfo.Category : "General"
-        };
-    });
-
-    // Wait for ALL promises to finish before continuing
-    feedbackData = await Promise.all(processingPromises);
-}
-
-// Select DOM elements
-const dateFilter = document.getElementById('date-filter');
+// --- DOM Elements ---
 const complaintsList = document.getElementById('complaints-list');
+const stallTitle = document.querySelector('.stall-title');
+const stallHeader = document.querySelector('.stall-header'); // <--- Select the header box
 const filterBtn = document.getElementById('filter-btn');
 const issueFilter = document.getElementById('issue-filter');
-// Function to Render Complaints
-function renderComplaints(data) {
-    // Clear existing content
-    complaintsList.innerHTML = '';
+const dateFilter = document.getElementById('date-filter');
 
-    if (data.length === 0) {
-        complaintsList.innerHTML = '<p style="text-align:center; color:#777;">No complaints found for this category.</p>';
+// --- Initialization ---
+async function initPage() {
+    if (!STALL_ID) {
+        if (stallTitle) stallTitle.textContent = "Error: No Stall ID";
+        complaintsList.innerHTML = '<p style="text-align:center;">No stall selected in URL.</p>';
         return;
     }
 
-    // Loop through data and create HTML for each card
-    data.forEach(complaint => {
+    console.log("Loading for Stall ID:", STALL_ID);
+
+    try {
+        const [stall, complaintsMap] = await Promise.all([
+            getStall(STALL_ID),
+            listStallComplaints(STALL_ID)
+        ]);
+
+        // --- UPDATE HEADER INFO ---
+        if (stall) {
+            console.log("Stall found:", stall.name);
+            stallTitle.textContent = stall.name;
+
+            // <--- Update Background Image --->
+            // Checks for 'image' or 'coverImage' property in your DB
+            const imageUrl = stall.image || stall.coverImage; 
+            
+            if (imageUrl) {
+                stallHeader.style.backgroundImage = `url('${imageUrl}')`;
+            } else {
+                // Keep default CSS image or set a specific fallback
+                console.log("No image found for stall, keeping default.");
+            }
+        } else {
+            stallTitle.textContent = "Stall Not Found";
+        }
+
+        // --- PROCESS COMPLAINTS ---
+        const rawComplaints = complaintsMap ? Object.values(complaintsMap) : [];
+        let complaintsData = [];
+
+        if (rawComplaints.length > 0) {
+            const processingPromises = rawComplaints.map(async (item) => {
+                let userName = "Unknown User";
+                
+                if (item.userId) {
+                    try {
+                        const user = await getUser(item.userId);
+                        if (user) {
+                            userName = user.name || user.email || "Anonymous";
+                        }
+                    } catch (err) {
+                        console.error("Failed to fetch user", item.userId);
+                    }
+                }
+
+                return {
+                    ...item,
+                    customerName: userName,
+                    category: item.category || "General",
+                    comments: item.comments || "No details provided.",
+                    date: item.dateCreated
+                };
+            });
+
+            complaintsData = await Promise.all(processingPromises);
+        }
+
+        window.currentComplaintsData = complaintsData; 
+        renderComplaints(complaintsData);
+
+    } catch (error) {
+        console.error("Error loading data:", error);
+    }
+}
+
+// --- Render Function ---
+function renderComplaints(data) {
+    complaintsList.innerHTML = '';
+
+    if (!data || data.length === 0) {
+        complaintsList.innerHTML = '<p style="text-align:center; color:#777;">No complaints found.</p>';
+        return;
+    }
+
+    const sortedData = [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    sortedData.forEach(complaint => {
+        const dateObj = new Date(complaint.date);
+        const dateStr = isNaN(dateObj) ? "Unknown Date" : dateObj.toLocaleDateString();
+
         const card = document.createElement('article');
         card.classList.add('complaint-card');
 
         card.innerHTML = `
             <div class="card-header">
                 <div class="avatar"></div>
-                <span class="user-name">${complaint.customername}</span>
-                <span class="issue-type"><span class="issue-label">Issue Type:</span> ${complaint.categories}</span>
-                <span class="date">${complaint.FbkDateTime}</span>
+                <span class="user-name">${complaint.customerName}</span>
+                <span class="issue-type">
+                    <span class="issue-label">Issue Type:</span> ${complaint.category}
+                </span>
+                <span class="date">${dateStr}</span>
             </div>
             <div class="card-body">
                 <ul>
-                    <li>${complaint.FbkComment}</li>
+                    <li>${complaint.comments}</li>
                 </ul>
             </div>
         `;
@@ -66,90 +124,37 @@ function renderComplaints(data) {
     });
 }
 
-// Filter Logic
-filterBtn.addEventListener('click', () => {
-    const selectedCategory = issueFilter.value;
-    const selectedDate = dateFilter.value; // Returns "YYYY-MM-DD"
+// --- 5. Filter Logic ---
+if (filterBtn) {
+    filterBtn.addEventListener('click', () => {
+        const data = window.currentComplaintsData || [];
+        const selectedCategory = issueFilter.value;
+        const selectedDate = dateFilter.value; 
 
-    console.log("Filtering...", selectedCategory, selectedDate);
+        const filteredData = data.filter(item => {
+            const itemCat = String(item.category).toLowerCase().trim();
+            const filterCat = selectedCategory.toLowerCase().trim();
+            const categoryMatch = selectedCategory === 'All' || itemCat === filterCat;
 
-    const filteredData = feedbackData.filter(item => {
-        // --- 1. ROBUST CATEGORY CHECK ---
-        // Convert BOTH to lowercase so "Service" matches "service"
-        // We use String() to safely handle if data is missing/null
-        const itemCat = String(item.categories).toLowerCase().trim();
-        const filterCat = selectedCategory.toLowerCase().trim();
-        
-        const categoryMatch = selectedCategory === 'All' || itemCat === filterCat;
-
-
-        // --- 2. ROBUST DATE CHECK ---
-        let dateMatch = true;
-        
-        if (selectedDate) {
-            if (item.FbkDateTime) {
-                // Create actual Date objects to compare (ignoring time and format differences)
-                // This makes "2026-02-05" equal "05/02/2026" or "Feb 5, 2026"
-                const itemDateObj = new Date(item.FbkDateTime);
+            let dateMatch = true;
+            if (selectedDate && item.date) {
+                const itemDateObj = new Date(item.date);
                 const filterDateObj = new Date(selectedDate);
-
-                // Compare Year, Month, and Day specifically
-                const isSameYear = itemDateObj.getFullYear() === filterDateObj.getFullYear();
-                const isSameMonth = itemDateObj.getMonth() === filterDateObj.getMonth();
-                const isSameDay = itemDateObj.getDate() === filterDateObj.getDate();
-
-                dateMatch = isSameYear && isSameMonth && isSameDay;
-            } else {
-                dateMatch = false; // Hide if item has no date
+                
+                dateMatch = (
+                    itemDateObj.getFullYear() === filterDateObj.getFullYear() &&
+                    itemDateObj.getMonth() === filterDateObj.getMonth() &&
+                    itemDateObj.getDate() === filterDateObj.getDate()
+                );
             }
-        }
 
-        return categoryMatch && dateMatch;
+            return categoryMatch && dateMatch;
+        });
+
+        renderComplaints(filteredData);
     });
+}
 
-    console.log("Items matched:", filteredData.length);
-    renderComplaints(filteredData);
-});
-
-// filterBtn.addEventListener('click', () => {
-//     const selectedCategory = issueFilter.value;
-//     const selectedDate = dateFilter.value; 
-
-//     console.log("--- FILTER CLICKED ---");
-//     console.log("Selected Category:", selectedCategory);
-//     console.log("Selected Date:", selectedDate);
-
-//     const filteredData = feedbackData.filter(item => {
-//         // --- DEBUGGING ---
-//         // This will print the category of the first few items so you can check spelling
-//         // (We only log the first one to avoid spamming the console)
-//         if (item === feedbackData[0]) {
-//             console.log("First Item Data:", item);
-//             console.log("Item Category in DB:", item.categories);
-//         }
-
-//         // 1. Check Category
-//         // We use safe comparison: match "All", OR match the category exactly
-//         const categoryMatch = selectedCategory === 'All' || item.categories === selectedCategory;
-
-//         // 2. Check Date
-//         let dateMatch = true; 
-//         if (selectedDate) {
-//             if (item.FbkDateTime) {
-//                 dateMatch = item.FbkDateTime.includes(selectedDate);
-//             } else {
-//                 dateMatch = false; 
-//             }
-//         }
-
-//         return categoryMatch && dateMatch;
-//     });
-
-//     console.log("Total items found:", filteredData.length);
-//     renderComplaints(filteredData);
-// });
-
-// Initial Render (Show all on load)
-renderComplaints(feedbackData);
-
-console.log("Complaint JS loaded");
+// Start
+initPage();
+console.log("Complaint Vendor JS loaded");

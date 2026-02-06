@@ -1,40 +1,52 @@
-import { addFeedback, getAllFeedback } from '/js/firebase/wrapper.js';
+import { createFeedback, onAuthChanged } from '/js/firebase/wrapper.js';
 
 const stars = document.querySelectorAll(".star");
 const ratingText = document.querySelector(".rating-text");
 const ratingInput = document.getElementById("ratingValue");
 const form = document.getElementById("feedbackForm");
 
+// State
 let currentRating = 0;
+let currentUser = null;
 
-// Unified Event Listeners (Fixes duplicate click & missing updateStars)
+// --- 1. Authentication Listener ---
+// We need the User ID to submit feedback (required by your wrapper)
+onAuthChanged((user) => {
+    if (user) {
+        currentUser = user;
+        console.log("Feedback Page: User detected", user.uid);
+    } else {
+        currentUser = null;
+        console.log("Feedback Page: No user logged in");
+    }
+});
+
+// --- 2. Star Rating UI Logic ---
 stars.forEach(star => {
-    // 1. Handle Hover (Mouse Enter)
+    // Handle Hover
     star.addEventListener("mouseenter", () => {
         highlightHover(star.dataset.value);
     });
 
-    // 2. Handle Hover End (Mouse Leave)
+    // Handle Hover End
     star.addEventListener("mouseleave", () => {
         clearHover();
-        highlightSelected(); // Restores the visual selection
+        highlightSelected(); // Restore selection state
     });
 
-    // 3. Handle Click (Selection)
+    // Handle Click
     star.addEventListener("click", () => {
-        // Update State
         currentRating = Number(star.dataset.value);
         
         // Update Form Inputs
         ratingInput.value = currentRating;
         ratingText.textContent = `${currentRating}/5`;
         
-        // Update Visuals (Replaces the missing updateStars function)
+        // Update Visuals
         highlightSelected(); 
     });
 });
 
-// Hover Visuals
 function highlightHover(rating) {
     stars.forEach(star => {
         star.classList.toggle("hover", star.dataset.value <= rating);
@@ -45,59 +57,62 @@ function clearHover() {
     stars.forEach(star => star.classList.remove("hover"));
 }
 
-// Selected Visuals
 function highlightSelected() {
     stars.forEach(star => {
         star.classList.toggle("selected", star.dataset.value <= currentRating);
     });
 }
 
-// Form Submit
+// --- 3. Form Submission ---
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    // Validation: Check Rating
     if (currentRating === 0) {
         alert("Please select a rating.");
         return;
     }
 
+    // Validation: Check Auth
+    if (!currentUser) {
+        alert("You must be logged in to submit feedback.");
+        // Optional: Redirect to login page
+        // window.location.href = "../../html/auth/login.html"; 
+        return;
+    }
+
+    // Get input values
+    const foodStallInput = document.getElementById("foodStall").value;
+    const hawkerCentreInput = document.getElementById("hawkerCentre").value;
+    const commentsInput = document.getElementById("comments").value;
+
+    // Construct the data object
+    // The wrapper 'createFeedback' specifically requires 'userId' and 'stallId'.
+    const feedbackData = {
+        userId: currentUser.uid,
+        stallId: foodStallInput, // Using the input name as ID for now
+        hawkerCentre: hawkerCentreInput,
+        rating: currentRating,
+        comments: commentsInput,
+        // 'id' is omitted: wrapper will generate a unique Firebase ID
+        // 'dateCreated' is omitted: wrapper will set it to now()
+    };
+
     try {
-        // --- NEW ID GENERATION LOGIC ---
-        
-        // Fetch all existing feedback
-        const allFeedbackData = await getAllFeedback();
-        
-        // Count them. 
-        // If data exists, count the keys. If null (empty db), count is 0.
-        const currentCount = allFeedbackData ? Object.keys(allFeedbackData).length : 0;
-        
-        // Generate ID (e.g., 0 -> 701, 15 -> 716)
-        const nextNumber = currentCount + 1;
-        const feedbackID = `7${String(nextNumber).padStart(2, '0')}`;
-        
-        // -------------------------------
+        const result = await createFeedback(feedbackData);
 
-        const feedbackSuccess = await addFeedback(
-            feedbackID,
-            document.getElementById("comments").value, // Assuming you accessed values directly or via data obj
-            new Date().toISOString().replace('T', ' ').slice(0, 19),
-            currentRating,
-            501,
-            document.getElementById("foodStall").value
-        );
-
-        if (feedbackSuccess) {
+        if (result) {
             alert("Feedback submitted successfully!");
+            
+            // Reset Form and State
             form.reset();
             currentRating = 0;
             highlightSelected(); 
-            ratingText.textContent = "__/5";
-        } else {
-            alert("Error submitting feedback.");
+            ratingText.textContent = " /5";
         }
     } catch (error) {
-        console.error(error);
-        alert("Error submitting feedback.");
+        console.error("Submission failed:", error);
+        alert("Error submitting feedback: " + error.message);
     }
 });
 
