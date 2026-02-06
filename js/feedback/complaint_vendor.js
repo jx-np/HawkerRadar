@@ -1,9 +1,9 @@
 import { listStallComplaints, getUser, getStall, updateComplaint } from "/js/firebase/wrapper.js";
 
-// --- Get Stall ID from URL ---
+// --- 1. Get Stall ID from URL (Dynamic) ---
 const urlParams = new URLSearchParams(window.location.search);
-// const STALL_ID = urlParams.get('id'); 
-const STALL_ID = 305; // change this after stall is fixed
+// const STALL_ID = urlParams.get('id'); // Gets ?id=301 from URL
+const STALL_ID = 301;
 
 // --- DOM Elements ---
 const complaintsList = document.getElementById('complaints-list');
@@ -13,7 +13,7 @@ const filterBtn = document.getElementById('filter-btn');
 const issueFilter = document.getElementById('issue-filter');
 const dateFilter = document.getElementById('date-filter');
 
-// Initialization
+// --- Initialization ---
 async function initPage() {
     if (!STALL_ID) {
         if (stallTitle) stallTitle.textContent = "Error: No Stall ID";
@@ -29,21 +29,25 @@ async function initPage() {
             listStallComplaints(STALL_ID)
         ]);
 
-        // UPDATE HEADER INFO
+        // --- UPDATE HEADER INFO ---
         if (stall) {
             console.log("Stall found:", stall.name);
             stallTitle.textContent = stall.name;
 
-            // Update Background Image
-            const imageUrl = stall.image || stall.coverImage; 
+            // <--- IMAGE FIX: Use 'storeImage' property --->
+            // Checks storeImage first (e.g., "/img/301.jpg")
+            const imageUrl = stall.storeImage || stall.image || stall.coverImage; 
+            
             if (imageUrl) {
                 stallHeader.style.backgroundImage = `url('${imageUrl}')`;
+            } else {
+                console.log("No image found for stall.");
             }
         } else {
             stallTitle.textContent = "Stall Not Found";
         }
 
-        // PROCESS COMPLAINTS
+        // --- PROCESS COMPLAINTS ---
         const rawComplaints = complaintsMap ? Object.values(complaintsMap) : [];
         let complaintsData = [];
 
@@ -83,7 +87,7 @@ async function initPage() {
     }
 }
 
-// Render Function
+// --- Render Function ---
 function renderComplaints(data) {
     complaintsList.innerHTML = '';
 
@@ -147,7 +151,7 @@ function renderComplaints(data) {
     });
 }
 
-// Filter Logic
+// --- Filter Logic ---
 if (filterBtn) {
     filterBtn.addEventListener('click', () => {
         const data = window.currentComplaintsData || [];
@@ -155,14 +159,12 @@ if (filterBtn) {
         const selectedDate = dateFilter.value; 
 
         const filteredData = data.filter(item => {
-            // Category Check 
             const itemCat = String(item.category).toLowerCase().trim();
             const filterCat = selectedCategory.toLowerCase().trim();
             
-            // Checks if the filter word exists inside the category string
+            // Includes check allows "Price" to be found in "Cleanliness, Price"
             const categoryMatch = selectedCategory === 'All' || itemCat.includes(filterCat);
 
-            // Date Check
             let dateMatch = true;
             if (selectedDate && item.date) {
                 const itemDateObj = new Date(item.date);
