@@ -1,8 +1,8 @@
+/* ==========================
+   RESET & BODY
+========================== */
 html, body {
   height: 100%;
-}
-
-body {
   margin: 0;
   font-family: 'Satoshi', sans-serif;
   background: #fff;
@@ -15,9 +15,8 @@ body {
   display: flex;
   min-height: 100vh;
   background: #fff;
-  font-size: clamp(16px, 1.4vw, 26px);
+  font-size: clamp(15px, 1vw, 20px); /* slightly smaller base font */
 }
-
 
 .auth-visual {
   flex: 1;
@@ -32,8 +31,8 @@ body {
   align-items: center;
   justify-content: center;
   background: #ffffff;
-  padding: 80px 40px;
-  font: 26px;
+  padding: clamp(2.5em, 5vw, 4em) clamp(1.2em, 3vw, 2.5em); /* more compact padding */
+  font-size: clamp(15px, 1vw, 20px);
 }
 
 /* ==========================
@@ -41,22 +40,20 @@ body {
 ========================== */
 .form-wrapper {
   width: 100%;
-  max-width: 500px;
+  max-width: 450px; /* slightly narrower */
 }
 
 .form-wrapper h1 {
-  font-size: 40px;   
+  font-size: clamp(24px, 2.5vw, 36px); /* smaller heading */
   font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
-
 
 .signup-text {
-  font-size: clamp(14px, 1.3vw, 18px);
+  font-size: clamp(13px, 1.1vw, 16px);
   color: #666;
-  margin-bottom: 36px;
+  margin-bottom: 28px;
 }
-
 
 .signup-text a {
   color: #1677ff;
@@ -72,19 +69,19 @@ body {
    FORM ELEMENTS
 ========================== */
 .form-wrapper label {
-  font-size: clamp(14px, 1.2vw, 18px);
+  font-size: clamp(13px, 1vw, 16px);
   color: #555;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
   display: block;
 }
 
 .form-wrapper input {
   width: 100%;
-  padding: 14px 16px;
+  padding: clamp(10px, 0.9vw, 14px);
   border: 1px solid #ddd;
   border-radius: 10px;
-  font-size: clamp(14px, 1.2vw, 18px);
-  margin-bottom: 22px;
+  font-size: clamp(13px, 1vw, 16px);
+  margin-bottom: clamp(16px, 1.5vw, 20px);
   transition: border-color 0.25s, box-shadow 0.25s;
 }
 
@@ -106,7 +103,7 @@ body {
 .toggle-password {
   background: none;
   border: none;
-  font-size: clamp(12px, 1vw, 13px);
+  font-size: clamp(11px, 0.9vw, 13px);
   color: #777;
   cursor: pointer;
 }
@@ -117,11 +114,11 @@ body {
 
 .forgot-password {
   text-align: right;
-  margin-bottom: 28px;
+  margin-bottom: clamp(16px, 1.5vw, 22px);
 }
 
 .forgot-password a {
-  font-size: clamp(14px, 1.2vw, 18px);
+  font-size: clamp(13px, 1vw, 16px);
   color: #555;
   text-decoration: none;
 }
@@ -135,14 +132,14 @@ body {
 ========================== */
 .social-login {
   display: flex;
-  gap: 16px;
+  gap: clamp(10px, 0.9vw, 14px);
   justify-content: space-between;
-  margin-bottom: 32px;
+  margin-bottom: clamp(20px, 2vw, 28px);
 }
 
 .social {
   flex: 1;
-  height: 44px;
+  height: clamp(38px, 3.5vw, 42px);
   border-radius: 12px;
   border: 1px solid #ddd;
   background-color: #fafafa;
@@ -162,15 +159,12 @@ body {
 .social.google {
   background-image: url("../../img/login/icons/Google__G__logo.svg.png");
 }
-
 .social.apple {
   background-image: url("../../img/login/icons/logo-apple-icon-lg.png");
 }
-
 .social.facebook {
   background-image: url("../../img/login/icons/Facebook_Logo_2023.png");
 }
-
 .social.twitter {
   background-image: url("../../img/login/icons/x_logo_PNG11.png");
 }
@@ -180,12 +174,12 @@ body {
 ========================== */
 .login-btn {
   width: 100%;
-  padding: 16px;
+  padding: clamp(12px, 1vw, 14px);
   border: none;
   border-radius: 999px;
   background: #1677ff;
   color: #ffffff;
-  font-size: clamp(14px, 1.2vw, 16px);
+  font-size: clamp(13px, 1vw, 16px);
   font-weight: 600;
   cursor: pointer;
   transition: background 0.25s, transform 0.15s;
@@ -197,8 +191,23 @@ body {
 }
 
 /* ==========================
-   RESPONSIVE
+   RESPONSIVE LAYOUT
 ========================== */
+@media (max-width: 1024px) {
+  .auth-form {
+    padding: clamp(2em, 4vw, 3.5em);
+    font-size: clamp(14px, 1vw, 18px);
+  }
+
+  .form-wrapper {
+    max-width: 400px;
+  }
+
+  .form-wrapper h1 {
+    font-size: clamp(22px, 2.2vw, 32px);
+  }
+}
+
 @media (max-width: 768px) {
   .auth-page {
     flex-direction: column;
@@ -209,44 +218,39 @@ body {
   }
 
   .auth-form {
-    padding: 48px 20px;
+    padding: clamp(1.5em, 3vw, 2.5em);
+    font-size: clamp(14px, 1vw, 18px);
+  }
+
+  .form-wrapper {
+    max-width: 350px;
+  }
+
+  .form-wrapper h1 {
+    font-size: clamp(20px, 2vw, 28px);
   }
 }
-@media (max-width: 768px) {
-  .auth-page {
-    flex-direction: column;
-  }
-
-  .auth-visual {
-    display: none;
-  }
-
-  .auth-form {
-    padding: 48px 20px;
-  }
-}
-
 
 /* ==========================
    FONTS
 ========================== */
 @font-face {
-    font-family: 'Satoshi';
-    src: url('../../fonts/Satoshi-Regular.otf') format('woff2');
-    font-weight: 400;
-    font-style: normal;
+  font-family: 'Satoshi';
+  src: url('../../fonts/Satoshi-Regular.otf') format('woff2');
+  font-weight: 400;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: 'Satoshi';
-    src: url('../../fonts/Satoshi-Bold.otf') format('woff2');
-    font-weight: 700;
-    font-style: normal;
+  font-family: 'Satoshi';
+  src: url('../../fonts/Satoshi-Bold.otf') format('woff2');
+  font-weight: 700;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: 'Satoshi';
-    src: url('../../fonts/Satoshi-BlackItalic.otf') format('woff2');
-    font-weight: 900;
-    font-style: italic;
+  font-family: 'Satoshi';
+  src: url('../../fonts/Satoshi-BlackItalic.otf') format('woff2');
+  font-weight: 900;
+  font-style: italic;
 }

@@ -1,23 +1,11 @@
-// ../../js/stall-page.js
+// ../../js/dish_favourite.js
 // Stall Dish Page: loads stall + dishes + feedback + favorites + cart (persistent)
-//
-// REQUIREMENTS:
-// 1) In HTML, before this script:
-//    <script>window.STALL_PAGE = { wrapperPath: "../../js/wrapper.js" };</script>
-// 2) Templates exist:
-//    #tpl-dish-row, #tpl-favorite-card
-// 3) Dish row template uses data-actions:
-//    - data-action="toggle-favorite"
-//    - data-action="cart-plus"
-//    - data-action="cart-minus"
-// 4) Body has data-stall-id OR URL has ?stall=...
-
-
+// Works with NEW wrapper.js (getStall/listMenuItemsByStall/listStallFeedback)
+// and also tolerates older wrapper shapes (best-effort).
 
 const cfg = {
   stallBodyAttr: "data-stall-id",
   stallQueryParam: "stall",
-
   customerStorageKey: "CustomerID",
 
   ids: {
@@ -43,11 +31,9 @@ const cfg = {
     cartMinus: "cart-minus",
   },
 
-  // Image fallbacks
   dishPlaceholderImg: "../../images/dishes/placeholder.jpg",
   stallPlaceholderImg: "../../images/stalls/stall-banner-placeholder.jpg",
 
-  // Cart storage version
   cartVersion: 1,
 };
 
@@ -64,25 +50,33 @@ function applyHeaderOffset() {
 applyHeaderOffset();
 window.addEventListener("resize", applyHeaderOffset);
 window.addEventListener("load", applyHeaderOffset);
-/* ---------------- Back + Go to Cart ---------------- */
 
-// Back arrow on stall_dish
+/* ---------------- Back + Go to Cart ---------------- */
 function smartBack() {
-  if (window.history.length > 1) {
-    window.history.back();
+  // Prefer returning to the stall list page we came from
+  const returnTo = sessionStorage.getItem("stallList:returnTo");
+  if (returnTo) {
+    window.location.href = returnTo;
     return;
   }
+
+  // Otherwise, try rebuild stall.html?hc=...
+  const hcId = sessionStorage.getItem("selectedHcId");
+  if (hcId) {
+    const u = new URL("./stall.html", window.location.href); // same folder as stall_dish.html
+    u.searchParams.set("hc", String(hcId));
+    window.location.href = u.href;
+    return;
+  }
+
+  // final fallback
   window.location.href = new URL("/html/home/home.html", window.location.origin).href;
 }
 document.getElementById("pageBackBtn")?.addEventListener("click", smartBack);
 
-// Cart navigation (your cart is at ../user/cart.html)
 document.getElementById("view-cart")?.addEventListener("click", (e) => {
   e.preventDefault();
-
-  // so Cart back arrow can return here
   sessionStorage.setItem("cart:returnTo", window.location.href);
-
   window.location.href = new URL("../user/cart.html", window.location.href).href;
 });
 
@@ -113,11 +107,6 @@ function toNumberPrice(v) {
   return Number.isFinite(n) ? n : 0;
 }
 
-function toMoney(v) {
-  const n = toNumberPrice(v);
-  return `$${n.toFixed(2)}`;
-}
-
 function setImgWithFallback(imgEl, primary, fallback, alt = "") {
   if (!imgEl) return;
   imgEl.alt = alt || "";
@@ -132,6 +121,7 @@ function setImgWithFallback(imgEl, primary, fallback, alt = "") {
 }
 
 function clearNode(node) {
+  if (!node) return;
   while (node.firstChild) node.removeChild(node.firstChild);
 }
 
@@ -141,24 +131,57 @@ function setPressed(btn, pressed) {
   btn.classList.toggle("is-favorited", pressed);
 }
 
-/* ---------------- Firebase wrapper loader ---------------- */
+/* ---------------- Wrapper loader ---------------- */
 async function loadWrapper() {
-  const wrapperPath = window.STALL_PAGE?.wrapperPath;
-  if (!wrapperPath) throw new Error("window.STALL_PAGE.wrapperPath is missing in HTML");
+  const wrapperPath = window.STALL_PAGE?.wrapperPath || "/js/firebase/wrapper.js";
   const wrapperUrl = new URL(wrapperPath, document.baseURI).href;
   return import(wrapperUrl);
 }
 
+/* ---------------- Normalizers (support old + new fields) ---------------- */
+function stallNameOf(s) {
+  return s?.StallName ?? s?.name ?? s?.stallName ?? "Stall";
+}
+function stallUnitOf(s) {
+  const u = s?.StallUnitNo ?? s?.unitNo ?? s?.unit ?? s?.unitNumber ?? "";
+  return u ? `Stall Unit: ${u}` : "";
+}
+function stallDescOf(s) {
+  return s?.StallDesc ?? s?.desc ?? s?.description ?? s?.stallDesc ?? "";
+}
+function feedbackRatingOf(fb) {
+  return Number(fb?.FbkRating ?? fb?.rating ?? fb?.stars ?? fb?.score ?? fb?.value);
+}
+function feedbackStallIdOf(fb) {
+  return fb?.StallID ?? fb?.stallId ?? fb?.stallID ?? fb?.StallId ?? null;
+}
+function menuItemStallIdOf(mi) {
+  return mi?.StallID ?? mi?.stallId ?? mi?.stallID ?? mi?.StallId ?? null;
+}
+function menuItemCodeOf(mi, key) {
+  return String(mi?.ItemCode ?? mi?.code ?? mi?.itemCode ?? mi?.id ?? key ?? "").trim();
+}
+function menuItemNameOf(mi, code) {
+  return mi?.ItemDesc ?? mi?.name ?? mi?.itemDesc ?? `Item ${code || ""}`.trim();
+}
+function menuItemCatOf(mi) {
+  return (mi?.ItemCategory ?? mi?.category ?? mi?.cuisine ?? mi?.type ?? "").trim();
+}
+function menuItemPriceOf(mi) {
+  return mi?.ItemPrice ?? mi?.price ?? mi?.unitPrice ?? mi?.cost ?? 0;
+}
+
 /* ---------------- Rating ---------------- */
-function computeRating(allFeedback, stallId) {
-  if (!allFeedback) return { avg: 0, count: 0 };
+function computeRating(feedbackObj, stallId) {
+  if (!feedbackObj) return { avg: 0, count: 0 };
+
   let sum = 0;
   let count = 0;
 
-  for (const fb of Object.values(allFeedback)) {
+  for (const fb of Object.values(feedbackObj)) {
     if (!fb) continue;
-    if (String(fb.StallID) !== String(stallId)) continue;
-    const r = Number(fb.FbkRating);
+    if (String(feedbackStallIdOf(fb)) !== String(stallId)) continue;
+    const r = feedbackRatingOf(fb);
     if (Number.isFinite(r)) {
       sum += r;
       count += 1;
@@ -167,17 +190,7 @@ function computeRating(allFeedback, stallId) {
   return { avg: count ? sum / count : 0, count };
 }
 
-/* ---------------- CART (localStorage persistent) ----------------
-   Stored per user (CustomerID or guest).
-   Shape:
-   {
-     version: 1,
-     updatedAt: ...,
-     items: {
-       "301_CR01": { stallId:"301", itemCode:"CR01", name:"...", unitPrice:5.0, qty:2 }
-     }
-   }
--------------------------------------------------------------- */
+/* ---------------- CART (localStorage persistent) ---------------- */
 function cartStorageKey() {
   const customerId = getCustomerId() || "guest";
   return `hc:cart:v${cfg.cartVersion}:${customerId}`;
@@ -208,10 +221,10 @@ function cartItemKey(stallId, itemCode) {
 function cartTotals(cart) {
   let count = 0;
   let total = 0;
-  for (const it of Object.values(cart.items)) {
+  for (const it of Object.values(cart.items || {})) {
     if (!it) continue;
-    count += it.qty;
-    total += it.qty * it.unitPrice;
+    count += Number(it.qty) || 0;
+    total += (Number(it.qty) || 0) * (Number(it.unitPrice) || 0);
   }
   return { count, total };
 }
@@ -219,9 +232,8 @@ function cartTotals(cart) {
 function fmtCount(n) {
   return String(n).padStart(2, "0");
 }
-
 function fmtMoney(n) {
-  return `$${n.toFixed(2)}`;
+  return `$${(Number(n) || 0).toFixed(2)}`;
 }
 
 function updateCartBar(cart) {
@@ -238,47 +250,53 @@ function setRowQtyUI(row, qty) {
   row.classList.toggle("has-qty", qty > 0);
 }
 
-/* ---------------- FAVORITES (Firebase likes or local fallback) ---------------- */
+/* ---------------- FAVORITES (localStorage only; works even if wrapper has no likes) ---------------- */
 function localFavKey(stallId) {
+  // matches dish.js fallback key
   return `hc:fav:${stallId}`;
 }
-
-function loadLocalFavorites(stallId) {
+function loadFavSet(stallId) {
   try {
     const raw = localStorage.getItem(localFavKey(stallId));
     const arr = raw ? JSON.parse(raw) : [];
-    return Array.isArray(arr) ? arr : [];
+    return new Set(Array.isArray(arr) ? arr.map(String) : []);
   } catch {
-    return [];
+    return new Set();
+  }
+}
+function saveFavSet(stallId, set) {
+  localStorage.setItem(localFavKey(stallId), JSON.stringify([...set]));
+}
+/* ---------------- STALL FAVORITES (sync with stall.html key) ---------------- */
+function stallHcIdOf(stall) {
+  return (
+    stall?.hawkerCentreId ??
+    stall?.hawkerCentreID ??
+    stall?.HawkerCentreID ??
+    stall?.HawkerCentreId ??
+    stall?.HCID ??
+    stall?.HCId ??
+    stall?.hcId ??
+    stall?.hcID ??
+    null
+  );
+}
+
+function stallFavKey(hcId) {
+  const customerId = getCustomerId() || "guest";
+  return `favStalls:${hcId}:${customerId}`;
+}
+
+function loadStallFavSet(hcId) {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(stallFavKey(hcId)) || "[]").map(String));
+  } catch {
+    return new Set();
   }
 }
 
-function saveLocalFavorites(stallId, arr) {
-  localStorage.setItem(localFavKey(stallId), JSON.stringify(arr));
-}
-
-function likeDocId(customerId, stallId, itemCode) {
-  return `${customerId}_${stallId}_${itemCode}`;
-}
-
-async function loadFirebaseFavorites(wrapper, customerId, stallId) {
-  const likesObj = await wrapper.getCustomerLikes(customerId);
-  if (!likesObj) return [];
-  const codes = [];
-  for (const like of Object.values(likesObj)) {
-    if (!like) continue;
-    if (String(like.StallID) !== String(stallId)) continue;
-    if (like.ItemCode) codes.push(String(like.ItemCode));
-  }
-  return codes;
-}
-
-async function addFirebaseFavorite(wrapper, customerId, stallId, itemCode) {
-  await wrapper.addLike(customerId, stallId, itemCode);
-}
-
-async function removeFirebaseFavorite(wrapper, customerId, stallId, itemCode) {
-  await wrapper.deleteData("likes", likeDocId(customerId, stallId, itemCode));
+function saveStallFavSet(hcId, set) {
+  localStorage.setItem(stallFavKey(hcId), JSON.stringify([...set]));
 }
 
 /* ---------------- Rendering ---------------- */
@@ -297,14 +315,18 @@ function renderDishRows({ stallId, items, dishMap, cart }) {
     return;
   }
 
-  items.forEach((item) => {
+  items.forEach((entry) => {
+    const { key, mi } = entry;
+
     const node = tpl.content.firstElementChild.cloneNode(true);
 
-    const itemCode = String(item.ItemCode ?? "").trim();
-    const itemName = item.ItemDesc ?? `Item ${itemCode}`; // SQL uses ItemDesc as name
-    const itemCat = item.ItemCategory ?? "";
-    const unitPriceNum = toNumberPrice(item.ItemPrice);
-    const priceText = `$${unitPriceNum.toFixed(2)}`;
+    const itemCode = menuItemCodeOf(mi, key);
+    if (!itemCode) return;
+
+    const itemName = menuItemNameOf(mi, itemCode);
+    const itemCat = menuItemCatOf(mi);
+    const unitPriceNum = toNumberPrice(menuItemPriceOf(mi));
+    const priceText = fmtMoney(unitPriceNum);
 
     node.setAttribute("data-item-code", itemCode);
 
@@ -315,12 +337,10 @@ function renderDishRows({ stallId, items, dishMap, cart }) {
     if (descEl) descEl.textContent = itemCat;
     if (priceEl) priceEl.textContent = priceText;
 
-    // image guess (you can change later)
     const imgEl = node.querySelector(".dish-row__thumb");
     const guessImg = `../../images/dishes/${stallId}_${itemCode}.jpg`;
     setImgWithFallback(imgEl, guessImg, cfg.dishPlaceholderImg, itemName);
 
-    // Store for favorites + cart
     dishMap.set(itemCode, {
       code: itemCode,
       name: itemName,
@@ -330,12 +350,11 @@ function renderDishRows({ stallId, items, dishMap, cart }) {
       img: guessImg,
     });
 
-    // init qty UI from cart
     const k = cartItemKey(stallId, itemCode);
-    const qty = cart.items[k]?.qty ?? 0;
+    const qty = cart.items?.[k]?.qty ?? 0;
     setRowQtyUI(node, qty);
 
-    // init heart unpressed (we will sync later after favorites load)
+    // default heart state; will sync after favs load
     const favBtn = node.querySelector(`[data-action="${cfg.actions.toggleFavorite}"]`);
     setPressed(favBtn, false);
 
@@ -386,7 +405,6 @@ function renderFavorites({ likedSet, dishMap }) {
 }
 
 function syncHearts(likedSet) {
-  // dish list hearts
   $$(`#${cfg.ids.dishList} [data-item-code]`).forEach((row) => {
     const code = row.getAttribute("data-item-code");
     const pressed = likedSet.has(code);
@@ -396,11 +414,63 @@ function syncHearts(likedSet) {
   });
 }
 
+/* ---------------- Data fetchers (new wrapper first, then old) ---------------- */
+async function fetchStall(wrapper, stallId) {
+  if (wrapper?.getStall) return wrapper.getStall(stallId);
+  if (wrapper?.getFoodStall) return wrapper.getFoodStall(stallId);
+  if (wrapper?.getFoodstall) return wrapper.getFoodstall(stallId);
+  return null;
+}
+
+async function fetchMenuItems(wrapper, stallId) {
+  // NEW: listMenuItemsByStall(stallId)
+  if (wrapper?.listMenuItemsByStall) {
+    const obj = await wrapper.listMenuItemsByStall(stallId);
+    return Object.entries(obj || {}).map(([key, mi]) => ({ key, mi }));
+  }
+
+  // OLD: getAllMenuItems() and filter
+  if (wrapper?.getAllMenuItems) {
+    const obj = await wrapper.getAllMenuItems();
+    const out = [];
+    for (const [key, mi] of Object.entries(obj || {})) {
+      if (!mi) continue;
+      if (String(menuItemStallIdOf(mi)) === String(stallId)) out.push({ key, mi });
+    }
+    return out;
+  }
+
+  // NEW fallback: listMenuItems() and filter
+  if (wrapper?.listMenuItems) {
+    const obj = await wrapper.listMenuItems();
+    const out = [];
+    for (const [key, mi] of Object.entries(obj || {})) {
+      if (!mi) continue;
+      if (String(menuItemStallIdOf(mi)) === String(stallId)) out.push({ key, mi });
+    }
+    return out;
+  }
+
+  return [];
+}
+
+async function fetchFeedback(wrapper, stallId) {
+  // NEW: listStallFeedback(stallId)
+  if (wrapper?.listStallFeedback) {
+    return (await wrapper.listStallFeedback(stallId)) || null;
+  }
+
+  // OLD: getAllFeedback()
+  if (wrapper?.getAllFeedback) {
+    return (await wrapper.getAllFeedback()) || null;
+  }
+
+  return null;
+}
+
 /* ---------------- Main ---------------- */
 (async () => {
   try {
-    applyHeaderOffset();
-
     const stallId = getStallId();
     if (!stallId) {
       safeSetText(cfg.ids.stallName, "Missing StallID");
@@ -411,13 +481,12 @@ function syncHearts(likedSet) {
     safeSetText(cfg.ids.stallName, "Loading…");
 
     const wrapper = await loadWrapper();
-    const customerId = getCustomerId();
 
-    // Load core data
-    const [stall, allItems, allFeedback] = await Promise.all([
-      wrapper.getFoodStall(stallId),
-      wrapper.getAllMenuItems(),
-      wrapper.getAllFeedback(),
+    // Load core data (new wrapper compatible)
+    const [stall, menuEntries, feedbackObj] = await Promise.all([
+      fetchStall(wrapper, stallId),
+      fetchMenuItems(wrapper, stallId),
+      fetchFeedback(wrapper, stallId),
     ]);
 
     if (!stall) {
@@ -425,97 +494,121 @@ function syncHearts(likedSet) {
       return;
     }
 
-    safeSetText(cfg.ids.stallName, stall.StallName || "Stall");
-    safeSetText(cfg.ids.stallUnit, stall.StallUnitNo ? `Stall Unit: ${stall.StallUnitNo}` : "");
-    safeSetText(cfg.ids.stallDesc, stall.StallDesc || "");
-    document.title = `${stall.StallName || "Stall"} • Dishes`;
+    safeSetText(cfg.ids.stallName, stallNameOf(stall));
+    safeSetText(cfg.ids.stallUnit, stallUnitOf(stall));
+    safeSetText(cfg.ids.stallDesc, stallDescOf(stall));
+    // ---------------- Stall favorite (banner heart) ----------------
+    const stallFavBtn = document.getElementById("stall-fav-btn");
+    const hcId = stallHcIdOf(stall);
+
+    if (stallFavBtn && hcId) {
+      let stallFavSet = loadStallFavSet(hcId);
+
+      // initial state
+      setPressed(stallFavBtn, stallFavSet.has(String(stallId)));
+
+      stallFavBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        stallFavSet = loadStallFavSet(hcId); // reload to be safe
+
+        const sid = String(stallId);
+        if (stallFavSet.has(sid)) stallFavSet.delete(sid);
+        else stallFavSet.add(sid);
+
+        saveStallFavSet(hcId, stallFavSet);
+        setPressed(stallFavBtn, stallFavSet.has(sid));
+      });
+    } else if (stallFavBtn) {
+      // no hawkerCentreId found on stall -> hide button to avoid “dead” UI
+      stallFavBtn.style.display = "none";
+    }
+    document.title = `${stallNameOf(stall)} • Dishes`;
 
     // Banner
     const bannerEl = document.getElementById(cfg.ids.banner);
     if (bannerEl) {
       const guessBanner = `../../images/stalls/${stallId}.jpg`;
-      setImgWithFallback(bannerEl, guessBanner, cfg.stallPlaceholderImg, stall.StallName || "Stall");
+      setImgWithFallback(bannerEl, guessBanner, cfg.stallPlaceholderImg, stallNameOf(stall));
     }
 
     // Rating
-    const { avg, count } = computeRating(allFeedback, stallId);
+    const { avg, count } = computeRating(feedbackObj, stallId);
     const ratingEl = document.getElementById(cfg.ids.ratingValue);
     const countEl = document.getElementById(cfg.ids.ratingCount);
     if (ratingEl) ratingEl.textContent = avg ? avg.toFixed(1) : "0.0";
     if (countEl) countEl.textContent = `(${count})`;
 
-    // Filter menu items for stall
-    const itemsArr = [];
-    if (allItems) {
-      for (const it of Object.values(allItems)) {
-        if (!it) continue;
-        if (String(it.StallID) === String(stallId)) itemsArr.push(it);
-      }
-    }
-    itemsArr.sort((a, b) => String(a.ItemCode).localeCompare(String(b.ItemCode)));
+    // items
+    const itemsArr = (menuEntries || [])
+      .filter(Boolean)
+      .sort((a, b) => String(menuItemCodeOf(a.mi, a.key)).localeCompare(String(menuItemCodeOf(b.mi, b.key))));
 
-    // Load cart first so we can render qty correctly
+    // cart
     let cart = loadCart();
     updateCartBar(cart);
 
-    // Render dishes
+    // render dishes
     const dishMap = new Map();
-    renderDishRows({ stallId, items: itemsArr, dishMap, cart });
+    renderDishRows({
+      stallId,
+      items: itemsArr,
+      dishMap,
+      cart,
+    });
 
-// ---------------- Dish navigation (row click + favorite card click) ----------------
-const openDishPage = (itemCode) => {
-  if (!itemCode) return;
-  const url = new URL("./dish.html", window.location.href);
-  url.searchParams.set("stall", String(stallId));
-  url.searchParams.set("item", String(itemCode));
-  sessionStorage.setItem("dish:returnTo", window.location.href);
-  window.location.href = url.href;
-};
+    // ---------------- Dish navigation (row click + favorite card click) ----------------
+    const openDishPage = (itemCode) => {
+      if (!itemCode) return;
+      const url = new URL("./dish.html", window.location.href);
+      url.searchParams.set("stall", String(stallId));
+      url.searchParams.set("item", String(itemCode));
+      sessionStorage.setItem("dish:returnTo", window.location.href);
+      window.location.href = url.href;
+    };
 
-// Click a dish row (ignore clicks on favorite/plus/minus buttons)
-document.getElementById(cfg.ids.dishList)?.addEventListener("click", (e) => {
-  if (e.target.closest("[data-action]")) return;
+    document.getElementById(cfg.ids.dishList)?.addEventListener("click", (e) => {
+      if (e.target.closest("[data-action]")) return;
+      const row = e.target.closest('li.dish-row[data-item-code]');
+      if (!row) return;
+      openDishPage(row.getAttribute("data-item-code"));
+    });
 
-  const row = e.target.closest('li.dish-row[data-item-code]');
-  if (!row) return;
+    document.getElementById(cfg.ids.favoritesScroller)?.addEventListener("click", (e) => {
+      if (e.target.closest("[data-action]")) return;
+      const card = e.target.closest('article.favorite-card[data-item-code]');
+      if (!card) return;
+      openDishPage(card.getAttribute("data-item-code"));
+    });
 
-  openDishPage(row.getAttribute("data-item-code"));
-});
-
-// Click a favorite-card in the scroller (ignore favorite button itself)
-document.getElementById(cfg.ids.favoritesScroller)?.addEventListener("click", (e) => {
-  if (e.target.closest("[data-action]")) return;
-
-  const card = e.target.closest('article.favorite-card[data-item-code]');
-  if (!card) return;
-
-  openDishPage(card.getAttribute("data-item-code"));
-});
-
-// ✅ When returning from dish.html or cart.html (bfcache/pageshow), refresh cart + row qty from storage
-    function refreshCartUI() {
+    // refresh qty when returning (bfcache/pageshow)
+    function refreshCartAndFavUI() {
+      // cart refresh
       cart = loadCart();
       updateCartBar(cart);
       $$(`#${cfg.ids.dishList} [data-item-code]`).forEach((row) => {
         const code = row.getAttribute("data-item-code");
         const k = cartItemKey(stallId, code);
-        const qty = cart.items[k]?.qty ?? 0;
+        const qty = cart.items?.[k]?.qty ?? 0;
         setRowQtyUI(row, qty);
       });
+
+      // favorites refresh (so changes from dish.html show up)
+      likedSet = loadFavSet(stallId);
+      syncHearts(likedSet);
+      renderFavorites({ likedSet, dishMap });
     }
-    window.addEventListener("pageshow", refreshCartUI);
 
-    // Load favorites
-    let likedCodes = [];
-    if (customerId) likedCodes = await loadFirebaseFavorites(wrapper, customerId, stallId);
-    else likedCodes = loadLocalFavorites(stallId);
+    window.addEventListener("pageshow", refreshCartAndFavUI);
 
-    const likedSet = new Set(likedCodes);
+    // favorites (local)
+    let likedSet = loadFavSet(stallId);
     syncHearts(likedSet);
     renderFavorites({ likedSet, dishMap });
 
     // ---------------- Click handling (favorites + cart) ----------------
-    document.addEventListener("click", async (e) => {
+    document.addEventListener("click", (e) => {
       const actionBtn = e.target.closest("[data-action]");
       if (!actionBtn) return;
 
@@ -523,48 +616,27 @@ document.getElementById(cfg.ids.favoritesScroller)?.addEventListener("click", (e
       const holder = actionBtn.closest("[data-item-code]");
       const itemCode = holder?.getAttribute("data-item-code") || null;
 
-      // Only these actions
       const isFav = action === cfg.actions.toggleFavorite;
       const isPlus = action === cfg.actions.cartPlus;
       const isMinus = action === cfg.actions.cartMinus;
 
       if (!isFav && !isPlus && !isMinus) return;
-
       e.preventDefault();
+      if (!itemCode) return;
 
-      // Favorites needs itemCode
-      if ((isFav || isPlus || isMinus) && !itemCode) return;
-
-      // -------- Favorites toggle --------
+      // favorites toggle (local)
       if (isFav) {
         const currentlyLiked = likedSet.has(itemCode);
+        if (currentlyLiked) likedSet.delete(itemCode);
+        else likedSet.add(itemCode);
 
-        try {
-          if (customerId) {
-            if (currentlyLiked) {
-              await removeFirebaseFavorite(wrapper, customerId, stallId, itemCode);
-              likedSet.delete(itemCode);
-            } else {
-              await addFirebaseFavorite(wrapper, customerId, stallId, itemCode);
-              likedSet.add(itemCode);
-            }
-          } else {
-            // local fallback
-            if (currentlyLiked) likedSet.delete(itemCode);
-            else likedSet.add(itemCode);
-            saveLocalFavorites(stallId, Array.from(likedSet));
-          }
-
-          syncHearts(likedSet);
-          renderFavorites({ likedSet, dishMap });
-        } catch (err) {
-          console.error("Favorite toggle failed:", err);
-        }
+        saveFavSet(stallId, likedSet);
+        syncHearts(likedSet);
+        renderFavorites({ likedSet, dishMap });
         return;
       }
 
-      // -------- Cart plus/minus --------
-      // Always reload from localStorage first (fixes stale cart when coming back from other pages)
+      // cart plus/minus (always reload from storage first)
       cart = loadCart();
       const dish = dishMap.get(itemCode);
       if (!dish) return;
@@ -590,10 +662,7 @@ document.getElementById(cfg.ids.favoritesScroller)?.addEventListener("click", (e
 
       saveCart(cart);
 
-      // Update row qty UI
       const newQty = cart.items[key]?.qty ?? 0;
-
-      // If minus/plus clicked from the favorites card, also update the matching row if exists
       const row = document.querySelector(`#${cfg.ids.dishList} [data-item-code="${CSS.escape(itemCode)}"]`);
       if (row) setRowQtyUI(row, newQty);
 

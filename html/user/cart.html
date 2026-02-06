@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta name="author" content="Javier Lum Dong Yee">
-        <title>Complaints review</title>
+        <title>Cart</title>
         <link rel="icon" href="">
         <link rel="stylesheet" href="../../css/Essential/navbar.css">
         <link rel="stylesheet" href="../../css/Essential/footer.css">
@@ -11,24 +11,23 @@
         />
     </head>
     <body>
-        <h1>hello
-        </h1>
+        <!-- Header = MAKE SURE TO COPY -->
         <header class="site-header">
-            <div class="logo">
-                <a href="../../html/home/home.html" class="link-wrapper">
-                <div class="logo-box"></div>
-                </a>
-            </div>
-            <nav class="nav-links">
-                <div class="nav-center">
-                <a href="../../html/home/home.html">Home</a>
-                <a href="#">Hawker Centres</a>
-                <a href="#">Order History</a>
-                </div>
-                <div class="nav-right">
-                <a href="../../html/auth/login.html">Login / Register</a>
-                </div>
-            </nav>
+        <div class="logo">
+            <a href="../../html/home/home.html" class="link-wrapper">
+            <div class="logo-box"></div>
+            </a>
+        </div>
+
+        <nav class="nav-center">
+            <a href="../../html/home/home.html">Home</a>
+            <a href="#">Hawker Centres</a>
+            <a href="#">Order History</a>
+        </nav>
+
+        <div class="nav-right">
+            <a href="../../html/auth/login.html">Login / Register</a>
+        </div>
         </header>
         <!--End of Header-->
         <main class="cart-main">
@@ -126,7 +125,7 @@
             </a>
         </footer>
         <script>
-            window.CART_PAGE = { wrapperPath: "../../js/firebase/wrapper.js" };
+            window.CART_PAGE = { wrapperPath: "/js/firebase/wrapper.js" };
         </script>
         <script type="module" src="../../js/cart.js"></script>
     </body>
