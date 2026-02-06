@@ -9,734 +9,607 @@ import {
     push as firebasePush
 } from './realtimedb.js';
 
-// ============================================
-// OPERATOR FUNCTIONS
-// ============================================
+import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
-export async function addOperator(OperatorID, OperatorName, ContactPerson) {
-    try {
-        const operatorRef = ref(db, `operator/${OperatorID}`);
-        await set(operatorRef, { OperatorID, OperatorName, ContactPerson });
-        return true;
-    } catch (error) {
-        console.error('Error adding operator:', error);
-        return false;
-    }
+const auth = getAuth();
+
+/* =========================================
+    Generic helpers
+========================================= */
+
+const dbRef = (path) => ref(db, path);
+
+const snapshotToValue = (snap) => (snap.exists() ? snap.val() : null);
+
+async function getOnce(path) {
+    const snap = await get(dbRef(path));
+    return snapshotToValue(snap);
 }
 
-export async function getOperator(OperatorID) {
-    try {
-        const operatorRef = ref(db, `operator/${OperatorID}`);
-        const snapshot = await get(operatorRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching operator:', error);
-        return null;
-    }
+/**
+ * Create or overwrite an entity at `/root/{id}`
+ */
+async function setEntity(root, id, data) {
+    const fullData = { ...data, id };
+    await set(dbRef(`${root}/${id}`), fullData);
+    return fullData;
 }
 
-export async function getAllOperators() {
-    try {
-        const operatorsRef = ref(db, 'operator');
-        const snapshot = await get(operatorsRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching operators:', error);
-        return null;
-    }
+/**
+ * Update an entity at `/root/{id}`
+ */
+async function updateEntity(root, id, partial) {
+    await update(dbRef(`${root}/${id}`), partial);
+    return getOnce(`${root}/${id}`);
 }
 
-// ============================================
-// HAWKER CENTRE FUNCTIONS
-// ============================================
-
-export async function addHawkerCentre(HawkerCentreID, HCName, HCAddress, OperatorID, PriceRange, Region, ImageURL) {
-    try {
-        const centreRef = ref(db, `hawkerCentre/${HawkerCentreID}`);
-        await set(centreRef, { 
-            HawkerCentreID, 
-            HCName, 
-            HCAddress, 
-            OperatorID, 
-            PriceRange,
-            Region,
-            ImageURL  
-        });
-        return true;
-    } catch (error) {
-        console.error('Error adding hawker centre:', error);
-        return false;
-    }
+/**
+ * Delete an entity at `/root/{id}`
+ */
+async function deleteEntity(root, id) {
+    await remove(dbRef(`${root}/${id}`));
 }
 
+/* =========================================
+   Hawker Centres
+========================================= */
 
+/**
+ * Create or overwrite a Hawker Centre
+ * @param {{
+ *   id: string|number,
+ *   name: string,
+ *   address: string,
+ *   coverImage: string,            // image URL
+ *   priceRange: "$" | "$$" | "$$$",
+ *   region: string,
+ *   [key: string]: any
+ * }} hc
+ */
 
-export async function getHawkerCentre(HawkerCentreID) {
-    try {
-        const centreRef = ref(db, `hawkerCentre/${HawkerCentreID}`);
-        const snapshot = await get(centreRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching hawker centre:', error);
-        return null;
+/*
+Example use:
+await createHawkerCentre({
+    id: 1,
+    name: "Maxwell Food Centre",
+    address: "1 Kadayanallur St, Singapore 069184",
+    coverImage: "https://cdn.chimmy.xyz/maxwell-food-centre.jpg",
+    priceRange: "$$",
+    region: "Central"
+});
+
+i doubt yall gonna use this anyway
+*/
+
+export async function createHawkerCentre(hc) {
+    const { id, ...rest } = hc;
+    if (id === undefined || id === null) {
+        throw new Error("HawkerCentre.id is required");
     }
+
+    // you can also auto-add timestamps here if you like
+    const now = new Date().toISOString();
+    const data = {
+        ...rest,
+        createdAt: rest.createdAt || now,
+        updatedAt: rest.updatedAt || now
+    };
+
+    return setEntity('hawkerCentres', id, data);
 }
 
-export async function getAllHawkerCentres() {
-    try {
-        const centresRef = ref(db, 'hawkerCentre');
-        const snapshot = await get(centresRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching hawker centres:', error);
-        return null;
-    }
+export async function getHawkerCentre(id) {
+    return getOnce(`hawkerCentres/${id}`);
 }
 
-// ============================================
-// STALL OWNER FUNCTIONS
-// ============================================
-
-export async function addStallOwner(OwnerID, OwnerName, OwnerNRIC, OwnerContactNo) {
-    try {
-        const ownerRef = ref(db, `stallOwner/${OwnerID}`);
-        await set(ownerRef, { OwnerID, OwnerName, OwnerNRIC, OwnerContactNo });
-        return true;
-    } catch (error) {
-        console.error('Error adding stall owner:', error);
-        return false;
-    }
+export async function listHawkerCentres() {
+    return getOnce('hawkerCentres');
 }
 
-export async function getStallOwner(OwnerID) {
-    try {
-        const ownerRef = ref(db, `stallOwner/${OwnerID}`);
-        const snapshot = await get(ownerRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching stall owner:', error);
-        return null;
-    }
+export async function updateHawkerCentre(id, partial) {
+    const withUpdatedAt = {
+        ...partial,
+        updatedAt: new Date().toISOString()
+    };
+
+    return updateEntity('hawkerCentres', id, withUpdatedAt);
 }
 
-export async function getAllStallOwners() {
-    try {
-        const ownersRef = ref(db, 'stallOwner');
-        const snapshot = await get(ownersRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching stall owners:', error);
-        return null;
-    }
+export async function deleteHawkerCentre(id) {
+    // does not cascade delete stalls, etc
+    await deleteEntity('hawkerCentres', id);
 }
 
-// ============================================
-// FOOD STALL FUNCTIONS
-// ============================================
+/* =========================================
+    Stalls
+========================================= */
 
-export async function addFoodStall(StallID, StallUnitNo, StallName, StallDesc, HawkerCentreID) {
-    try {
-        const stallRef = ref(db, `foodStall/${StallID}`);
-        await set(stallRef, { StallID, StallUnitNo, StallName, StallDesc, HawkerCentreID });
-        return true;
-    } catch (error) {
-        console.error('Error adding food stall:', error);
-        return false;
-    }
+/**
+ * Create or overwrite a Stall.
+ * Also maintains `hawkerCentreStalls/{hawkerCentreId}/{stallId}` index.
+ */
+export async function createStall(stall) {
+    const { id, hawkerCentreId, ...rest } = stall;
+    if (!hawkerCentreId) throw new Error('hawkerCentreId is required for stall');
+
+    const data = await setEntity('stalls', id, { hawkerCentreId, ...rest });
+
+    // index: HawkerCentre → Stalls
+    await set(dbRef(`hawkerCentreStalls/${hawkerCentreId}/${id}`), true);
+
+    return data;
 }
 
-export async function getFoodStall(StallID) {
-    try {
-        const stallRef = ref(db, `foodStall/${StallID}`);
-        const snapshot = await get(stallRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching food stall:', error);
-        return null;
-    }
+export async function getStall(id) {
+    return getOnce(`stalls/${id}`);
 }
 
-export async function getAllFoodStalls() {
-    try {
-        const stallsRef = ref(db, 'foodStall');
-        const snapshot = await get(stallsRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching food stalls:', error);
-        return null;
-    }
+export async function listStalls() {
+    return getOnce('stalls');
 }
 
-// ============================================
-// RENTAL AGREEMENT FUNCTIONS
-// ============================================
+export async function listStallsByHawkerCentre(hawkerCentreId) {
+    const stallIds = await getOnce(`hawkerCentreStalls/${hawkerCentreId}`);
+    if (!stallIds) return null;
 
-export async function addRentalAgreement(AgreementID, AgrStartDate, AgrEndDate, AgrTermCondition, RentalPrice, OwnerID, StallID) {
-    try {
-        const agreementRef = ref(db, `rentalAgreement/${AgreementID}`);
-        await set(agreementRef, { AgreementID, AgrStartDate, AgrEndDate, AgrTermCondition, RentalPrice, OwnerID, StallID });
-        return true;
-    } catch (error) {
-        console.error('Error adding rental agreement:', error);
-        return false;
+    const result = {};
+    for (const stallId of Object.keys(stallIds)) {
+        result[stallId] = await getStall(stallId);
     }
+    return result;
 }
 
-export async function getRentalAgreement(AgreementID) {
-    try {
-        const agreementRef = ref(db, `rentalAgreement/${AgreementID}`);
-        const snapshot = await get(agreementRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching rental agreement:', error);
-        return null;
-    }
-}
+export async function updateStall(id, partial) {
+    const stall = await updateEntity('stalls', id, partial);
 
-export async function getAllRentalAgreements() {
-    try {
-        const agreementsRef = ref(db, 'rentalAgreement');
-        const snapshot = await get(agreementsRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching rental agreements:', error);
-        return null;
-    }
-}
-
-// ============================================
-// CUSTOMER FUNCTIONS
-// ============================================
-
-export async function addCustomer(CustomerID, CustNRIC, CustName, CustContactNo, CustEmail) {
-    try {
-        const customerRef = ref(db, `customer/${CustomerID}`);
-        await set(customerRef, { CustomerID, CustNRIC, CustName, CustContactNo, CustEmail });
-        return true;
-    } catch (error) {
-        console.error('Error adding customer:', error);
-        return false;
-    }
-}
-
-export async function getCustomer(CustomerID) {
-    try {
-        const customerRef = ref(db, `customer/${CustomerID}`);
-        const snapshot = await get(customerRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching customer:', error);
-        return null;
-    }
-}
-
-export async function getAllCustomers() {
-    try {
-        const customersRef = ref(db, 'customer');
-        const snapshot = await get(customersRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching customers:', error);
-        return null;
-    }
-}
-
-// ============================================
-// CUSTOMER ORDER FUNCTIONS
-// ============================================
-
-export async function addCustOrder(OrderID, OrderDate, PmtType, CustomerID) {
-    try {
-        const orderRef = ref(db, `custOrder/${OrderID}`);
-        await set(orderRef, { OrderID, OrderDate, PmtType, CustomerID });
-        return true;
-    } catch (error) {
-        console.error('Error adding customer order:', error);
-        return false;
-    }
-}
-
-export async function getCustOrder(OrderID) {
-    try {
-        const orderRef = ref(db, `custOrder/${OrderID}`);
-        const snapshot = await get(orderRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching customer order:', error);
-        return null;
-    }
-}
-
-export async function getAllCustOrders() {
-    try {
-        const ordersRef = ref(db, 'custOrder');
-        const snapshot = await get(ordersRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching customer orders:', error);
-        return null;
-    }
-}
-
-// ============================================
-// MENU ITEM FUNCTIONS
-// ============================================
-
-export async function addMenuItem(StallID, ItemCode, ItemDesc, ItemPrice, ItemCategory) {
-    try {
-        const key = `${StallID}_${ItemCode}`;
-        const itemRef = ref(db, `menuItem/${key}`);
-        await set(itemRef, { StallID, ItemCode, ItemDesc, ItemPrice, ItemCategory });
-        return true;
-    } catch (error) {
-        console.error('Error adding menu item:', error);
-        return false;
-    }
-}
-
-export async function getMenuItem(StallID, ItemCode) {
-    try {
-        const key = `${StallID}_${ItemCode}`;
-        const itemRef = ref(db, `menuItem/${key}`);
-        const snapshot = await get(itemRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching menu item:', error);
-        return null;
-    }
-}
-
-export async function getAllMenuItems() {
-    try {
-        const itemsRef = ref(db, 'menuItem');
-        const snapshot = await get(itemsRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching menu items:', error);
-        return null;
-    }
-}
-
-// ============================================
-// ORDER ITEM FUNCTIONS
-// ============================================
-
-export async function addOrderItem(OrderID, OrderItemNo, StallID, ItemCode, Quantity, UnitPrice) {
-    try {
-        const key = `${OrderID}_${OrderItemNo}`;
-        const itemRef = ref(db, `orderItem/${key}`);
-        await set(itemRef, { OrderID, OrderItemNo, StallID, ItemCode, Quantity, UnitPrice });
-        return true;
-    } catch (error) {
-        console.error('Error adding order item:', error);
-        return false;
-    }
-}
-
-export async function getOrderItem(OrderID, OrderItemNo) {
-    try {
-        const key = `${OrderID}_${OrderItemNo}`;
-        const itemRef = ref(db, `orderItem/${key}`);
-        const snapshot = await get(itemRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching order item:', error);
-        return null;
-    }
-}
-
-export async function getAllOrderItems() {
-    try {
-        const itemsRef = ref(db, 'orderItem');
-        const snapshot = await get(itemsRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching order items:', error);
-        return null;
-    }
-}
-
-// ============================================
-// FEEDBACK FUNCTIONS
-// ============================================
-
-export async function addFeedback(FbkID, FbkComment, FbkDateTime, FbkRating, CustomerID, StallID) {
-    try {
-        const feedbackRef = ref(db, `feedback/${FbkID}`);
-        await set(feedbackRef, { FbkID, FbkComment, FbkDateTime, FbkRating, CustomerID, StallID });
-        return true;
-    } catch (error) {
-        console.error('Error adding feedback:', error);
-        return false;
-    }
-}
-
-export async function getFeedback(FbkID) {
-    try {
-        const feedbackRef = ref(db, `feedback/${FbkID}`);
-        const snapshot = await get(feedbackRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching feedback:', error);
-        return null;
-    }
-}
-
-export async function getAllFeedback() {
-    try {
-        const feedbackRef = ref(db, 'feedback');
-        const snapshot = await get(feedbackRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching feedback:', error);
-        return null;
-    }
-}
-
-// ============================================
-// COMPLAINT FUNCTIONS
-// ============================================
-
-export async function addComplaint(FbkID, Category) {
-    try {
-        const complaintRef = ref(db, `complaint/${FbkID}`);
-        await set(complaintRef, { FbkID, Category });
-        return true;
-    } catch (error) {
-        console.error('Error adding complaint:', error);
-        return false;
-    }
-}
-
-export async function getComplaint(FbkID) {
-    try {
-        const complaintRef = ref(db, `complaint/${FbkID}`);
-        const snapshot = await get(complaintRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching complaint:', error);
-        return null;
-    }
-}
-
-export async function getAllComplaints() {
-    try {
-        const complaintsRef = ref(db, 'complaint');
-        const snapshot = await get(complaintsRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching complaints:', error);
-        return null;
-    }
-}
-
-// ============================================
-// CUISINE FUNCTIONS
-// ============================================
-
-export async function addCuisine(CuisineID, CuisineDesc) {
-    try {
-        const cuisineRef = ref(db, `cuisine/${CuisineID}`);
-        await set(cuisineRef, { CuisineID, CuisineDesc });
-        return true;
-    } catch (error) {
-        console.error('Error adding cuisine:', error);
-        return false;
-    }
-}
-
-export async function getCuisine(CuisineID) {
-    try {
-        const cuisineRef = ref(db, `cuisine/${CuisineID}`);
-        const snapshot = await get(cuisineRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching cuisine:', error);
-        return null;
-    }
-}
-
-export async function getAllCuisines() {
-    try {
-        const cuisinesRef = ref(db, 'cuisine');
-        const snapshot = await get(cuisinesRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching cuisines:', error);
-        return null;
-    }
-}
-
-// ============================================
-// MENU ITEM CUISINE FUNCTIONS
-// ============================================
-
-export async function addMenuItemCuisine(CuisineID, StallID, ItemCode) {
-    try {
-        const key = `${CuisineID}_${StallID}_${ItemCode}`;
-        const itemCuisineRef = ref(db, `menuItemCuisine/${key}`);
-        await set(itemCuisineRef, { CuisineID, StallID, ItemCode });
-        return true;
-    } catch (error) {
-        console.error('Error adding menu item cuisine:', error);
-        return false;
-    }
-}
-
-export async function getMenuItemCuisine(CuisineID, StallID, ItemCode) {
-    try {
-        const key = `${CuisineID}_${StallID}_${ItemCode}`;
-        const itemCuisineRef = ref(db, `menuItemCuisine/${key}`);
-        const snapshot = await get(itemCuisineRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching menu item cuisine:', error);
-        return null;
-    }
-}
-
-export async function getAllMenuItemCuisines() {
-    try {
-        const itemCuisinesRef = ref(db, 'menuItemCuisine');
-        const snapshot = await get(itemCuisinesRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching menu item cuisines:', error);
-        return null;
-    }
-}
-
-// ============================================
-// NEA OFFICER FUNCTIONS
-// ============================================
-
-export async function addNEAOfficer(OfficerID, OfficerName, OfficerContactNo) {
-    try {
-        const officerRef = ref(db, `neaOfficer/${OfficerID}`);
-        await set(officerRef, { OfficerID, OfficerName, OfficerContactNo });
-        return true;
-    } catch (error) {
-        console.error('Error adding NEA officer:', error);
-        return false;
-    }
-}
-
-export async function getNEAOfficer(OfficerID) {
-    try {
-        const officerRef = ref(db, `neaOfficer/${OfficerID}`);
-        const snapshot = await get(officerRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching NEA officer:', error);
-        return null;
-    }
-}
-
-export async function getAllNEAOfficers() {
-    try {
-        const officersRef = ref(db, 'neaOfficer');
-        const snapshot = await get(officersRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching NEA officers:', error);
-        return null;
-    }
-}
-
-// ============================================
-// INSPECTION FUNCTIONS
-// ============================================
-
-export async function addInspection(InspectionID, InspectionDate, HygieneGrade, GradeExpiry, OfficerID, StallID) {
-    try {
-        const inspectionRef = ref(db, `inspection/${InspectionID}`);
-        await set(inspectionRef, { InspectionID, InspectionDate, HygieneGrade, GradeExpiry, OfficerID, StallID });
-        return true;
-    } catch (error) {
-        console.error('Error adding inspection:', error);
-        return false;
-    }
-}
-
-export async function getInspection(InspectionID) {
-    try {
-        const inspectionRef = ref(db, `inspection/${InspectionID}`);
-        const snapshot = await get(inspectionRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching inspection:', error);
-        return null;
-    }
-}
-
-export async function getAllInspections() {
-    try {
-        const inspectionsRef = ref(db, 'inspection');
-        const snapshot = await get(inspectionsRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching inspections:', error);
-        return null;
-    }
-}
-
-// ============================================
-// INSPECTION REMARK FUNCTIONS
-// ============================================
-
-export async function addInspectionRemark(InspectionID, InspectionRemark) {
-    try {
-        const remarkRef = ref(db, `inspectionRemark/${InspectionID}`);
-        await set(remarkRef, { InspectionID, InspectionRemark });
-        return true;
-    } catch (error) {
-        console.error('Error adding inspection remark:', error);
-        return false;
-    }
-}
-
-export async function getInspectionRemark(InspectionID) {
-    try {
-        const remarkRef = ref(db, `inspectionRemark/${InspectionID}`);
-        const snapshot = await get(remarkRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching inspection remark:', error);
-        return null;
-    }
-}
-
-export async function getAllInspectionRemarks() {
-    try {
-        const remarksRef = ref(db, 'inspectionRemark');
-        const snapshot = await get(remarksRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching inspection remarks:', error);
-        return null;
-    }
-}
-
-// ============================================
-// PROMOTION FUNCTIONS
-// ============================================
-
-export async function addPromotion(PromoID, PromoDesc, PromoStartDate, PromoEndDate, StallID) {
-    try {
-        const promoRef = ref(db, `promotion/${PromoID}`);
-        await set(promoRef, { PromoID, PromoDesc, PromoStartDate, PromoEndDate, StallID });
-        return true;
-    } catch (error) {
-        console.error('Error adding promotion:', error);
-        return false;
-    }
-}
-
-export async function getPromotion(PromoID) {
-    try {
-        const promoRef = ref(db, `promotion/${PromoID}`);
-        const snapshot = await get(promoRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching promotion:', error);
-        return null;
-    }
-}
-
-export async function getAllPromotions() {
-    try {
-        const promosRef = ref(db, 'promotion');
-        const snapshot = await get(promosRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching promotions:', error);
-        return null;
-    }
-}
-
-// ============================================
-// LIKES FUNCTIONS
-// ============================================
-
-export async function addLike(CustomerID, StallID, ItemCode) {
-    try {
-        const key = `${CustomerID}_${StallID}_${ItemCode}`;
-        const likeRef = ref(db, `likes/${key}`);
-        await set(likeRef, { CustomerID, StallID, ItemCode });
-        return true;
-    } catch (error) {
-        console.error('Error adding like:', error);
-        return false;
-    }
-}
-
-export async function getLike(CustomerID, StallID, ItemCode) {
-    try {
-        const key = `${CustomerID}_${StallID}_${ItemCode}`;
-        const likeRef = ref(db, `likes/${key}`);
-        const snapshot = await get(likeRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching like:', error);
-        return null;
-    }
-}
-
-export async function getAllLikes() {
-    try {
-        const likesRef = ref(db, 'likes');
-        const snapshot = await get(likesRef);
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error('Error fetching likes:', error);
-        return null;
-    }
-}
-
-export async function getCustomerLikes(CustomerID) {
-    try {
-        const allLikes = await getAllLikes();
-        if (!allLikes) return null;
-        
-        const customerLikes = {};
-        for (const [key, like] of Object.entries(allLikes)) {
-            if (like.CustomerID === CustomerID) {
-                customerLikes[key] = like;
-            }
+    // If hawkerCentreId changed, you should also update indexes.
+    // This keeps it simple: only update index if hawkerCentreId is in partial.
+    if (partial.hawkerCentreId) {
+        const oldStall = await getStall(id);
+        // remove from old centre index if needed
+        if (oldStall && oldStall.hawkerCentreId && oldStall.hawkerCentreId !== partial.hawkerCentreId) {
+            await remove(dbRef(`hawkerCentreStalls/${oldStall.hawkerCentreId}/${id}`));
         }
-        return Object.keys(customerLikes).length > 0 ? customerLikes : null;
-    } catch (error) {
-        console.error('Error fetching customer likes:', error);
-        return null;
+        await set(dbRef(`hawkerCentreStalls/${partial.hawkerCentreId}/${id}`), true);
     }
+
+    return stall;
 }
 
-// ============================================
-// DELETE FUNCTIONS (Generic)
-// ============================================
-
-export async function deleteData(table, id) {
-    try {
-        const dataRef = ref(db, `${table}/${id}`);
-        await remove(dataRef);
-        return true;
-    } catch (error) {
-        console.error(`Error deleting from ${table}:`, error);
-        return false;
+export async function deleteStall(id) {
+    const stall = await getStall(id);
+    if (stall && stall.hawkerCentreId) {
+        await remove(dbRef(`hawkerCentreStalls/${stall.hawkerCentreId}/${id}`));
     }
+    // NOTE: does not auto-delete menuItems, orders, feedback, complaints
+    await deleteEntity('stalls', id);
 }
 
-// ============================================
-// UPDATE FUNCTIONS (Generic)
-// ============================================
+/* =========================================
+   Menu Items + Promotions
+========================================= */
 
-export async function updateData(table, id, data) {
-    try {
-        const dataRef = ref(db, `${table}/${id}`);
-        await update(dataRef, data);
-        return true;
-    } catch (error) {
-        console.error(`Error updating ${table}:`, error);
-        return false;
+/**
+ * Create or overwrite a Menu Item.
+ * Also maintains `stallMenuItems/{stallId}/{menuItemId}` index.
+ */
+export async function createMenuItem(menuItem) {
+    const { id, stallId, ...rest } = menuItem;
+    if (!stallId) throw new Error('stallId is required for menuItem');
+
+    const data = await setEntity('menuItems', id, { stallId, ...rest });
+
+    // index: Stall → MenuItems
+    await set(dbRef(`stallMenuItems/${stallId}/${id}`), true);
+
+    return data;
+}
+
+export async function getMenuItem(id) {
+    return getOnce(`menuItems/${id}`);
+}
+
+export async function listMenuItems() {
+    return getOnce('menuItems');
+}
+
+export async function listMenuItemsByStall(stallId) {
+    const ids = await getOnce(`stallMenuItems/${stallId}`);
+    if (!ids) return null;
+
+    const result = {};
+    for (const menuItemId of Object.keys(ids)) {
+        result[menuItemId] = await getMenuItem(menuItemId);
     }
+    return result;
+}
+
+export async function updateMenuItem(id, partial) {
+    const updated = await updateEntity('menuItems', id, partial);
+
+    // handle stallId change in index if needed
+    if (partial.stallId) {
+        const old = await getMenuItem(id);
+        if (old && old.stallId && old.stallId !== partial.stallId) {
+            await remove(dbRef(`stallMenuItems/${old.stallId}/${id}`));
+        }
+        await set(dbRef(`stallMenuItems/${partial.stallId}/${id}`), true);
+    }
+
+    return updated;
+}
+
+export async function deleteMenuItem(id) {
+    const mi = await getMenuItem(id);
+    if (mi && mi.stallId) {
+        await remove(dbRef(`stallMenuItems/${mi.stallId}/${id}`));
+    }
+    await deleteEntity('menuItems', id);
+}
+
+/**
+ * Add or overwrite a promotion on a Menu Item.
+ * If `promotion.id` is not provided, a push key is generated.
+ */
+export async function addMenuItemPromotion(menuItemId, promotion) {
+    const baseRef = dbRef(`menuItems/${menuItemId}/promotions`);
+    let promoId = promotion.id;
+
+    if (!promoId) {
+        const newRef = firebasePush(baseRef);
+        promoId = newRef.key;
+    }
+
+    const full = { ...promotion, id: promoId };
+    await set(child(baseRef, promoId), full);
+    return full;
+}
+
+/**
+ * Remove a promotion from a Menu Item
+ */
+export async function removeMenuItemPromotion(menuItemId, promotionId) {
+    await remove(dbRef(`menuItems/${menuItemId}/promotions/${promotionId}`));
+}
+
+/* =========================================
+   Users + Auth
+========================================= */
+
+/**
+ * Register a user with Firebase Auth and create a profile in /users
+ * @param {{email: string, password: string, nric?: string, name?: string, contactNo?: string, roles?: object}} payload
+ */
+export async function registerUserWithEmail(payload) {
+    const { email, password, ...profile } = payload;
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    const uid = cred.user.uid;
+
+    const now = new Date().toISOString();
+    const userData = {
+        id: uid,
+        email,
+        createdAt: now,
+        updatedAt: now,
+        roles: { customer: true, ...(profile.roles || {}) },
+        ...profile
+    };
+
+    await set(dbRef(`users/${uid}`), userData);
+    return userData;
+}
+
+export async function loginWithEmail(email, password) {
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    return cred.user;
+}
+
+export function onAuthChanged(callback) {
+    return onAuthStateChanged(auth, callback);
+}
+
+export async function logout() {
+    await signOut(auth);
+}
+
+/**
+ * Direct DB-only user creation (e.g. vendor-created users) without Auth.
+ * Caller must handle password hashing externally.
+ */
+export async function createUserDirect(user) {
+    const { id, ...rest } = user;
+    return setEntity('users', id, rest);
+}
+
+export async function getUser(id) {
+    return getOnce(`users/${id}`);
+}
+
+export async function updateUser(id, partial) {
+    return updateEntity('users', id, partial);
+}
+
+export async function deleteUser(id) {
+    // NOTE: does not delete Auth user; call auth.deleteUser(server-side) if needed
+    await deleteEntity('users', id);
+}
+
+/* =========================================
+   Orders
+========================================= */
+
+/**
+ * Create an Order.
+ * If `order.id` is provided, it will be used.
+ * Otherwise a push key is generated.
+ * Also maintains `userOrders` and `stallOrders` indexes.
+ *
+ * @param {{
+ *   id?: string,
+ *   userId: string|number,
+ *   stallId: string|number,
+ *   hawkerCentreId?: string|number,
+ *   dateCreated?: string,
+ *   status?: string,
+ *   payType: 'Cash' | 'Card' | 'PayNow',
+ *   items: object,
+ *   [key: string]: any
+ * }} order
+ */
+export async function createOrder(order) {
+    const { id: maybeId, userId, stallId } = order;
+    if (!userId) throw new Error('userId is required for order');
+    if (!stallId) throw new Error('stallId is required for order');
+
+    let orderRef;
+    let orderId = maybeId;
+
+    if (orderId) {
+        orderRef = dbRef(`orders/${orderId}`);
+    } else {
+        orderRef = firebasePush(dbRef('orders'));
+        orderId = orderRef.key;
+    }
+
+    const now = new Date().toISOString();
+    const data = {
+        ...order,
+        id: orderId,
+        dateCreated: order.dateCreated || now
+    };
+
+    await set(orderRef, data);
+
+    // indexes
+    await set(dbRef(`userOrders/${userId}/${orderId}`), true);
+    await set(dbRef(`stallOrders/${stallId}/${orderId}`), true);
+
+    return data;
+}
+
+export async function getOrder(id) {
+    return getOnce(`orders/${id}`);
+}
+
+export async function updateOrder(id, partial) {
+    await update(dbRef(`orders/${id}`), {
+        ...partial,
+        updatedAt: new Date().toISOString()
+    });
+    return getOrder(id);
+}
+
+/**
+ * Update order status (and optional extra fields)
+ */
+export async function updateOrderStatus(id, status, extra = {}) {
+    return updateOrder(id, { status, ...extra });
+}
+
+export async function deleteOrder(id) {
+    const order = await getOrder(id);
+    if (order) {
+        if (order.userId) {
+            await remove(dbRef(`userOrders/${order.userId}/${id}`));
+        }
+        if (order.stallId) {
+            await remove(dbRef(`stallOrders/${order.stallId}/${id}`));
+        }
+    }
+    await deleteEntity('orders', id);
+}
+
+export async function listUserOrders(userId) {
+    const ids = await getOnce(`userOrders/${userId}`);
+    if (!ids) return null;
+
+    const result = {};
+    for (const orderId of Object.keys(ids)) {
+        result[orderId] = await getOrder(orderId);
+    }
+    return result;
+}
+
+export async function listStallOrders(stallId) {
+    const ids = await getOnce(`stallOrders/${stallId}`);
+    if (!ids) return null;
+
+    const result = {};
+    for (const orderId of Object.keys(ids)) {
+        result[orderId] = await getOrder(orderId);
+    }
+    return result;
+}
+
+/* =========================================
+   Feedback
+========================================= */
+
+/**
+ * Create Feedback.
+ * If `feedback.id` not provided, uses a push key.
+ * maintains `stallFeedback` and `userFeedback` indexes.
+ */
+export async function createFeedback(feedback) {
+    const { id: maybeId, userId, stallId } = feedback;
+    if (!userId) throw new Error('userId is required for feedback');
+    if (!stallId) throw new Error('stallId is required for feedback');
+
+    let fbRef;
+    let fbId = maybeId;
+
+    if (fbId) {
+        fbRef = dbRef(`feedback/${fbId}`);
+    } else {
+        fbRef = firebasePush(dbRef('feedback'));
+        fbId = fbRef.key;
+    }
+
+    const now = new Date().toISOString();
+    const data = {
+        ...feedback,
+        id: fbId,
+        dateCreated: feedback.dateCreated || now
+    };
+
+    await set(fbRef, data);
+
+    // indexes
+    await set(dbRef(`stallFeedback/${stallId}/${fbId}`), true);
+    await set(dbRef(`userFeedback/${userId}/${fbId}`), true);
+
+    return data;
+}
+
+export async function getFeedback(id) {
+    return getOnce(`feedback/${id}`);
+}
+
+export async function deleteFeedback(id) {
+    const fb = await getFeedback(id);
+    if (fb) {
+        if (fb.stallId) {
+            await remove(dbRef(`stallFeedback/${fb.stallId}/${id}`));
+        }
+        if (fb.userId) {
+            await remove(dbRef(`userFeedback/${fb.userId}/${id}`));
+        }
+    }
+    await deleteEntity('feedback', id);
+}
+
+export async function listStallFeedback(stallId) {
+    const ids = await getOnce(`stallFeedback/${stallId}`);
+    if (!ids) return null;
+
+    const result = {};
+    for (const fbId of Object.keys(ids)) {
+        result[fbId] = await getFeedback(fbId);
+    }
+    return result;
+}
+
+export async function listUserFeedback(userId) {
+    const ids = await getOnce(`userFeedback/${userId}`);
+    if (!ids) return null;
+
+    const result = {};
+    for (const fbId of Object.keys(ids)) {
+        result[fbId] = await getFeedback(fbId);
+    }
+    return result;
+}
+
+/* =========================================
+   Complaints
+========================================= */
+
+/**
+ * Create a Complaint.
+ * If `complaint.id` not provided, uses random firebase key generated
+ * maintains `stallComplaints` and `userComplaints` indexes.
+ */
+export async function createComplaint(complaint) {
+    const { id: maybeId, userId, stallId } = complaint;
+    if (!userId) throw new Error('userId is required for complaint');
+    if (!stallId) throw new Error('stallId is required for complaint');
+
+    let cRef;
+    let cId = maybeId;
+
+    if (cId) {
+        cRef = dbRef(`complaints/${cId}`);
+    } else {
+        cRef = firebasePush(dbRef('complaints'));
+        cId = cRef.key;
+    }
+
+    const now = new Date().toISOString();
+    const data = {
+        ...complaint,
+        id: cId,
+        dateCreated: complaint.dateCreated || now,
+        status: complaint.status || 'open'
+    };
+
+    await set(cRef, data);
+
+    // indexes
+    await set(dbRef(`stallComplaints/${stallId}/${cId}`), true);
+    await set(dbRef(`userComplaints/${userId}/${cId}`), true);
+
+    return data;
+}
+
+export async function getComplaint(id) {
+    return getOnce(`complaints/${id}`);
+}
+
+export async function updateComplaint(id, partial) {
+    await update(dbRef(`complaints/${id}`), {
+        ...partial,
+        updatedAt: new Date().toISOString()
+    });
+    return getComplaint(id);
+}
+
+export async function deleteComplaint(id) {
+    const c = await getComplaint(id);
+    if (c) {
+        if (c.stallId) {
+            await remove(dbRef(`stallComplaints/${c.stallId}/${id}`));
+        }
+        if (c.userId) {
+            await remove(dbRef(`userComplaints/${c.userId}/${id}`));
+        }
+    }
+    await deleteEntity('complaints', id);
+}
+
+export async function listStallComplaints(stallId) {
+    const ids = await getOnce(`stallComplaints/${stallId}`);
+    if (!ids) return null;
+
+    const result = {};
+    for (const cId of Object.keys(ids)) {
+        result[cId] = await getComplaint(cId);
+    }
+    return result;
+}
+
+export async function listUserComplaints(userId) {
+    const ids = await getOnce(`userComplaints/${userId}`);
+    if (!ids) return null;
+
+    const result = {};
+    for (const cId of Object.keys(ids)) {
+        result[cId] = await getComplaint(cId);
+    }
+    return result;
 }

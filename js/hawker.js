@@ -1,5 +1,5 @@
 // /js/hawker.js
-import { getAllHawkerCentres, getAllFoodStalls } from "/js/firebase/wrapper.js";
+import { listHawkerCentres, listStalls } from "/js/firebase/wrapper.js";
 
 const regionSelect = document.getElementById("region");
 const hcGrid = document.getElementById("hcGrid");
@@ -10,17 +10,17 @@ function renderHawkerCentres(centres) {
   hcGrid.innerHTML = ""; // clear previous cards
 
   Object.entries(centres).forEach(([hcId, centre]) => {
-    const realHcId = String(centre.HawkerCentreID ?? centre.HCId ?? centre.HCID ?? hcId);
+    const realHcId = String(centre.id ?? hcId);
 
     hcGrid.innerHTML += `
       <div class="hc-card" data-hc-id="${realHcId}">
-          <div class="hc-image" style="background-image: url('${centre.ImageURL}');"></div>
+          <div class="hc-image" style="background-image: url('${centre.coverImage}');"></div>
           <div class="hc-info">
               <div class="hc-info-top">
-                  <strong>${centre.HCName}</strong>
-                  <span class="hc-price">${centre.PriceRange}</span>
+                  <strong>${centre.name}</strong>
+                  <span class="hc-price">${centre.priceRange}</span>
               </div>
-              <em>${centre.Region}</em>
+              <em>${centre.region}</em>
               <button class="hc-view-menu" type="button">View Menu</button>
           </div>
       </div>
@@ -31,8 +31,10 @@ function renderHawkerCentres(centres) {
 
 // Initialize: fetch data and render
 async function init() {
-  const centres = await getAllHawkerCentres();
+  const centres = await listHawkerCentres();
   if (!centres) return;
+
+  console.log(centres);
 
   renderHawkerCentres(centres);
 
@@ -117,7 +119,7 @@ featuredGrid?.addEventListener("click", async (e) => {
       .toLowerCase();
 
     if (wantedName) {
-      const stallsObj = await getAllFoodStalls();
+      const stallsObj = await listStalls();
       const allStalls = Object.values(stallsObj || {}).filter(Boolean);
 
       const match = allStalls.find(
