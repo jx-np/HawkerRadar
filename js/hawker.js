@@ -57,7 +57,7 @@ async function init() {
     const filtered = Object.fromEntries(
       Object.entries(centres).filter(([, centre]) => {
         if (!selectedRegion) return true;
-        return (centre.Region || "").toLowerCase() === selectedRegion;
+        return (centre.region || "").toLowerCase() === selectedRegion;
       })
     );
 
