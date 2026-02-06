@@ -235,20 +235,21 @@ body {
 ========================== */
 @media screen and (max-width: 768px) {
     
+    /* 1. Layout & Container */
     .container {
         width: 100%;
         padding: 0 15px;
         margin-bottom: 40px;
     }
 
+    /* 2. Stall Header Banner */
     .stall-header {
-        height: 200px; /* Shorter banner for mobile */
-        margin-top: 80px; /* Less gap from top */
-        margin-bottom: 25px;
+        height: 200px;
+        margin-top: 80px; 
     }
 
     .stall-title {
-        font-size: 24px; /* Smaller font */
+        font-size: 24px; 
         left: 20px;
         bottom: 15px;
     }
@@ -259,33 +260,35 @@ body {
         left: 15px;
     }
 
+    /* 3. Filter Controls (Stack them) */
     .filter-controls {
-        flex-direction: column; /* Stack vertically */
-        align-items: stretch; /* Stretch to full width */
+        flex-direction: column;
+        align-items: stretch;
         gap: 15px;
     }
 
     .filter-controls label {
-        margin-bottom: -5px; /* Pull label closer to input */
+        margin-bottom: -5px;
     }
 
     .filter-label-spacing {
-        margin-left: 0; /* Remove left spacing since it's now on a new line */
+        margin-left: 0;
     }
 
     .filter-controls select,
     .filter-controls input[type="date"],
     .filter-controls button {
-        width: 100%; /* Full width inputs */
+        width: 100%;
         min-width: 0;
     }
 
+    /* 4. Complaint Cards */
     .complaint-card {
         padding: 15px;
     }
 
     .card-header {
-        flex-direction: column; /* Stack header items */
+        flex-direction: column;
         align-items: flex-start;
         gap: 8px;
     }
@@ -303,18 +306,19 @@ body {
     }
 
     .date {
-        align-self: flex-start; /* Align date to left */
+        align-self: flex-start;
         font-size: 0.85rem;
         color: #666;
         margin-top: 4px;
     }
 
+    /* 5. Mark as Read Button */
     .card-actions {
         margin-top: 20px;
     }
 
     .btn-mark-read {
-        width: 100%; /* Full width button for easier tapping */
+        width: 100%;
         padding: 12px;
     }
 }

@@ -2,7 +2,8 @@ import { listStallFeedback, getUser, getStall } from "/js/firebase/wrapper.js";
 
 // --- Get Stall ID from URL ---
 const urlParams = new URLSearchParams(window.location.search);
-const STALL_ID = urlParams.get('id'); // e.g. "501"
+// const STALL_ID = urlParams.get('id'); // e.g. "501"
+const STALL_ID = 305;
 
 // --- DOM Elements ---
 const reviewListContainer = document.getElementById('review-list');
@@ -11,7 +12,7 @@ const filterSelect = document.getElementById('star-filter');
 const heroRatingVal = document.getElementById('hero-rating-val');
 const heroReviewCount = document.getElementById('hero-review-count');
 const stallNameHeader = document.querySelector('.stall-name');
-const heroSection = document.querySelector('.hero-section'); // <--- Added Selector
+const heroSection = document.querySelector('.hero-section'); 
 
 // --- Main Logic ---
 async function initPage() {
@@ -38,8 +39,10 @@ async function initPage() {
                 stallNameHeader.textContent = stallData.name || "Unknown Stall";
             }
             
-            // 2. Update Background Image (New Logic)
-            const imageUrl = stallData.image || stallData.coverImage;
+            // 2. Update Background Image (Updated Logic)
+            // Checks 'storeImage' first, then 'image', then 'coverImage'
+            const imageUrl = stallData.storeImage || stallData.image || stallData.coverImage;
+            
             if (imageUrl && heroSection) {
                 heroSection.style.backgroundImage = `url('${imageUrl}')`;
             }
@@ -113,7 +116,7 @@ function renderReviews(reviewsToRender) {
 
     reviewsToRender.forEach(review => {
         const rating = Number(review.rating).toFixed(1);
-        const comment = review.comments || "No comment provided.";
+        const comment = review.comment || review.comments || "No comment provided.";
         const name = review.customerName;
 
         const cardHTML = `
