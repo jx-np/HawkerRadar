@@ -1,6 +1,7 @@
 // ../../js/dish.js
 // Dish detail page
-// URL: dish.html?stall=301&item=CR01
+// URL: dish.html?stall=<stallId>&item=<menuItemId>
+// Works with updated /js/firebase/wrapper.js (getMenuItem(id), listMenuItemsByStall(stallId)).
 
 const CART_VERSION = 1;
 
@@ -43,8 +44,8 @@ function saveCart(cart) {
   localStorage.setItem(cartStorageKey(), JSON.stringify(cart));
 }
 
-function itemKey(stallId, itemCode) {
-  return `${stallId}_${itemCode}`;
+function itemKey(stallId, itemId) {
+  return `${stallId}_${itemId}`;
 }
 
 function money(n) {
@@ -77,8 +78,7 @@ function setImgWithFallback(imgEl, primary, fallback, alt = "") {
 }
 
 async function loadWrapper() {
-  const wrapperPath = window.DISH_PAGE?.wrapperPath;
-  if (!wrapperPath) throw new Error("window.DISH_PAGE.wrapperPath missing");
+  const wrapperPath = window.DISH_PAGE?.wrapperPath || "/js/firebase/wrapper.js";
   const wrapperUrl = new URL(wrapperPath, document.baseURI).href;
   return import(wrapperUrl);
 }
@@ -87,41 +87,18 @@ function getParams() {
   const url = new URL(window.location.href);
   return {
     stallId: (url.searchParams.get("stall") || "").trim(),
-    itemCode: (url.searchParams.get("item") || "").trim(),
+    itemId: (url.searchParams.get("item") || "").trim(),
   };
 }
 
-// Best-effort: if the user arrived from the stall menu page, remember it.
-// This makes the "Add" button reliably return to the right place even if your folder structure differs.
-function rememberReturnToFromReferrer() {
-  try {
-    const ref = (document.referrer || "").trim();
-    if (!ref) return;
-
-    // only store same-origin referrers
-    const u = new URL(ref);
-    if (u.origin !== window.location.origin) return;
-
-    // keep it broad: anything that looks like the stall menu page
-    const p = (u.pathname || "").toLowerCase();
-    if (p.includes("stall_dish") || p.includes("stall-dish") || p.endsWith("/stall_dish.html") || p.endsWith("/stall-dish.html")) {
-      sessionStorage.setItem("dish:returnTo", u.href);
-    }
-  } catch {
-    // ignore
-  }
-}
-
-function goBackToMenu(stallId, itemCode) {
-  // 1) preferred: explicit returnTo saved in session
+function smartBackToMenu(resolvedStallId) {
   const saved = sessionStorage.getItem("dish:returnTo");
   if (saved) {
     try {
       const u = new URL(saved, window.location.href);
       if (u.origin === window.location.origin) {
-        if (stallId) u.searchParams.set("stall", String(stallId));
-        if (itemCode) u.searchParams.set("highlight", String(itemCode));
-        window.location.replace(u.href);
+        if (resolvedStallId) u.searchParams.set("stall", String(resolvedStallId));
+        window.location.href = u.href;
         return;
       }
     } catch {
@@ -129,14 +106,28 @@ function goBackToMenu(stallId, itemCode) {
     }
   }
 
-  // 2) fallback: relative stall menu page in same folder
   const fallback = new URL("./stall_dish.html", window.location.href);
-  if (stallId) fallback.searchParams.set("stall", String(stallId));
-  if (itemCode) fallback.searchParams.set("highlight", String(itemCode));
-  window.location.replace(fallback.href);
+  if (resolvedStallId) fallback.searchParams.set("stall", String(resolvedStallId));
+  window.location.href = fallback.href;
 }
 
-/* ---------- favorites (guest local fallback matches stall page) ---------- */
+// best-effort: store stall_dish referrer as returnTo
+function rememberReturnToFromReferrer() {
+  try {
+    const ref = (document.referrer || "").trim();
+    if (!ref) return;
+    const u = new URL(ref);
+    if (u.origin !== window.location.origin) return;
+    const p = (u.pathname || "").toLowerCase();
+    if (p.includes("stall_dish") || p.includes("stall-dish")) {
+      sessionStorage.setItem("dish:returnTo", u.href);
+    }
+  } catch {
+    // ignore
+  }
+}
+
+/* ---------- favorites (localStorage; shared with stall_dish page) ---------- */
 function localFavKey(stallId) {
   return `hc:fav:${stallId}`;
 }
@@ -171,112 +162,149 @@ const el = {
   viewCart: document.getElementById("viewCart"),
 };
 
+/* ---------- data normalizers ---------- */
+function dishNameOf(mi, itemId) {
+  return (mi?.name ?? mi?.ItemDesc ?? mi?.itemDesc ?? `Item ${itemId}`).toString();
+}
+function dishDescOf(mi, fallback = "") {
+  const d = (mi?.description ?? mi?.desc ?? mi?.ItemLongDesc ?? mi?.ItemDescLong ?? "").toString().trim();
+  if (d) return d;
+  const cat = (mi?.category ?? mi?.ItemCategory ?? mi?.cuisine ?? mi?.type ?? "").toString().trim();
+  if (cat) return `${cat}. ${fallback}`.trim();
+  return fallback;
+}
+function dishPriceOf(mi) {
+  return mi?.price ?? mi?.ItemPrice ?? mi?.unitPrice ?? mi?.cost ?? 0;
+}
+function dishStallIdOf(mi) {
+  return mi?.stallId ?? mi?.StallID ?? mi?.stallID ?? mi?.StallId ?? "";
+}
+
+async function fetchMenuItem(wrapper, stallId, itemId) {
+  // ✅ updated wrapper
+  if (wrapper?.getMenuItem) {
+    const mi = await wrapper.getMenuItem(itemId);
+    if (mi) return mi;
+  }
+
+  // fallback: list by stall and find
+  if (stallId && wrapper?.listMenuItemsByStall) {
+    const obj = await wrapper.listMenuItemsByStall(stallId);
+    if (!obj) return null;
+    if (obj[itemId]) return obj[itemId];
+    for (const mi of Object.values(obj)) {
+      if (!mi) continue;
+      const idGuess = String(mi?.id ?? mi?.ItemCode ?? mi?.itemCode ?? "").trim();
+      if (idGuess && idGuess === String(itemId)) return mi;
+    }
+  }
+
+  // fallback: list all and find
+  if (wrapper?.listMenuItems) {
+    const obj = await wrapper.listMenuItems();
+    if (!obj) return null;
+    if (obj[itemId]) return obj[itemId];
+    for (const mi of Object.values(obj)) {
+      if (!mi) continue;
+      const idGuess = String(mi?.id ?? mi?.ItemCode ?? mi?.itemCode ?? "").trim();
+      if (idGuess && idGuess === String(itemId)) return mi;
+    }
+  }
+
+  return null;
+}
+
+/* ---------- main ---------- */
 (async function init() {
-  const { stallId, itemCode } = getParams();
+  const { stallId: paramStallId, itemId } = getParams();
 
-  // remember where the user came from (if they came from the stall menu page)
   rememberReturnToFromReferrer();
-
-  // back button
-  el.back?.addEventListener("click", () => {
-    if (window.history.length > 1) return window.history.back();
-    // fallback: go back to stall menu
-    goBackToMenu(stallId, itemCode);
-  });
 
   // cart link (so cart can return here)
   el.viewCart?.addEventListener("click", (e) => {
     e.preventDefault();
-    sessionStorage.setItem("cart:returnTo", window.location.href);
-    window.location.href = new URL("../user/cart.html", window.location.href).href;
+      // Always return cart -> stall menu
+  const stallMenuUrl =
+    sessionStorage.getItem("dish:returnTo") ||
+    (() => {
+      const u = new URL("./stall_dish.html", window.location.href);
+      if (stallId) u.searchParams.set("stall", String(stallId));
+      return u.href;
+    })();
+
+  sessionStorage.setItem("cart:returnTo", stallMenuUrl);
+  window.location.href = new URL("../user/cart.html", window.location.href).href;
   });
 
-  if (!stallId || !itemCode) {
+  if (!itemId) {
     if (el.name) el.name.textContent = "Missing dish";
     if (el.desc) el.desc.textContent = "Open this page like: dish.html?stall=301&item=CR01";
+    if (el.addBtn) el.addBtn.disabled = true;
     return;
   }
 
   try {
     const wrapper = await loadWrapper();
+    const mi = await fetchMenuItem(wrapper, paramStallId, itemId);
 
-    // Load dish
-    const dish = await wrapper.getMenuItem(stallId, itemCode);
-    if (!dish) {
+    if (!mi) {
       if (el.name) el.name.textContent = "Dish not found";
+      if (el.desc) el.desc.textContent = `No menu item found for item=${itemId}`;
+      if (el.addBtn) el.addBtn.disabled = true;
       return;
     }
 
-    const dishName = dish.ItemDesc || `Item ${itemCode}`;
-    const unitPrice = toNumberPrice(dish.ItemPrice);
+    // resolve stallId (prefer URL param, else from menu item)
+    const resolvedStallId = (paramStallId || dishStallIdOf(mi) || "").toString().trim();
+
+    // back button
+    el.back?.addEventListener("click", () => {
+      goBackToMenu(stallId, itemCode);
+    });
+
+    const dishName = dishNameOf(mi, itemId);
+    const unitPrice = toNumberPrice(dishPriceOf(mi));
 
     document.title = dishName;
     if (el.name) el.name.textContent = dishName;
-
-    // placeholder description (you can change later)
-    const cat = (dish.ItemCategory || "").trim();
-    if (el.desc) {
-      el.desc.textContent = cat
-        ? `${cat}. This is placeholder description text — replace with real dish description later.`
-        : "This is placeholder description text — replace with real dish description later.";
-    }
-
     if (el.price) el.price.textContent = money(unitPrice);
 
-    // banner image guess
-    const guessImg = `../../images/dishes/${stallId}_${itemCode}.jpg`;
-    const fallbackImg = "../../images/dishes/placeholder.jpg";
-    setImgWithFallback(el.banner, guessImg, fallbackImg, dishName);
-
-    // Favorites init
-    const customerId = localStorage.getItem("CustomerID")?.trim();
-    let isFav = false;
-    let localFavSet = null;
-
-    if (customerId) {
-      const like = await wrapper.getLike(customerId, stallId, itemCode);
-      isFav = !!like;
-    } else {
-      localFavSet = loadLocalFavSet(stallId);
-      isFav = localFavSet.has(String(itemCode));
+    if (el.desc) {
+      el.desc.textContent = dishDescOf(
+        mi,
+        "This is placeholder description text — replace with real dish description later."
+      );
     }
 
-    setPressed(el.favBtn, isFav);
+    // banner image guess
+    const guessImg = resolvedStallId
+      ? `../../images/dishes/${resolvedStallId}_${itemId}.jpg`
+      : `../../images/dishes/${itemId}.jpg`;
+    setImgWithFallback(el.banner, guessImg, "../../images/dishes/placeholder.jpg", dishName);
 
-    el.favBtn?.addEventListener("click", async () => {
-      try {
-        const currently = el.favBtn?.getAttribute("aria-pressed") === "true";
+    // favorites (localStorage)
+    const favSet = loadLocalFavSet(resolvedStallId || "unknown");
+    setPressed(el.favBtn, favSet.has(String(itemId)));
 
-        if (customerId) {
-          if (currently) {
-            await wrapper.deleteData("likes", `${customerId}_${stallId}_${itemCode}`);
-            setPressed(el.favBtn, false);
-          } else {
-            await wrapper.addLike(customerId, stallId, itemCode);
-            setPressed(el.favBtn, true);
-          }
-        } else {
-          if (!localFavSet) localFavSet = loadLocalFavSet(stallId);
-          if (currently) localFavSet.delete(String(itemCode));
-          else localFavSet.add(String(itemCode));
-          saveLocalFavSet(stallId, localFavSet);
-          setPressed(el.favBtn, !currently);
-        }
-      } catch (err) {
-        console.error("fav toggle failed", err);
-      }
+    el.favBtn?.addEventListener("click", () => {
+      const currently = el.favBtn?.getAttribute("aria-pressed") === "true";
+      if (currently) favSet.delete(String(itemId));
+      else favSet.add(String(itemId));
+      saveLocalFavSet(resolvedStallId || "unknown", favSet);
+      setPressed(el.favBtn, !currently);
     });
-    // Cart: add quantity (persists on this page)
-    let cart = loadCart();
-    const k = itemKey(stallId, itemCode);
+
+    // cart qty selector persistence
+    const k = itemKey(resolvedStallId || "unknown", itemId);
     const selKey = `dish:addQty:${k}`;
 
-    function getInCartQty() {
-      return cart.items?.[k]?.qty ?? 0;
-    }
-
-    // Load last selected qty for this dish (session-only) so it won't reset to 1 after adding
+    let cart = loadCart();
     let addQty = Math.max(1, Number(sessionStorage.getItem(selKey)) || 1);
+
+    function getInCartQty() {
+      const key = itemKey(resolvedStallId || "unknown", itemId);
+      return cart.items?.[key]?.qty ?? 0;
+    }
 
     function persistQty() {
       sessionStorage.setItem(selKey, String(addQty));
@@ -304,29 +332,31 @@ const el = {
     });
 
     el.addBtn?.addEventListener("click", () => {
-      cart = loadCart();
+      // prevent double clicks
+      if (el.addBtn) el.addBtn.disabled = true;
 
-      if (!cart.items[k]) {
-        cart.items[k] = {
-          stallId: String(stallId),
-          itemCode: String(itemCode),
+      cart = loadCart();
+      const key = itemKey(resolvedStallId || "unknown", itemId);
+
+      if (!cart.items[key]) {
+        cart.items[key] = {
+          stallId: String(resolvedStallId || "unknown"),
+          itemCode: String(itemId),
           name: String(dishName),
           unitPrice: unitPrice,
           qty: 0,
         };
       }
 
-      cart.items[k].qty += addQty;
+      cart.items[key].qty += addQty;
       saveCart(cart);
-
-      // ✅ keep user's selected qty (don't reset to 1)
       persistQty();
 
-      // ✅ after adding, go back to the stall menu page
-      goBackToMenu(stallId, itemCode);
+      // go back to stall menu page
+      smartBackToMenu(resolvedStallId);
     });
 
-    // If you come back from Cart, refresh the "In cart" label (keep selected qty too)
+    // refresh “In cart” on return from cart, keep selected qty
     window.addEventListener("pageshow", () => {
       cart = loadCart();
       const saved = Number(sessionStorage.getItem(selKey));
@@ -336,10 +366,10 @@ const el = {
 
     persistQty();
     renderQtyUI();
-
   } catch (err) {
     console.error(err);
     if (el.name) el.name.textContent = "Error loading dish";
     if (el.desc) el.desc.textContent = err?.message || String(err);
+    if (el.addBtn) el.addBtn.disabled = true;
   }
 })();
