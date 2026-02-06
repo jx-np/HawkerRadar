@@ -1,109 +1,149 @@
-import { getAllFeedback, getAllCustomers, getCustomer } from "/js/firebase/wrapper.js";
+import { listStallFeedback, getUser, getStall } from "/js/firebase/wrapper.js";
 
-let feedbackDataRaw = await getAllFeedback();
-let customerDataRaw = await getAllCustomers();
+// --- Get Stall ID from URL ---
+const urlParams = new URLSearchParams(window.location.search);
+const STALL_ID = urlParams.get('id'); // e.g. "501"
 
-// Convert customers to an array first so we can search them
-const customersArray = feedbackDataRaw ? Object.values(feedbackDataRaw) : [];
-
-// Create the complaints array and merge the customer name into it
-let feedbackData = [];
-
-if (feedbackDataRaw) {
-    // Create an array of Promises
-    const processingPromises = Object.values(feedbackDataRaw).map(async (feedback) => {
-        // Now we can use await here safely because the callback is async
-        let customer = await getCustomer(feedback.CustomerID);
-        console.log(customer)
-        return {
-            ...feedback,
-            customername: customer ? customer.CustName : "Unknown User"
-        };
-    });
-
-    // Wait for ALL promises to finish before continuing
-    feedbackData = await Promise.all(processingPromises);
-}
-
-console.log(feedbackData)
-// DOM Elements
+// --- DOM Elements ---
 const reviewListContainer = document.getElementById('review-list');
 const filterBtn = document.getElementById('btn-filter');
 const filterSelect = document.getElementById('star-filter');
 const heroRatingVal = document.getElementById('hero-rating-val');
 const heroReviewCount = document.getElementById('hero-review-count');
+const stallNameHeader = document.querySelector('.stall-name');
 
-// Calculate Average Rating & Count for Hero Section
+// --- Main Logic ---
+async function initPage() {
+    if (!STALL_ID) {
+        console.error("No Stall ID found in URL");
+        if(stallNameHeader) stallNameHeader.textContent = "Stall Not Found";
+        reviewListContainer.innerHTML = "<p style='text-align:center;'>Error: No stall selected.</p>";
+        return;
+    }
+
+    console.log("Loading data for Stall ID:", STALL_ID);
+
+    try {
+        // Parallel Fetch: Get Stall Info AND Feedback at the same time
+        const [stallData, feedbackMap] = await Promise.all([
+            getStall(STALL_ID),
+            listStallFeedback(STALL_ID)
+        ]);
+
+        // Update Header Info
+        if (stallData && stallNameHeader) {
+            stallNameHeader.textContent = stallData.name || "Unknown Stall";
+        } else if (stallNameHeader) {
+            stallNameHeader.textContent = "Stall Not Found";
+        }
+
+        // Process Feedback
+        let feedbackData = [];
+        const rawFeedbackArray = feedbackMap ? Object.values(feedbackMap) : [];
+
+        if (rawFeedbackArray.length > 0) {
+            // Hydrate with User Names
+            const processingPromises = rawFeedbackArray.map(async (feedback) => {
+                let userName = "Unknown User";
+                if (feedback.userId) {
+                    try {
+                        const user = await getUser(feedback.userId);
+                        if (user) {
+                            userName = user.name || user.email || "Anonymous";
+                        }
+                    } catch (err) {
+                        console.error("Failed to fetch user:", feedback.userId);
+                    }
+                }
+                return { ...feedback, customerName: userName };
+            });
+
+            feedbackData = await Promise.all(processingPromises);
+        }
+
+        // Render Page
+        updateHeroStats(feedbackData);
+        renderReviews(feedbackData);
+
+        // Setup Filter Button
+        setupFilter(feedbackData);
+
+    } catch (error) {
+        console.error("Error initializing page:", error);
+    }
+}
+
+// --- Helper Functions ---
+
 function updateHeroStats(reviews) {
+    if (!heroRatingVal || !heroReviewCount) return;
+
     const totalReviews = reviews.length;
-    
     if (totalReviews === 0) {
         heroRatingVal.textContent = "0.0";
         heroReviewCount.textContent = "(0)";
         return;
     }
-
-    // Sum up all ratings
-    const sum = reviews.reduce((acc, curr) => acc + curr.FbkRating, 0);
-    const average = (sum / totalReviews).toFixed(1); // One decimal place (e.g., 4.5)
-
-    // Update HTML
+    const sum = reviews.reduce((acc, curr) => acc + (Number(curr.rating) || 0), 0);
+    const average = (sum / totalReviews).toFixed(1);
+    
     heroRatingVal.textContent = average;
-    heroReviewCount.textContent = `(${totalReviews})`; // e.g. (150)
+    heroReviewCount.textContent = `(${totalReviews})`;
 }
 
-// Render Review Cards
 function renderReviews(reviewsToRender) {
-    reviewListContainer.innerHTML = ''; // Clear existing list
+    if (!reviewListContainer) return;
+    reviewListContainer.innerHTML = ''; 
 
-    if (reviewsToRender.length === 0) {
-        reviewListContainer.innerHTML = '<p>No reviews found for this filter.</p>';
+    if (!reviewsToRender || reviewsToRender.length === 0) {
+        reviewListContainer.innerHTML = '<p style="padding: 20px; text-align:center;">No reviews yet for this stall.</p>';
         return;
     }
 
     reviewsToRender.forEach(review => {
-        // Create HTML string for one card
+        const rating = Number(review.rating).toFixed(1);
+        const comment = review.comments || "No comment provided.";
+        const name = review.customerName;
+
         const cardHTML = `
             <div class="review-card">
                 <div class="card-header">
                     <div class="avatar-circle"></div>
-                    <span class="user-name">${review.customername}</span>
+                    <span class="user-name">${name}</span>
                     <div class="star-display">
                         <i class="fa-regular fa-star"></i>
-                        <span>${review.FbkRating.toFixed(1)}</span>
+                        <span>${rating}</span>
                     </div>
                 </div>
                 <div class="review-body">
                     <div class="review-content">
-                        <ul>
-                            <li>${review.FbkComment}</li>
-                        </ul>
+                        <ul><li>${comment}</li></ul>
                     </div>
                 </div>
             </div>
         `;
-        // Append to container
         reviewListContainer.innerHTML += cardHTML;
     });
 }
 
-// Filter Functionality
-filterBtn.addEventListener('click', () => {
-    const filterValue = filterSelect.value;
-    
-    if (filterValue === "all") {
-        renderReviews(feedbackData);
-    } else {
-        // Math.floor(4.5) = 4, so 4.5 stars will show up under "4 Stars" filter
-        const filteredData = feedbackData.filter(item => Math.floor(item.FbkRating) == filterValue);
-        renderReviews(filteredData);
+function setupFilter(allFeedback) {
+    if (filterBtn && filterSelect) {
+        // Remove old listeners by cloning
+        const newBtn = filterBtn.cloneNode(true);
+        filterBtn.parentNode.replaceChild(newBtn, filterBtn);
+
+        newBtn.addEventListener('click', () => {
+            const filterValue = filterSelect.value;
+            if (filterValue === "all") {
+                renderReviews(allFeedback);
+            } else {
+                const filteredData = allFeedback.filter(item => Math.floor(item.rating) == filterValue);
+                renderReviews(filteredData);
+            }
+        });
     }
-});
+}
 
-// 5. INITIALIZATION: Run on page load
-// Calculate stats based on the FULL database
-updateHeroStats(feedbackData);
-// Show all reviews initially
-renderReviews(feedbackData);
-
-console.log("Complaint JS loaded");
+// --- Run ---
+initPage();
+console.log("Review JS loaded");
