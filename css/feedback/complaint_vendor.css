@@ -200,6 +200,130 @@ body {
     line-height: 1.4;
 }
 
+.card-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end; /* Aligns button to the right */
+}
+
+.btn-mark-read {
+    padding: 8px 16px;
+    background-color: #28a745; /* Green */
+    color: white;
+    border: 1px solid #218838;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-mark-read:hover {
+    background-color: #218838; /* Darker Green */
+}
+
+/* Button State: RED (Closed/Read) */
+.btn-mark-read.closed {
+    background-color: #dc3545 !important; /* Red */
+    border-color: #c82333 !important;
+    color: white !important;
+    cursor: default;
+    opacity: 0.8;
+}
+
+/* ==========================
+   MOBILE RESPONSIVENESS
+========================== */
+@media screen and (max-width: 768px) {
+    
+    /* 1. Layout & Container */
+    .container {
+        width: 100%;
+        padding: 0 15px;
+        margin-bottom: 40px;
+    }
+
+    /* 2. Stall Header Banner */
+    .stall-header {
+        height: 200px; /* Shorter banner for mobile */
+        margin-top: 80px; /* Less gap from top */
+        margin-bottom: 25px;
+    }
+
+    .stall-title {
+        font-size: 24px; /* Smaller font */
+        left: 20px;
+        bottom: 15px;
+    }
+
+    .back-arrow {
+        font-size: 20px;
+        top: 15px;
+        left: 15px;
+    }
+
+    /* 3. Filter Controls (Stack them) */
+    .filter-controls {
+        flex-direction: column; /* Stack vertically */
+        align-items: stretch; /* Stretch to full width */
+        gap: 15px;
+    }
+
+    .filter-controls label {
+        margin-bottom: -5px; /* Pull label closer to input */
+    }
+
+    .filter-label-spacing {
+        margin-left: 0; /* Remove left spacing since it's now on a new line */
+    }
+
+    .filter-controls select,
+    .filter-controls input[type="date"],
+    .filter-controls button {
+        width: 100%; /* Full width inputs */
+        min-width: 0;
+    }
+
+    /* 4. Complaint Cards */
+    .complaint-card {
+        padding: 15px;
+    }
+
+    .card-header {
+        flex-direction: column; /* Stack header items */
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .user-name {
+        margin-right: 0;
+        margin-bottom: 4px;
+        font-size: 1.1rem;
+    }
+
+    .issue-type {
+        width: 100%;
+        margin-right: 0;
+        font-size: 0.95rem;
+    }
+
+    .date {
+        align-self: flex-start; /* Align date to left */
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 4px;
+    }
+
+    /* 5. Button (Mark as Read) */
+    .card-actions {
+        margin-top: 20px;
+    }
+
+    .btn-mark-read {
+        width: 100%; /* Full width button for easier tapping */
+        padding: 12px;
+    }
+}
+
 /* ==========================
    FONTS
 ========================== */
