@@ -177,6 +177,75 @@ select#star-filter {
 }
 
 /* ==========================
+   MOBILE RESPONSIVENESS
+========================== */
+@media screen and (max-width: 768px) {
+    
+    /* 1. Adjust Container & Spacing */
+    .container {
+        width: 100%;
+        padding: 0 20px;
+        margin-bottom: 40px;
+    }
+
+    /* 2. Hero Section (Banner) */
+    .hero-section {
+        height: 220px; /* Reduce height */
+        margin-top: 80px; /* Reduce top gap */
+    }
+
+    .hero-overlay {
+        padding: 15px 20px;
+    }
+
+    .stall-name {
+        font-size: 1.8rem; /* Smaller title */
+        margin-bottom: 5px;
+    }
+
+    .stall-rating-summary {
+        font-size: 1.4rem; /* Smaller stars */
+    }
+
+    #hero-review-count {
+        font-size: 1.1rem;
+    }
+
+    .back-arrow {
+        font-size: 1.5rem;
+    }
+
+    /* 3. Filter Controls (Stack Vertical) */
+    .filter-container {
+        flex-direction: column; /* Stack items */
+        align-items: stretch;   /* Full width */
+        gap: 15px;
+    }
+
+    select#star-filter,
+    .btn-filter {
+        width: 100%; /* Full width inputs */
+    }
+
+    /* 4. Review Cards */
+    .review-card {
+        padding: 15px 20px; /* Reduce padding */
+    }
+
+    .card-header {
+        flex-wrap: wrap; /* Allow wrapping if name is long */
+    }
+
+    .user-name {
+        font-size: 1rem;
+    }
+
+    .star-display {
+        font-size: 1rem;
+    }
+}
+
+/* ==========================
    FONTS
 ========================== */
 @font-face {
