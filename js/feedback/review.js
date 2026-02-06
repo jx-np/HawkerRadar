@@ -16,7 +16,7 @@ const stallNameHeader = document.querySelector('.stall-name');
 async function initPage() {
     if (!STALL_ID) {
         console.error("No Stall ID found in URL");
-        if(stallNameHeader) stallNameHeader.textContent = "Stall Not Found";
+        if(stallNameHeader) stallNameHeader.textContent = "Error: No Stall ID";
         reviewListContainer.innerHTML = "<p style='text-align:center;'>Error: No stall selected.</p>";
         return;
     }
