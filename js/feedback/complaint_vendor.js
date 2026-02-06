@@ -3,7 +3,7 @@ import { listStallComplaints, getUser, getStall, updateComplaint } from "/js/fir
 // --- 1. Get Stall ID from URL (Dynamic) ---
 const urlParams = new URLSearchParams(window.location.search);
 // const STALL_ID = urlParams.get('id'); // Gets ?id=301 from URL
-const STALL_ID = 301;
+const STALL_ID = 303;
 
 // --- DOM Elements ---
 const complaintsList = document.getElementById('complaints-list');
@@ -121,7 +121,7 @@ function renderComplaints(data) {
             </div>
             <div class="card-body">
                 <ul>
-                    <li>${complaint.comments}</li>
+                    <li>${complaint.description}</li>
                 </ul>
                 <div class="card-actions">
                     <button class="${btnClass}" data-id="${complaint.id}">${btnText}</button>

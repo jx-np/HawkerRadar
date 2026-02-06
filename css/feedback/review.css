@@ -182,14 +182,14 @@ select#star-filter {
 ========================== */
 @media screen and (max-width: 768px) {
     
-    /* 1. Adjust Container & Spacing */
+    /* Adjust Container & Spacing */
     .container {
         width: 100%;
         padding: 0 20px;
         margin-bottom: 40px;
     }
 
-    /* 2. Hero Section (Banner) */
+    /* Hero Section (Banner) */
     .hero-section {
         height: 220px; /* Reduce height */
         margin-top: 80px; /* Reduce top gap */
@@ -216,7 +216,7 @@ select#star-filter {
         font-size: 1.5rem;
     }
 
-    /* 3. Filter Controls (Stack Vertical) */
+    /* Filter Controls (Stack Vertical) */
     .filter-container {
         flex-direction: column; /* Stack items */
         align-items: stretch;   /* Full width */
@@ -228,7 +228,7 @@ select#star-filter {
         width: 100%; /* Full width inputs */
     }
 
-    /* 4. Review Cards */
+    /* Review Cards */
     .review-card {
         padding: 15px 20px; /* Reduce padding */
     }

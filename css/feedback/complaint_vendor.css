@@ -31,6 +31,20 @@ body {
     margin-top: 120px;
 }
 
+/* Dark Gradient Overlay for Text Readability */
+.stall-header::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Gradient from transparent at top to 80% black at bottom */
+    background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.8));
+    border-radius: 12px; 
+    z-index: 1; /* Sits above image, below text */
+}
+
 .stall-title {
     position: absolute;
     bottom: 25px;
@@ -38,7 +52,7 @@ body {
     font-size: 36px;
     font-weight: 600;
     color: white;
-    z-index: 2;
+    z-index: 2; /* Sits on top of overlay */
 }
 
 .header-bg {
@@ -56,7 +70,7 @@ body {
     left: 20px;
     font-size: 24px;
     color: white;
-    z-index: 2;
+    z-index: 2; /* Sits on top of overlay */
     cursor: pointer;
 }
 
@@ -93,6 +107,7 @@ body {
     align-items: center;
     gap: 10px;
     margin-bottom: 25px;
+    flex-wrap: wrap; 
 }
 
 .filter-controls label {
@@ -121,25 +136,15 @@ body {
 }
 
 .filter-controls input[type="date"] {
-    padding: 7px; /* 7px aligns vertically better with select's 8px usually */
+    padding: 7px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-family: 'Satoshi', sans-serif;
     color: #333;
 }
 
-/* Optional: Add a little spacing if the labels feel too tight */
 .filter-label-spacing {
     margin-left: 10px;
-}
-
-/* Update: Allow controls to wrap on smaller screens so it doesn't break */
-.filter-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 25px;
-    flex-wrap: wrap; /* Added this to prevent layout breaking on mobile */
 }
 
 /* Complaint Card */
@@ -200,12 +205,14 @@ body {
     line-height: 1.4;
 }
 
+/* Action Buttons */
 .card-actions {
     margin-top: 15px;
     display: flex;
-    justify-content: flex-end; /* Aligns button to the right */
+    justify-content: flex-end; 
 }
 
+/* Default State: GREEN (Mark as Read) */
 .btn-mark-read {
     padding: 8px 16px;
     background-color: #28a745; /* Green */
@@ -221,7 +228,7 @@ body {
     background-color: #218838; /* Darker Green */
 }
 
-/* Button State: RED (Closed/Read) */
+/* Closed State: RED (Read) */
 .btn-mark-read.closed {
     background-color: #dc3545 !important; /* Red */
     border-color: #c82333 !important;
@@ -235,14 +242,14 @@ body {
 ========================== */
 @media screen and (max-width: 768px) {
     
-    /* 1. Layout & Container */
+    /* Layout & Container */
     .container {
         width: 100%;
         padding: 0 15px;
         margin-bottom: 40px;
     }
 
-    /* 2. Stall Header Banner */
+    /* Stall Header Banner */
     .stall-header {
         height: 200px;
         margin-top: 80px; 
@@ -260,7 +267,7 @@ body {
         left: 15px;
     }
 
-    /* 3. Filter Controls (Stack them) */
+    /* Filter Controls (Stack them) */
     .filter-controls {
         flex-direction: column;
         align-items: stretch;
@@ -282,7 +289,7 @@ body {
         min-width: 0;
     }
 
-    /* 4. Complaint Cards */
+    /* Complaint Cards */
     .complaint-card {
         padding: 15px;
     }
@@ -312,7 +319,7 @@ body {
         margin-top: 4px;
     }
 
-    /* 5. Mark as Read Button */
+    /* Mark as Read Button */
     .card-actions {
         margin-top: 20px;
     }
