@@ -98,7 +98,7 @@ function smartBackToMenu(resolvedStallId) {
       const u = new URL(saved, window.location.href);
       if (u.origin === window.location.origin) {
         if (resolvedStallId) u.searchParams.set("stall", String(resolvedStallId));
-        window.location.href = u.href;
+        window.location.replace(u.href);
         return;
       }
     } catch {
@@ -108,7 +108,7 @@ function smartBackToMenu(resolvedStallId) {
 
   const fallback = new URL("./stall_dish.html", window.location.href);
   if (resolvedStallId) fallback.searchParams.set("stall", String(resolvedStallId));
-  window.location.href = fallback.href;
+  window.location.replace(fallback.href);
 }
 
 // best-effort: store stall_dish referrer as returnTo
@@ -217,6 +217,7 @@ async function fetchMenuItem(wrapper, stallId, itemId) {
 /* ---------- main ---------- */
 (async function init() {
   const { stallId: paramStallId, itemId } = getParams();
+  let navStallId = paramStallId; // will be updated after dish loads
 
   rememberReturnToFromReferrer();
 
@@ -228,7 +229,7 @@ async function fetchMenuItem(wrapper, stallId, itemId) {
     sessionStorage.getItem("dish:returnTo") ||
     (() => {
       const u = new URL("./stall_dish.html", window.location.href);
-      if (stallId) u.searchParams.set("stall", String(stallId));
+      if (navStallId) u.searchParams.set("stall", String(navStallId));
       return u.href;
     })();
 
@@ -256,10 +257,11 @@ async function fetchMenuItem(wrapper, stallId, itemId) {
 
     // resolve stallId (prefer URL param, else from menu item)
     const resolvedStallId = (paramStallId || dishStallIdOf(mi) || "").toString().trim();
+    navStallId = resolvedStallId;
 
-    // back button
+    // back button -> return to stall menu (stall_dish.html)
     el.back?.addEventListener("click", () => {
-      goBackToMenu(stallId, itemCode);
+      smartBackToMenu(resolvedStallId);
     });
 
     const dishName = dishNameOf(mi, itemId);

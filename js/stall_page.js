@@ -32,8 +32,11 @@ const el = {
 
 /* ---------- Back arrow ---------- */
 function smartBack() {
-  if (window.history.length > 1) return window.history.back();
-  window.location.href = new URL("/html/home/home.html", window.location.origin).href;
+  const returnTo = sessionStorage.getItem("stalls:returnTo");
+  const fallbackHome = new URL("/html/home/home.html", window.location.origin).href;
+
+  // Use app flow, not browser history
+  window.location.replace(returnTo || fallbackHome);
 }
 document.getElementById("pageBackBtn")?.addEventListener("click", smartBack);
 
