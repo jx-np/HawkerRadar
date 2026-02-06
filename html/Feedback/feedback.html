@@ -1,7 +1,8 @@
 <html>
     <head>
         <meta name="author" content="Neo You Sheng Xavier">
-        <title>Feedback</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Feedback form</title>
         <link rel="icon" href="">
         <link rel="stylesheet" href="../../css/feedback/feedback.css">
         <link rel="stylesheet" href="../../css/Essential/navbar.css">
@@ -38,12 +39,19 @@
         <main class="feedback-container">
             <form id="feedbackForm">
 
-                <label>Food Stall:</label>
-                <input type="text" id="foodStall" name="foodStall" placeholder="Enter Food Stall name" required>
-
-
                 <label>Hawker Centre:</label>
-                <input type="text" id="hawkerCentre" name="hawkerCentre" placeholder="Enter Hawker Centre name" required>
+                <div class="autocomplete-wrapper">
+                    <input type="text" id="hawkerCentre" name="hawkerCentre" placeholder="Type to search hawker centre..." autocomplete="off" required>
+                    <input type="hidden" id="selectedHawkerId"> 
+                    <ul id="hawkerSuggestions" class="suggestions-list"></ul>
+                </div>
+
+                <label>Food Stall:</label>
+                <div class="autocomplete-wrapper">
+                    <input type="text" id="foodStall" name="foodStall" placeholder="Select a Hawker Centre first..." autocomplete="off" disabled required>
+                    <input type="hidden" id="selectedStallId" name="stallId">
+                    <ul id="stallSuggestions" class="suggestions-list"></ul>
+                </div>
 
                 <label>Overall Rating:</label>
                 <div class="rating">

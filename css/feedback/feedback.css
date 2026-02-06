@@ -108,6 +108,89 @@ textarea {
     border: 1px solid #C00000;
 }
 
+/* AUTOCOMPLETE STYLES */
+.autocomplete-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+}
+
+.suggestions-list {
+    position: absolute;
+    top: 100%; /* Puts it right below input */
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 200px; /* Limits height */
+    overflow-y: auto; /* Adds scrollbar if list is long */
+    z-index: 1000; /* Ensures it sits on top of other content */
+    display: none; /* Hidden by default */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.suggestions-list li {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.suggestions-list li:hover {
+    background-color: #f0f0f0;
+}
+
+.suggestions-list li strong {
+    color: #C00000; /* Highlight matches */
+}
+
+/* ==========================
+   MOBILE RESPONSIVENESS
+========================== */
+@media screen and (max-width: 768px) {
+
+    .feedback-container {
+        padding: 30px 20px; /* Reduce side padding */
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Overrides the fixed 400px/600px widths */
+    input[type="text"],
+    textarea,
+    .autocomplete-wrapper {
+        width: 100%; 
+        max-width: 100%; /* Remove limits */
+        min-width: 0;    /* Prevent overflow */
+    }
+
+    .page-header {
+        padding: 30px 20px;
+    }
+
+    .page-header h1 {
+        font-size: 32px; /* Smaller title */
+        margin-top: 60px;
+    }
+
+    .page-header p {
+        font-size: 16px;
+    }
+
+    .submit-btn {
+        width: 100%; /* Full width button for easier tapping */
+        margin-bottom: 20px;
+    }
+
+    .star {
+        font-size: 28px; /* Slightly smaller stars */
+    }
+}
+
 /* ==========================
    FONTS
 ========================== */
