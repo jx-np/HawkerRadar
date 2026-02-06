@@ -11,6 +11,7 @@ const filterSelect = document.getElementById('star-filter');
 const heroRatingVal = document.getElementById('hero-rating-val');
 const heroReviewCount = document.getElementById('hero-review-count');
 const stallNameHeader = document.querySelector('.stall-name');
+const heroSection = document.querySelector('.hero-section'); // <--- Added Selector
 
 // --- Main Logic ---
 async function initPage() {
@@ -30,9 +31,19 @@ async function initPage() {
             listStallFeedback(STALL_ID)
         ]);
 
-        // Update Header Info
-        if (stallData && stallNameHeader) {
-            stallNameHeader.textContent = stallData.name || "Unknown Stall";
+        // Update Header Info & Banner Image
+        if (stallData) {
+            // 1. Update Name
+            if (stallNameHeader) {
+                stallNameHeader.textContent = stallData.name || "Unknown Stall";
+            }
+            
+            // 2. Update Background Image (New Logic)
+            const imageUrl = stallData.image || stallData.coverImage;
+            if (imageUrl && heroSection) {
+                heroSection.style.backgroundImage = `url('${imageUrl}')`;
+            }
+
         } else if (stallNameHeader) {
             stallNameHeader.textContent = "Stall Not Found";
         }
