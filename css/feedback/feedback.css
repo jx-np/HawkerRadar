@@ -148,6 +148,50 @@ textarea {
 }
 
 /* ==========================
+   MOBILE RESPONSIVENESS
+========================== */
+@media screen and (max-width: 768px) {
+
+    .feedback-container {
+        padding: 30px 20px; /* Reduce side padding */
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Overrides the fixed 400px/600px widths */
+    input[type="text"],
+    textarea,
+    .autocomplete-wrapper {
+        width: 100%; 
+        max-width: 100%; /* Remove limits */
+        min-width: 0;    /* Prevent overflow */
+    }
+
+    .page-header {
+        padding: 30px 20px;
+    }
+
+    .page-header h1 {
+        font-size: 32px; /* Smaller title */
+        margin-top: 60px;
+    }
+
+    .page-header p {
+        font-size: 16px;
+    }
+
+    .submit-btn {
+        width: 100%; /* Full width button for easier tapping */
+        margin-bottom: 20px;
+    }
+
+    .star {
+        font-size: 28px; /* Slightly smaller stars */
+    }
+}
+
+/* ==========================
    FONTS
 ========================== */
 @font-face {

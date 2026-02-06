@@ -235,14 +235,12 @@ body {
 ========================== */
 @media screen and (max-width: 768px) {
     
-    /* 1. Layout & Container */
     .container {
         width: 100%;
         padding: 0 15px;
         margin-bottom: 40px;
     }
 
-    /* 2. Stall Header Banner */
     .stall-header {
         height: 200px; /* Shorter banner for mobile */
         margin-top: 80px; /* Less gap from top */
@@ -261,7 +259,6 @@ body {
         left: 15px;
     }
 
-    /* 3. Filter Controls (Stack them) */
     .filter-controls {
         flex-direction: column; /* Stack vertically */
         align-items: stretch; /* Stretch to full width */
@@ -283,7 +280,6 @@ body {
         min-width: 0;
     }
 
-    /* 4. Complaint Cards */
     .complaint-card {
         padding: 15px;
     }
@@ -313,7 +309,6 @@ body {
         margin-top: 4px;
     }
 
-    /* 5. Button (Mark as Read) */
     .card-actions {
         margin-top: 20px;
     }
