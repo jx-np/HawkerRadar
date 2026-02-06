@@ -16,17 +16,15 @@
                 </a>
             </div>
 
-        <nav class="nav-links">
-            <div class="nav-center">
-            <a href="../../html/home/home.html">Home</a>
-            <a href="#">Hawker Centres</a>
-            <a href="#">Order History</a>
-            </div>
+            <nav class="nav-center">
+                <a href="../../html/home/home.html">Home</a>
+                <a href="#">Hawker Centres</a>
+                <a href="#">Order History</a>
+            </nav>
 
             <div class="nav-right">
-            <a href="#">Login / Register</a>
+                <a href="../../html/auth/login.html">Login / Register</a>
             </div>
-        </nav>
         </header>
 
         <!--Content of complaint (visible to vendor)-->
@@ -45,13 +43,19 @@
                 <div class="filter-controls">
                     <label for="issue-filter">Filter by:</label>
                     <select id="issue-filter">
+                        <!--Change data-value base on firebase-->
                         <option value="All">All Issues</option>
-                        <option value="Poor Hygiene">Poor Hygiene</option>
-                        <option value="Food Safety Issue">Food Safety Issue</option>
-                        <option value="Unsatisfactory Service">Unsatisfactory Service</option>
-                        <option value="Overcharging">Overcharging</option>
+                        <option value="Cleanliness">Cleanliness</option>
+                        <option value="Food Quality">Food Quality</option>
+                        <option value="Price">Price</option>
+                        <option value="Service">Service</option>
+                        <option value="Waiting Time">Waiting Time</option>
                         <option value="Others">Others</option>
                     </select>
+
+                    <label for="date-filter" class="filter-label-spacing">Date:</label>
+                    <input type="date" id="date-filter">
+
                     <button id="filter-btn">Filter</button>
                 </div>
 
@@ -72,5 +76,7 @@
         </footer>
 
         <script type="module" src="/js/feedback/complaint_vendor.js"></script>
+        <script type="module" src="/js/utils/navbar.js"></script>
+        <script type="module" src="/js/utils/footer.js"></script>
     </body>
 </html>

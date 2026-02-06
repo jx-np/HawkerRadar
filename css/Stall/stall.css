@@ -1,0 +1,233 @@
+:root{
+  --page-max: 860px;
+  --pad: 22px;
+  --divider: 1px solid rgba(0,0,0,0.18);
+
+  --panel: #ededed;
+  --img: #d7d7d7;
+  --text: #111;
+  --muted: rgba(0,0,0,0.65);
+  --shadow: 0 1px 0 rgba(0,0,0,0.12);
+
+  --banner-h: 240px;
+
+  /* set by JS */
+  --site-header-h: 0px;
+}
+
+*{ box-sizing: border-box; }
+
+body{
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--text);
+  padding-top: var(--site-header-h);
+}
+
+/* ✅ Material Symbols (icons) */
+.material-symbols-outlined{
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  font-feature-settings: "liga";
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+
+  font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 28;
+  font-size: 30px;
+}
+[aria-pressed="true"] .material-symbols-outlined{
+  font-variation-settings: 'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 28;
+}
+
+/* Page container */
+.stalls-page{
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: var(--pad);
+  padding-bottom: 80px;
+}
+
+/* Hero */
+.hc-hero{
+  display: grid;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+/* ✅ shell enables button OUTSIDE the banner */
+.hc-hero__banner-shell{
+  position: relative;
+  overflow: visible;
+}
+
+/* ✅ back arrow: icon-only, OUTSIDE banner (top-left) */
+.page-back-btn{
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  /* push outside; tweak if needed */
+  transform: translate(-140%, 0);
+
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  width: auto;
+  height: auto;
+
+  cursor: pointer;
+  z-index: 20;
+}
+.page-back-btn .material-symbols-outlined{
+  font-size: 34px;
+  line-height: 1;
+}
+.page-back-btn:hover{ opacity: 0.75; }
+
+.hc-hero__banner{
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--img);
+  box-shadow: var(--shadow);
+}
+.hc-hero__img{
+  width: 100%;
+  height: var(--banner-h);
+  object-fit: cover;
+  display: block;
+}
+.hc-hero__title{
+  margin: 0;
+  font-size: 34px;
+  font-weight: 900;
+}
+.hc-hero__subtitle{
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+/* Filter */
+.stall-filter{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 14px;
+  margin-top: 8px;
+  border-top: var(--divider);
+}
+.stall-filter__label{
+  font-weight: 900;
+}
+.stall-filter__select{
+  height: 42px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.25);
+  padding: 0 12px;
+  min-width: 220px;
+}
+.stall-filter__btn{
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.25);
+  background: #f3f3f3;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+/* Sections */
+.stall-section{
+  padding-top: 12px;
+}
+.stall-section__title{
+  margin: 12px 0 8px;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+/* Empty text */
+.stall-empty{
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Grid */
+.stall-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: var(--divider);
+}
+
+/* Card */
+.stall-card{
+  background: var(--panel);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.stall-card__img{
+  height: 120px;
+  background: var(--img);
+}
+.stall-card__body{
+  padding: 12px;
+}
+.stall-card__top{
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+.stall-card__name{
+  margin: 0;
+  font-size: 16px;
+  font-weight: 900;
+}
+.stall-card__fav{
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.stall-card__meta{
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.stall-card__dot{ opacity: 0.7; }
+
+.stall-card__btn{
+  margin-top: 12px;
+  width: 100%;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.25);
+  background: #fff;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+@media (max-width: 650px){
+  .stall-grid{ grid-template-columns: repeat(2, 1fr); }
+  .stall-filter{ flex-wrap: wrap; }
+}

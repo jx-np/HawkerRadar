@@ -16,17 +16,15 @@
                 </a>
             </div>
 
-        <nav class="nav-links">
-            <div class="nav-center">
-            <a href="../../html/home/home.html">Home</a>
-            <a href="#">Hawker Centres</a>
-            <a href="#">Order History</a>
-            </div>
+            <nav class="nav-center">
+                <a href="../../html/home/home.html">Home</a>
+                <a href="#">Hawker Centres</a>
+                <a href="#">Order History</a>
+            </nav>
 
             <div class="nav-right">
-            <a href="#">Login / Register</a>
+                <a href="../../html/auth/login.html">Login / Register</a>
             </div>
-        </nav>
         </header>
 
         <!--Content of complaint form-->
@@ -44,22 +42,28 @@
                 <input type="text" id="hawkerCentre" name="hawkerCentre" placeholder="Enter Hawker Centre name" required>
 
                 <label>Complaint Category:</label>
+                <!--Change data-value base on firebase-->
                 <div class="category-container">
-                    <div class="category" data-value="Poor Hygiene">
+                    <div class="category" data-value="Cleanliness">
                         <span class="box"></span>
-                        <span class="text">Poor Hygiene</span>
+                        <span class="text">Cleanliness</span>
                     </div>
-                    <div class="category" data-value="Food Safety Issue">
+                    <div class="category" data-value="Food Quality">
                         <span class="box"></span>
-                        <span class="text">Food Safety Issue</span>
+                        <span class="text">Food Quality</span>
                     </div>
-                    <div class="category" data-value="Unsatisfactory Service">
-                        <span class="box"></span>
-                        <span class="text">Unsatisfactory Service</span>
                     </div>
-                    <div class="category" data-value="Overcharging">
+                    <div class="category" data-value="Price">
                         <span class="box"></span>
-                        <span class="text">Overcharging</span>
+                        <span class="text">Price</span>
+                    </div>
+                    <div class="category" data-value="Service">
+                        <span class="box"></span>
+                        <span class="text">Service</span>
+                    </div>
+                    <div class="category" data-value="Waiting Time">
+                        <span class="box"></span>
+                        <span class="text">Waiting Time</span>
                     </div>
                     <div class="category" data-value="Others" id="othersCategory">
                         <span class="box"></span>
@@ -97,5 +101,7 @@
 
         <!--Complaint Javascript-->
         <script type="module" src="/js/feedback/complaint.js"></script>
+        <script type="module" src="/js/utils/navbar.js"></script>
+        <script type="module" src="/js/utils/footer.js"></script>
     </body>
 </html>

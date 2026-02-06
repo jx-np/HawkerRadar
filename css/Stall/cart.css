@@ -1,0 +1,234 @@
+.cart-main{
+  max-width: 780px;
+  margin: calc(var(--site-header-h, 80px) + 18px) auto 48px;
+  padding: 0 18px;
+}
+
+.cart-wrap{
+  background: #fff;
+}
+
+.cart-title{
+  font-size: 26px;
+  font-weight: 800;
+  margin: 6px 0 14px;
+}
+
+.cart-section{
+  padding: 14px 0;
+  border-top: 1px solid #e8e8e8;
+}
+
+.cart-heading{
+  font-size: 13px;
+  font-weight: 800;
+  margin: 0 0 10px;
+}
+
+.cart-items{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cart-item{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.cart-item-name{
+  font-weight: 700;
+}
+
+.cart-item-meta{
+  white-space: nowrap;
+  color: #111;
+}
+
+.cart-empty{
+  margin: 10px 0 0;
+  color: #666;
+}
+
+.fee-details{
+  border-top: 1px solid #f1f1f1;
+  padding-top: 10px;
+}
+
+.fee-summary{
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fee-summary::-webkit-details-marker{ display:none; }
+
+.fee-summary-text{
+  font-weight: 800;
+}
+
+.fee-breakdown{
+  margin-top: 10px;
+  border-top: 1px solid #f1f1f1;
+  padding-top: 10px;
+}
+
+.fee-row{
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+
+.cart-total-row{
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 14px 0;
+  border-top: 1px solid #e8e8e8;
+  font-size: 16px;
+}
+
+.cart-payment{
+  padding: 10px 0 18px;
+}
+
+.pmt-pill{
+  appearance: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid #dcdcdc;
+  background: #f4f4f4;
+  font-weight: 700;
+}
+
+.checkout-btn{
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 999px;
+  border: none;
+  background: #e6e6e6;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.checkout-btn:disabled{
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* dialogs */
+.cart-dialog{
+  max-width: 420px;
+  width: calc(100% - 32px);
+  border: none;
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.cart-dialog::backdrop{
+  background: rgba(0,0,0,0.45);
+}
+
+.dialog-title{
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.dialog-text{
+  margin: 0 0 10px;
+  color: #444;
+}
+
+.confirm-check{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 12px 0 14px;
+}
+
+.dialog-actions{
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-primary{
+  border: none;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-weight: 800;
+  background: #e6e6e6;
+  cursor: pointer;
+}
+
+.btn-secondary{
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #fff;
+  cursor: pointer;
+}
+.card-box{
+  border: 1px solid #dcdcdc;
+  border-radius: 12px;
+  padding: 14px;
+  background: #f6f6f6;
+  font-weight: 700;
+  color: #666;
+}
+
+.page-back-row{
+  max-width: 780px;
+  margin: calc(var(--site-header-h, 80px) + 6px) auto 0;
+  padding: 0 18px;
+}
+
+.page-back-btn-left{
+  background: transparent;
+  border: none;
+  padding: 6px 0;
+  cursor: pointer;
+}
+
+.page-back-btn-left .material-symbols-outlined{
+  font-size: 34px;
+  line-height: 1;
+}
+
+.page-back-btn-left:hover{
+  opacity: 0.75;
+}
+
+.cart-topbar{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0 14px;
+}
+
+.cart-back-btn{
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.cart-back-btn .material-symbols-outlined{
+  font-size: 34px;
+  line-height: 1;
+}
+
+.cart-back-btn:hover{ opacity: 0.75; }
+
+/* remove spacing from cart title since topbar now handles it */
+.cart-title{
+  margin: 0;
+}

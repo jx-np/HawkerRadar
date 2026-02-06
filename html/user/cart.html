@@ -1,0 +1,133 @@
+<html>
+    <head>
+        <meta name="author" content="Javier Lum Dong Yee">
+        <title>Complaints review</title>
+        <link rel="icon" href="">
+        <link rel="stylesheet" href="../../css/Essential/navbar.css">
+        <link rel="stylesheet" href="../../css/Essential/footer.css">
+        <link rel="stylesheet" href="../../css/Stall/cart.css">
+        <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" 
+        />
+    </head>
+    <body>
+        <h1>hello
+        </h1>
+        <header class="site-header">
+            <div class="logo">
+                <a href="../../html/home/home.html" class="link-wrapper">
+                <div class="logo-box"></div>
+                </a>
+            </div>
+            <nav class="nav-links">
+                <div class="nav-center">
+                <a href="../../html/home/home.html">Home</a>
+                <a href="#">Hawker Centres</a>
+                <a href="#">Order History</a>
+                </div>
+                <div class="nav-right">
+                <a href="../../html/auth/login.html">Login / Register</a>
+                </div>
+            </nav>
+        </header>
+        <!--End of Header-->
+        <main class="cart-main">
+            <div class="cart-wrap">
+                <div class="cart-topbar">
+                    <button class="cart-back-btn" id="pageBackBtn" type="button" aria-label="Back">
+                        <span class="material-symbols-outlined" aria-hidden="true">arrow_back_2</span>
+                    </button>
+                    <h1 class="cart-title">Cart</h1>
+                </div>
+
+                <!-- Items -->
+                <section class="cart-section">
+                    <h2 class="cart-heading">Items</h2>
+                    <div id="cartItems" class="cart-items"></div>
+                    <p id="cartEmpty" class="cart-empty" hidden>No items in cart.</p>
+                </section>
+
+                <!-- Fees (like your wireframe: total fee row with a dropdown arrow) -->
+                <section class="cart-section">
+                    <h2 class="cart-heading">Fees</h2>
+
+                    <details class="fee-details" open>
+                        <summary class="fee-summary">
+                            <span class="fee-summary-text">
+                                Total Fee: <strong id="feeTotal">$0.00</strong>
+                            </span>
+                        </summary>
+
+                        <div class="fee-breakdown">
+                            <div class="fee-row">
+                                <span>GST (9%)</span>
+                                <span id="feeGst">$0.00</span>
+                            </div>
+                            <div class="fee-row">
+                                <span>Service Charge (10%)</span>
+                                <span id="feeSvc">$0.00</span>
+                            </div>
+                            <div class="fee-row">
+                                <span>Rush Hour Fee (5%)</span>
+                                <span id="feeRush">$0.00</span>
+                            </div>
+                        </div>
+                    </details>
+                </section>
+
+                <!-- Total payable (recommended even though wireframe focuses on fees) -->
+                <div class="cart-total-row">
+                <span>Total</span>
+                <strong id="grandTotal">$0.00</strong>
+                </div>
+
+                <!-- Payment -->
+                <section class="cart-section">
+                    <h2 class="cart-heading">Payment</h2>
+                    <div class="card-box" id="savedCards">No cards saved.</div>
+                </section>
+
+                <button id="checkoutBtn" class="checkout-btn" type="button" disabled>Checkout</button>
+            </div>
+
+            <!-- Popup #1 -->
+            <dialog id="confirmDialog" class="cart-dialog">
+                <h3 class="dialog-title">Confirm your order</h3>
+                <p class="dialog-text">Please confirm everything is correct.</p>
+
+                <label class="confirm-check">
+                <input id="confirmCheck" type="checkbox" />
+                I confirm my order is correct.
+                </label>
+
+                <div class="dialog-actions">
+                <button id="cancelConfirm" type="button" class="btn-secondary">Cancel</button>
+                <button id="placeOrderBtn" type="button" class="btn-primary" disabled>Place Order</button>
+                </div>
+            </dialog>
+
+            <!-- Popup #2 -->
+            <dialog id="successDialog" class="cart-dialog">
+                <h3 class="dialog-title">Order placed ✅</h3>
+                <p class="dialog-text">Order has been successfully placed.</p>
+                <div class="dialog-actions">
+                <button id="successOk" type="button" class="btn-primary">OK</button>
+                </div>
+            </dialog>
+            </main>
+        <!-- Footer - MAKE SURE TO COPY!-->
+        <footer class="site-footer">
+            <a href="../../html/Footer Stuff/ContactUs.html">Contact Us</a>
+            <span>|</span>
+            <a href="../../html/Footer Stuff/FAQ.html">FAQs</a>
+            <span>|</span>
+            <a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">
+                NEA Info
+            </a>
+        </footer>
+        <script>
+            window.CART_PAGE = { wrapperPath: "../../js/firebase/wrapper.js" };
+        </script>
+        <script type="module" src="../../js/cart.js"></script>
+    </body>
+</html>

@@ -1,8 +1,8 @@
-/* ==========================
-   RESET & BODY
-========================== */
 html, body {
   height: 100%;
+}
+
+body {
   margin: 0;
   font-family: 'Satoshi', sans-serif;
   background: #fff;
@@ -15,7 +15,7 @@ html, body {
   display: flex;
   min-height: 100vh;
   background: #fff;
-  font-size: clamp(15px, 1vw, 20px); /* slightly smaller base font */
+  font-size: 26px;
 }
 
 .auth-visual {
@@ -31,8 +31,7 @@ html, body {
   align-items: center;
   justify-content: center;
   background: #ffffff;
-  padding: clamp(2.5em, 5vw, 4em) clamp(1.2em, 3vw, 2.5em); /* more compact padding */
-  font-size: clamp(15px, 1vw, 20px);
+  padding: 80px 40px;
 }
 
 /* ==========================
@@ -40,19 +39,19 @@ html, body {
 ========================== */
 .form-wrapper {
   width: 100%;
-  max-width: 450px; /* slightly narrower */
+  max-width: 420px;
 }
 
 .form-wrapper h1 {
-  font-size: clamp(24px, 2.5vw, 36px); /* smaller heading */
+  font-size: 40px;
   font-weight: 700;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .signup-text {
-  font-size: clamp(13px, 1.1vw, 16px);
+  font-size: 18px;
   color: #666;
-  margin-bottom: 28px;
+  margin-bottom: 36px;
 }
 
 .signup-text a {
@@ -69,77 +68,91 @@ html, body {
    FORM ELEMENTS
 ========================== */
 .form-wrapper label {
-  font-size: clamp(13px, 1vw, 16px);
+  font-size: 18px;
   color: #555;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
   display: block;
 }
 
-.form-wrapper input {
+.form-wrapper input,
+.form-wrapper select {
   width: 100%;
-  padding: clamp(10px, 0.9vw, 14px);
+  padding: 14px 16px;
   border: 1px solid #ddd;
   border-radius: 10px;
-  font-size: clamp(13px, 1vw, 16px);
-  margin-bottom: clamp(16px, 1.5vw, 20px);
+  font-size: 18px;
+  margin-bottom: 22px;
   transition: border-color 0.25s, box-shadow 0.25s;
+  background-color: #fff;
 }
 
-.form-wrapper input:focus {
+/* Focus */
+.form-wrapper input:focus,
+.form-wrapper select:focus {
   outline: none;
   border-color: #1677ff;
   box-shadow: 0 0 0 3px rgba(22, 119, 255, 0.12);
 }
 
 /* ==========================
-   PASSWORD ROW
+   SELECT (ROLE)
 ========================== */
-.password-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+#role {
+    width: 50%;
+    padding: 12px 14px;
+    font-size: 18px;
+    border-radius: 10px;
+    border: 1.5px solid #ddd;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    transition: 
+        border-color 0.3s,
+        box-shadow 0.3s,
+        background-color 0.3s;
+    font-weight: bold;
 }
 
-.toggle-password {
-  background: none;
-  border: none;
-  font-size: clamp(11px, 0.9vw, 13px);
-  color: #777;
-  cursor: pointer;
+#role:focus {
+    outline: none;
 }
 
-.toggle-password:hover {
-  color: #1677ff;
+/* CUSTOMER – Red */
+#role:has(option[value="customer"]:checked) {
+    border-color: #FF3838;
+    background-color: #fff5f5;
+    color: #FF3838;
 }
 
-.forgot-password {
-  text-align: right;
-  margin-bottom: clamp(16px, 1.5vw, 22px);
+/* STALL OWNER – Gold */
+#role:has(option[value="stallOwner"]:checked) {
+    border-color: #ffa928;
+    background-color: #fff9e6;
+    color: #ffa928;
 }
 
-.forgot-password a {
-  font-size: clamp(13px, 1vw, 16px);
-  color: #555;
-  text-decoration: none;
+/* OPERATOR – Blue */
+#role:has(option[value="operator"]:checked) {
+    border-color: #1677ff;
+    background-color: #f2f6ff;
+    color: #1677ff;
 }
 
-.forgot-password a:hover {
-  text-decoration: underline;
-}
+
 
 /* ==========================
    SOCIAL LOGIN
 ========================== */
 .social-login {
   display: flex;
-  gap: clamp(10px, 0.9vw, 14px);
+  gap: 16px;
   justify-content: space-between;
-  margin-bottom: clamp(20px, 2vw, 28px);
+  margin-top: 24px;
 }
 
 .social {
   flex: 1;
-  height: clamp(38px, 3.5vw, 42px);
+  height: 44px;
   border-radius: 12px;
   border: 1px solid #ddd;
   background-color: #fafafa;
@@ -159,12 +172,15 @@ html, body {
 .social.google {
   background-image: url("../../img/login/icons/Google__G__logo.svg.png");
 }
+
 .social.apple {
   background-image: url("../../img/login/icons/logo-apple-icon-lg.png");
 }
+
 .social.facebook {
   background-image: url("../../img/login/icons/Facebook_Logo_2023.png");
 }
+
 .social.twitter {
   background-image: url("../../img/login/icons/x_logo_PNG11.png");
 }
@@ -174,12 +190,12 @@ html, body {
 ========================== */
 .login-btn {
   width: 100%;
-  padding: clamp(12px, 1vw, 14px);
+  padding: 16px;
   border: none;
   border-radius: 999px;
   background: #1677ff;
   color: #ffffff;
-  font-size: clamp(13px, 1vw, 16px);
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.25s, transform 0.15s;
@@ -191,23 +207,8 @@ html, body {
 }
 
 /* ==========================
-   RESPONSIVE LAYOUT
+   RESPONSIVE
 ========================== */
-@media (max-width: 1024px) {
-  .auth-form {
-    padding: clamp(2em, 4vw, 3.5em);
-    font-size: clamp(14px, 1vw, 18px);
-  }
-
-  .form-wrapper {
-    max-width: 400px;
-  }
-
-  .form-wrapper h1 {
-    font-size: clamp(22px, 2.2vw, 32px);
-  }
-}
-
 @media (max-width: 768px) {
   .auth-page {
     flex-direction: column;
@@ -218,16 +219,11 @@ html, body {
   }
 
   .auth-form {
-    padding: clamp(1.5em, 3vw, 2.5em);
-    font-size: clamp(14px, 1vw, 18px);
-  }
-
-  .form-wrapper {
-    max-width: 350px;
+    padding: 60px 24px;
   }
 
   .form-wrapper h1 {
-    font-size: clamp(20px, 2vw, 28px);
+    font-size: 28px;
   }
 }
 

@@ -1,0 +1,62 @@
+/* =============================
+   FEEDBACK HISTORY PAGE
+   ============================= */
+.history-header {
+    background: #ececec;
+    padding: 36px 40px;
+}
+.history-header h1 {
+    margin-top: 90px; /* keep below fixed header */
+    font-size: 40px;
+    color: #333;
+}
+.history-header p {
+    margin-top: 8px;
+    font-size: 18px;
+    color: #666;
+}
+
+.history-container {
+    padding: 50px 80px 140px; /* leave space for footer */
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.history-titles, .history-item {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.history-titles {
+    font-weight: 700;
+    font-size: 22px;
+    border-bottom: 2px solid #dedede;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.history-titles .col { color: #333; }
+.history-item {
+    padding: 18px 0;
+    border-bottom: 1px solid transparent;
+}
+.history-item .col { color: #222; font-size: 18px; }
+
+.col.date { flex: 0 0 160px; }
+.col.stall { flex: 0 0 300px; }
+.col.rating { flex: 0 0 120px; display:flex; align-items:center; gap:8px; color:#333; }
+.col.comment { flex: 1; color:#666; }
+
+.rating-value { font-weight:700; margin-left:6px; }
+
+/* adjustments for mobile */
+@media (max-width: 768px) {
+    .history-container { padding: 36px 24px 120px; }
+    .history-titles, .history-item { gap: 12px; }
+    .history-titles { font-size: 18px; }
+    .col.date, .col.stall, .col.rating { flex: 0 0 auto; }
+    .col.stall { min-width: 140px; }
+    .col.comment { display: none; }
+}
+

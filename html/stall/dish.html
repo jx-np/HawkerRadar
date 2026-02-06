@@ -1,1 +1,119 @@
-<html></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="author" content="Javier Lum Dong Yee" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Dish</title>
+
+    <link rel="icon" href="" />
+    <link rel="stylesheet" href="../../css/Essential/navbar.css" />
+    <link rel="stylesheet" href="../../css/Essential/footer.css" />
+    <link rel="stylesheet" href="../../css/Stall/dish.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+  </head>
+
+  <!-- expects URL like: dish.html?stall=301&item=CR01 -->
+  <body>
+    <!-- Header -->
+    <header class="site-header">
+      <div class="logo">
+        <a href="../../html/home/home.html" class="link-wrapper">
+          <div class="logo-box"></div>
+        </a>
+      </div>
+
+      <nav class="nav-links">
+        <div class="nav-center">
+          <a href="../../html/home/home.html">Home</a>
+          <a href="#">Hawker Centres</a>
+          <a href="#">Order History</a>
+        </div>
+
+        <div class="nav-right">
+          <a href="../../html/auth/login.html">Login / Register</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="dish-page" id="dish-page">
+      <section class="dish-hero" aria-label="Dish header">
+        <div class="dish-hero__banner-shell">
+          <button class="page-back-btn" id="pageBackBtn" type="button" aria-label="Back">
+            <span class="material-symbols-outlined" aria-hidden="true">arrow_back_2</span>
+          </button>
+
+          <div class="dish-hero__banner-wrap">
+            <img
+              class="dish-hero__banner"
+              id="dish-banner"
+              src="../../images/dishes/placeholder.jpg"
+              alt="Dish banner"
+            />
+
+            <button
+              class="dish-hero__fav-btn"
+              id="dish-fav-btn"
+              type="button"
+              aria-pressed="false"
+              aria-label="Favorite this dish"
+            >
+              <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
+            </button>
+
+            <h1 class="dish-hero__name" id="dish-name">Loading…</h1>
+          </div>
+        </div>
+      </section>
+
+      <section class="dish-section" aria-label="Dish description">
+        <h2 class="dish-section__title">Description</h2>
+        <p class="dish-desc" id="dish-desc"></p>
+
+        <div class="dish-price-row">
+          <span class="dish-price-label">Price</span>
+          <strong class="dish-price" id="dish-price">$0.00</strong>
+        </div>
+
+        <div class="dish-qty-row" aria-label="Quantity">
+          <span class="dish-qty-label">Quantity</span>
+
+          <div class="dish-qty-controls">
+            <button class="dish-qty-btn" id="qtyMinus" type="button" aria-label="Decrease quantity">−</button>
+            <span class="dish-qty-num" id="qtyNum" aria-label="Quantity">1</span>
+            <button class="dish-qty-btn" id="qtyPlus" type="button" aria-label="Increase quantity">+</button>
+          </div>
+
+          <span class="dish-in-cart" id="inCart">In cart: 0</span>
+        </div>
+
+        <a class="dish-view-cart" id="viewCart" href="../user/cart.html">View Cart</a>
+      </section>
+
+      <aside class="dish-bottom" aria-label="Add to cart">
+        <button class="dish-add-btn" id="addBtn" type="button" disabled>Add for $0.00</button>
+      </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <a href="../../html/Footer Stuff/ContactUs.html">Contact Us</a>
+      <span>|</span>
+      <a href="../../html/Footer Stuff/FAQ.html">FAQs</a>
+      <span>|</span>
+      <a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">
+        NEA Info
+      </a>
+    </footer>
+
+    <script>
+      window.DISH_PAGE = { wrapperPath: "../../js/firebase/wrapper.js" };
+    </script>
+    <script type="module" src="../../js/dish.js"></script>
+  </body>
+</html>
