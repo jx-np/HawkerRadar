@@ -1,17 +1,29 @@
 // /js/hawker.js
+// Import Firebase wrapper functions to fetch hawker centres and food stalls
 import { getAllHawkerCentres, getAllFoodStalls } from "/js/firebase/wrapper.js";
 
+// Grab DOM elements used across the page
 const regionSelect = document.getElementById("region");
 const hcGrid = document.getElementById("hcGrid");
 
-// Function to render hawker centre cards
+/* ==========================
+   RENDER HAWKER CENTRES
+========================== */
+// Creates hawker centre cards and inserts them into the grid
 function renderHawkerCentres(centres) {
   if (!hcGrid) return;
-  hcGrid.innerHTML = ""; // clear previous cards
 
+  // Clear existing cards before rendering new ones
+  hcGrid.innerHTML = "";
+
+  // Loop through each hawker centre from Firebase
   Object.entries(centres).forEach(([hcId, centre]) => {
-    const realHcId = String(centre.HawkerCentreID ?? centre.HCId ?? centre.HCID ?? hcId);
+    // Resolve Hawker Centre ID safely (handles inconsistent field names)
+    const realHcId = String(
+      centre.HawkerCentreID ?? centre.HCId ?? centre.HCID ?? hcId
+    );
 
+    // Inject hawker centre card HTML
     hcGrid.innerHTML += `
       <div class="hc-card" data-hc-id="${realHcId}">
           <div class="hc-image" style="background-image: url('${centre.ImageURL}');"></div>
@@ -24,22 +36,27 @@ function renderHawkerCentres(centres) {
               <button class="hc-view-menu" type="button">View Menu</button>
           </div>
       </div>
-
     `;
   });
 }
 
-// Initialize: fetch data and render
+/* ==========================
+   INITIAL DATA LOAD + FILTER
+========================== */
+// Fetch hawker centres from Firebase and set up region filtering
 async function init() {
   const centres = await getAllHawkerCentres();
   if (!centres) return;
 
+  // Initial render (no filters applied)
   renderHawkerCentres(centres);
 
+  // Apply region filter only when "Filter" button is clicked
   const filterButton = document.querySelector(".filter-bar button");
   filterButton?.addEventListener("click", () => {
     const selectedRegion = (regionSelect?.value || "").toLowerCase();
 
+    // Filter centres by selected region
     const filtered = Object.fromEntries(
       Object.entries(centres).filter(([, centre]) => {
         if (!selectedRegion) return true;
@@ -47,24 +64,39 @@ async function init() {
       })
     );
 
+    // Re-render grid with filtered results
     renderHawkerCentres(filtered);
   });
 }
 
+// Start page logic
 init();
 
-// ✅ Smooth scroll (only if elements exist)
+/* ==========================
+   HERO SEARCH SCROLL
+========================== */
+// Smooth-scroll from hero button down to banner section
 const searchButton = document.querySelector(".hero-buttons button:first-child");
 const banner = document.querySelector(".ad-banner");
 
 searchButton?.addEventListener("click", () => {
   if (!banner) return;
-  const headerOffset = 120;
-  const bannerPosition = banner.getBoundingClientRect().top + window.pageYOffset;
-  window.scrollTo({ top: bannerPosition - headerOffset, behavior: "smooth" });
+
+  // Offset accounts for fixed header
+  const headerOffset = 60;
+  const bannerPosition =
+    banner.getBoundingClientRect().top + window.pageYOffset;
+
+  window.scrollTo({
+    top: bannerPosition - headerOffset,
+    behavior: "smooth",
+  });
 });
 
-// ✅ Back to top (only if element exists)
+/* ==========================
+   BACK TO TOP BUTTON
+========================== */
+// Show button only after scrolling down
 const backToTopBtn = document.getElementById("backToTop");
 
 window.addEventListener("scroll", () => {
@@ -72,11 +104,15 @@ window.addEventListener("scroll", () => {
   backToTopBtn.style.display = window.scrollY > 300 ? "block" : "none";
 });
 
+// Smooth-scroll back to top when clicked
 backToTopBtn?.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
-// ✅ Hawker Centre "View Menu" -> stall.html?hc=...
+/* ==========================
+   HAWKER CENTRE → STALL PAGE
+========================== */
+// Handle "View Menu" click for hawker centre cards
 hcGrid?.addEventListener("click", (e) => {
   const btn = e.target.closest(".hc-view-menu");
   if (!btn) return;
@@ -85,32 +121,36 @@ hcGrid?.addEventListener("click", (e) => {
   const hcId = card?.dataset?.hcId;
   if (!hcId) return;
 
+  // Save selected hawker centre ID for next page
   sessionStorage.setItem("selectedHcId", hcId);
 
-  // robust absolute path
+  // Redirect to stall page with hc query param
   const url = new URL("/html/stall/stall.html", window.location.origin);
   url.searchParams.set("hc", hcId);
   window.location.href = url.href;
 });
 
-// ✅ Featured Stalls "View Menu" -> stall_dish.html?stall=...
-// Requires featured buttons to have class="feature-view-menu"
-// Best: set data-stall-id="123"
-// Fallback: set data-stall-name="Exact StallName in Firebase"
+/* ==========================
+   FEATURED STALL → DISH PAGE
+========================== */
+// Handles featured stall "View Menu" buttons
 const featuredGrid = document.querySelector(".feature-stall-grid");
 
 featuredGrid?.addEventListener("click", async (e) => {
   const btn = e.target.closest(".feature-view-menu");
   if (!btn) return;
 
-  // Prefer direct StallID from HTML
+  // Prefer direct StallID from data attribute
   let stallId = (btn.dataset.stallId || "").trim();
 
-  // Fallback: match by stall name in Firebase
+  // Fallback: resolve StallID by matching stall name from Firebase
   if (!stallId) {
     const wantedName = (
       btn.dataset.stallName ||
-      btn.closest(".feature-stall-card")?.querySelector("strong")?.textContent ||
+      btn
+        .closest(".feature-stall-card")
+        ?.querySelector("strong")
+        ?.textContent ||
       ""
     )
       .trim()
@@ -121,20 +161,25 @@ featuredGrid?.addEventListener("click", async (e) => {
       const allStalls = Object.values(stallsObj || {}).filter(Boolean);
 
       const match = allStalls.find(
-        (s) => String(s?.StallName || "").trim().toLowerCase() === wantedName
+        (s) =>
+          String(s?.StallName || "").trim().toLowerCase() === wantedName
       );
 
       stallId = match?.StallID ? String(match.StallID) : "";
     }
   }
 
+  // Abort if StallID still cannot be resolved
   if (!stallId) {
     console.warn("[home] Could not resolve featured stall to a StallID.");
     return;
   }
 
-  // Go to stall menu page (adjust path if your project uses a different folder)
-  const url = new URL("/html/stall/stall_dish.html", window.location.origin);
+  // Redirect to dish page with stall query param
+  const url = new URL(
+    "/html/stall/stall_dish.html",
+    window.location.origin
+  );
   url.searchParams.set("stall", stallId);
   window.location.href = url.href;
 });
