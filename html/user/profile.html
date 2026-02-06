@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="author" content="<Marc Edward Domingo Rasco>">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My Profile</title>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="../../css/Essential/navbar.css">
+        <link rel="stylesheet" href="../../css/auth/profile.css">
+        <link rel="stylesheet" href="../../css/Essential/footer.css">
+    </head>
+    <body>
+
+    <!-- Header = MAKE SURE TO COPY -->
+    <div class="container">
+
+    <!-- Header = MAKE SURE TO COPY -->
+    <header class="site-header">
+        <div class="logo">
+            <a href="/html/home/home.html" class="link-wrapper">
+            <div class="logo-box"></div>
+            </a>
+        </div>
+
+        <div class="nav-right">
+            <a href="/html/home/home.html">Go back</a>
+        </div>
+        </header>
+    <!--End of Header-->
+    
+    
+
+    <main class="container">
+
+        <!-- LEFT PROFILE PANEL -->
+        <section class="profile-sidebar">
+
+            <div class="profile-image">
+                <img id="profilePhoto" alt="Profile Photo" src="../../img/funni/Macaca_nigra_self-portrait_large.jpg">
+            </div>
+
+            <h2 id="displayName">Your Name</h2>
+            <p id="displayEmail">john.doe@example.com</p>
+            <p id="displayUsername">"Username"</p>
+
+            <button id="uploadPhotoBtn">Upload New Photo</button>
+
+        </section>
+
+
+        <!-- RIGHT PROFILE DETAILS -->
+        <section class="profile-details">
+
+            <h1>My Profile</h1>
+
+            <!-- PROFILE INFO -->
+            <div class="info-group">
+                <label>Profile Information</label>
+                <a href="#" class="change-link">Change</a>
+                <input id="profileNameInput" type="text" placeholder="Your Name">
+            </div>
+
+            <div class="info-group">
+                <label>Email</label>
+                <a href="#" class="change-link">Change</a>
+                <input id="profileEmailInput" type="email" placeholder="john.doe@example.com">
+            </div>
+
+            <div class="info-group">
+                <label>Phone Number</label>
+                <a href="#" class="change-link">Change</a>
+                <input id="profilePhoneInput" type="text" placeholder="+65 1234 5678">
+            </div>
+
+            <div class="info-group">
+                <label>Address</label>
+                <a href="#" class="change-link">Change</a>
+                <input id="profileAddressInput" type="text" placeholder="123 Example Street, Singapore 676767">
+            </div>
+
+            <button id="saveProfileBtn" class="save-btn">Save Changes</button>
+
+            <hr>
+
+            <!-- PAYMENT METHODS -->
+            <section class="payment-section">
+
+                <h3>Payment Methods</h3>
+
+                <div id="paymentCardsContainer" class="payment-cards">
+
+                    <!-- Cards dynamically inserted by Firebase JS -->
+
+                </div>
+
+                <button id="addCardBtn" class="add-card-btn">+ Add New Card</button>
+
+            </section>
+
+        </section>
+
+    </main>
+
+    </div>
+    <script type="module" src="/js/hawker.js"></script>
+    <script type="module" src="/js/utils/navbar.js"></script>
+    </body>
+</html>
