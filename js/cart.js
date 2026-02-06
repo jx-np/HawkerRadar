@@ -14,35 +14,31 @@ window.addEventListener("load", applyHeaderOffset);
 
 // ---------- Back button ----------
 function smartBack() {
-  if (window.history.length > 1) {
-    window.history.back();
-    return;
-  }
+  // Always go back to the stall menu (not last browser page)
+  const returnTo =
+    sessionStorage.getItem("cart:returnTo") ||
+    sessionStorage.getItem("dish:returnTo") ||
+    sessionStorage.getItem("stallMenu:url");
 
-  // If we saved a return URL (recommended)
-  const returnTo = sessionStorage.getItem("cart:returnTo");
   if (returnTo) {
     window.location.href = returnTo;
     return;
   }
 
-  // fallback: try referrer if it's same site
-  if (document.referrer) {
-    try {
-      const ref = new URL(document.referrer);
-      if (ref.origin === window.location.origin) {
-        window.location.href = ref.href;
-        return;
-      }
-    } catch {}
+  // rebuild stall menu if we know stall id
+  const lastStallId = sessionStorage.getItem("lastStallId");
+  if (lastStallId) {
+    const u = new URL("/html/Stall/stall_dish.html", window.location.origin);
+    u.searchParams.set("stall", String(lastStallId));
+    window.location.href = u.href;
+    return;
   }
 
-  // final fallback
   window.location.href = new URL("/html/home/home.html", window.location.origin).href;
 }
 document.getElementById("pageBackBtn")?.addEventListener("click", smartBack);
 
-// ---------- cart storage (same as stall pages) ----------
+// ---------- cart storage ----------
 function getCustomerId() {
   const id = localStorage.getItem("CustomerID");
   return id && id.trim() ? id.trim() : "guest";
@@ -75,16 +71,15 @@ function money(n) {
   return `$${v.toFixed(2)}`;
 }
 
-function calcSubtotal(cart) {
+function calcSubtotal(items) {
   let subtotal = 0;
-  for (const it of Object.values(cart.items || {})) {
-    if (!it) continue;
+  for (const it of items) {
     subtotal += (Number(it.unitPrice) || 0) * (Number(it.qty) || 0);
   }
   return subtotal;
 }
 
-// Fees: GST 9%, Service 10%, Rush hour 5% (always)
+// Fees: GST 9%, Service 10%, Rush hour 5%
 function calcFees(subtotal) {
   const gst = subtotal * 0.09;
   const svc = subtotal * 0.10;
@@ -94,19 +89,9 @@ function calcFees(subtotal) {
 
 // ---------- firebase wrapper ----------
 async function loadWrapper() {
-  const wrapperPath = window.CART_PAGE?.wrapperPath;
-  if (!wrapperPath) throw new Error("window.CART_PAGE.wrapperPath missing");
+  const wrapperPath = window.CART_PAGE?.wrapperPath || "/js/firebase/wrapper.js";
   const wrapperUrl = new URL(wrapperPath, document.baseURI).href;
   return import(wrapperUrl);
-}
-
-function nextOrderId(ordersObj) {
-  let maxId = 0;
-  for (const [k, v] of Object.entries(ordersObj || {})) {
-    const n = Number(v?.OrderID ?? k);
-    if (Number.isFinite(n) && n > maxId) maxId = n;
-  }
-  return maxId + 1;
 }
 
 // ---------- DOM ----------
@@ -131,8 +116,12 @@ const successOk = document.getElementById("successOk");
 
 let cart = loadCart();
 
+function getItemsArray() {
+  return Object.values(cart.items || {}).filter(Boolean);
+}
+
 function render() {
-  const items = Object.values(cart.items || {}).filter(Boolean);
+  const items = getItemsArray();
 
   if (cartItemsEl) cartItemsEl.innerHTML = "";
 
@@ -154,7 +143,7 @@ function render() {
     }
   }
 
-  const subtotal = calcSubtotal(cart);
+  const subtotal = calcSubtotal(items);
   const { gst, svc, rush, feeTotal } = calcFees(subtotal);
   const grandTotal = subtotal + feeTotal;
 
@@ -167,73 +156,110 @@ function render() {
 
 render();
 
+// keep UI fresh if you come back from other pages
+window.addEventListener("pageshow", () => {
+  cart = loadCart();
+  render();
+});
+
 // ---------- checkout flow ----------
 checkoutBtn?.addEventListener("click", () => {
   confirmCheck.checked = false;
   placeOrderBtn.disabled = true;
-  confirmDialog?.showModal();
+  confirmDialog?.showModal?.();
 });
 
 confirmCheck?.addEventListener("change", () => {
   placeOrderBtn.disabled = !confirmCheck.checked;
 });
 
-cancelConfirm?.addEventListener("click", () => confirmDialog?.close());
+cancelConfirm?.addEventListener("click", () => confirmDialog?.close?.());
+
+function groupItemsByStall(items) {
+  const map = new Map();
+  for (const it of items) {
+    const sid = String(it.stallId ?? "").trim();
+    if (!sid) continue;
+    if (!map.has(sid)) map.set(sid, []);
+    map.get(sid).push(it);
+  }
+  return map;
+}
 
 placeOrderBtn?.addEventListener("click", async () => {
   placeOrderBtn.disabled = true;
 
   try {
-    const items = Object.values(cart.items || {}).filter(Boolean);
+    const items = getItemsArray();
     if (!items.length) {
-      confirmDialog?.close();
+      confirmDialog?.close?.();
       render();
       return;
     }
 
     const wrapper = await loadWrapper();
 
-    const allOrders = await wrapper.getAllCustOrders();
-    const orderId = nextOrderId(allOrders);
-
-    const customerId = getCustomerId();
-    const customerForDb = customerId === "guest" ? 0 : (Number(customerId) || 0);
-
-    const orderDate = new Date().toISOString();
-    const pmtType = "Card"; // per your placeholder (no cards saved)
-
-    // Save order header
-    const okOrder = await wrapper.addCustOrder(orderId, orderDate, pmtType, customerForDb);
-    if (!okOrder) throw new Error("addCustOrder failed");
-
-    // Save order items
-    let orderItemNo = 1;
-    for (const it of items) {
-      const okItem = await wrapper.addOrderItem(
-        orderId,
-        orderItemNo++,
-        String(it.stallId),
-        String(it.itemCode),
-        Number(it.qty) || 0,
-        Number(it.unitPrice) || 0
-      );
-      if (!okItem) throw new Error("addOrderItem failed");
+    // NEW wrapper path: createOrder()
+    if (typeof wrapper.createOrder !== "function") {
+      throw new Error("wrapper.createOrder is missing (wrapper.js is not the updated version).");
     }
 
-    // Clear cart after successful order
+    const userId = getCustomerId();
+    const payType = "Card"; // placeholder
+
+    // Because wrapper Orders require stallId, we create ONE order per stall
+    const byStall = groupItemsByStall(items);
+
+    const createdOrderIds = [];
+
+    for (const [stallId, stallItems] of byStall.entries()) {
+      const subtotal = calcSubtotal(stallItems);
+      const fees = calcFees(subtotal);
+
+      const orderPayload = {
+        userId,
+        stallId,
+        payType,
+        status: "Placed",
+        totals: {
+          subtotal,
+          ...fees,
+          grandTotal: subtotal + fees.feeTotal,
+        },
+        items: stallItems.map((it) => ({
+          itemCode: String(it.itemCode),
+          name: String(it.name ?? it.itemCode),
+          qty: Number(it.qty) || 0,
+          unitPrice: Number(it.unitPrice) || 0,
+        })),
+      };
+
+      const created = await wrapper.createOrder(orderPayload);
+      createdOrderIds.push(created?.id || "");
+    }
+
+    // Clear cart after successful order(s)
     cart.items = {};
     saveCart(cart);
     render();
 
-    confirmDialog?.close();
-    successDialog?.showModal();
+    confirmDialog?.close?.();
+
+    // optional: show order ids in console
+    console.log("Created orders:", createdOrderIds);
+
+    successDialog?.showModal?.();
   } catch (err) {
     console.error(err);
     placeOrderBtn.disabled = false;
-    alert("Failed to place order. Check console for details.");
+    alert(`Failed to place order. ${err?.message || err}`);
   }
 });
 
 successOk?.addEventListener("click", () => {
-  successDialog?.close();
+  successDialog?.close?.();
+
+  // optional: auto return to where they came from
+  const returnTo = sessionStorage.getItem("cart:returnTo");
+  if (returnTo) window.location.href = returnTo;
 });
