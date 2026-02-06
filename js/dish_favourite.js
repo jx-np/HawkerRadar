@@ -52,25 +52,45 @@ window.addEventListener("resize", applyHeaderOffset);
 window.addEventListener("load", applyHeaderOffset);
 
 /* ---------------- Back + Go to Cart ---------------- */
+function rememberReturnToFromReferrer() {
+  try {
+    const ref = (document.referrer || "").trim();
+    if (!ref) return;
+
+    const u = new URL(ref);
+    if (u.origin !== window.location.origin) return;
+
+    const p = (u.pathname || "").toLowerCase();
+
+    // If we came from stall.html, remember it
+    if (p.includes("/stall.html")) {
+      sessionStorage.setItem("stallList:returnTo", u.href);
+    }
+
+    // If we came from home, remember it too (nice fallback)
+    if (p.includes("/home/home.html")) {
+      sessionStorage.setItem("stalls:returnTo", u.href);
+    }
+  } catch {
+    // ignore
+  }
+}
 function smartBack() {
-  // Prefer returning to the stall list page we came from
   const returnTo = sessionStorage.getItem("stallList:returnTo");
   if (returnTo) {
-    window.location.href = returnTo;
+    window.location.replace(returnTo);
     return;
   }
 
-  // Otherwise, try rebuild stall.html?hc=...
-  const hcId = sessionStorage.getItem("selectedHcId");
+  const hcId = sessionStorage.getItem("selectedHcId") || sessionStorage.getItem("lastHcId");
   if (hcId) {
-    const u = new URL("./stall.html", window.location.href); // same folder as stall_dish.html
+    const u = new URL("./stall.html", window.location.href);
     u.searchParams.set("hc", String(hcId));
-    window.location.href = u.href;
+    window.location.replace(u.href);
     return;
   }
 
-  // final fallback
-  window.location.href = new URL("/html/home/home.html", window.location.origin).href;
+  window.location.replace(new URL("/html/home/home.html", window.location.origin).href);
 }
 document.getElementById("pageBackBtn")?.addEventListener("click", smartBack);
 

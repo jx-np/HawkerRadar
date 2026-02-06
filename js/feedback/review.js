@@ -3,7 +3,7 @@ import { listStallFeedback, getUser, getStall } from "/js/firebase/wrapper.js";
 // --- Get Stall ID from URL ---
 const urlParams = new URLSearchParams(window.location.search);
 // const STALL_ID = urlParams.get('id'); // e.g. "501"
-const STALL_ID = 305;
+const STALL_ID = 302;
 
 // --- DOM Elements ---
 const reviewListContainer = document.getElementById('review-list');

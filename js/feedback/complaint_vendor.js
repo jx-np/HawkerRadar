@@ -1,9 +1,11 @@
 import { listStallComplaints, getUser, getStall, updateComplaint } from "/js/firebase/wrapper.js";
+// [!] Import auth function. Ensure this path points to where you saved your auth.js file
+import { getCurrentUser } from "/js/auth/auth.js"; 
 
-// --- 1. Get Stall ID from URL (Dynamic) ---
+// --- Get Stall ID from URL (Dynamic) ---
 const urlParams = new URLSearchParams(window.location.search);
 // const STALL_ID = urlParams.get('id'); // Gets ?id=301 from URL
-const STALL_ID = 301;
+const STALL_ID = 303;
 
 // --- DOM Elements ---
 const complaintsList = document.getElementById('complaints-list');
@@ -15,6 +17,31 @@ const dateFilter = document.getElementById('date-filter');
 
 // --- Initialization ---
 async function initPage() {
+    // --- SECURITY CHECK START ---
+    const user = getCurrentUser();
+
+    // Check if user is logged in
+    if (!user) {
+        alert("Access Denied: Please log in first.");
+        window.location.href = "/login.html"; // Redirect to login page
+        return;
+    }
+
+    // Check if user has the 'stallOwner' (Vendor) role
+    // Based on your auth.js: USER_ROLES.STALL_OWNER = 'stallOwner'
+    if (user.role !== 'stallOwner') {
+        document.body.innerHTML = `
+            <div style="text-align: center; margin-top: 50px; font-family: sans-serif;">
+                <h1>Access Denied</h1>
+                <p>You do not have permission to view this page.</p>
+                <p>Current Role: <strong>${user.role || 'None'}</strong> (Required: <strong>Vendor</strong>)</p>
+                <a href="/">Return Home</a>
+            </div>
+        `;
+        return; // Stop execution, do not fetch data
+    }
+    // --- SECURITY CHECK END ---
+
     if (!STALL_ID) {
         if (stallTitle) stallTitle.textContent = "Error: No Stall ID";
         complaintsList.innerHTML = '<p style="text-align:center;">No stall selected in URL.</p>';
@@ -121,7 +148,7 @@ function renderComplaints(data) {
             </div>
             <div class="card-body">
                 <ul>
-                    <li>${complaint.comments}</li>
+                    <li>${complaint.description}</li>
                 </ul>
                 <div class="card-actions">
                     <button class="${btnClass}" data-id="${complaint.id}">${btnText}</button>

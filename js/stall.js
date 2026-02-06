@@ -157,6 +157,7 @@ function renderStalls(hcId, stalls, favSet, stallToCuisine) {
 
       // view menu
       card.querySelector(".stall-card__btn").addEventListener("click", () => {
+        sessionStorage.setItem("stallList:returnTo", window.location.href); // ✅ add this
         window.location.href = `./stall_dish.html?stall=${encodeURIComponent(sid)}`;
       });
 

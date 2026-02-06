@@ -121,6 +121,9 @@ hcGrid?.addEventListener("click", (e) => {
   // Save selected hawker centre ID for next page
   sessionStorage.setItem("selectedHcId", hcId);
 
+  // ✅ PUT IT RIGHT HERE (before redirect)
+  sessionStorage.setItem("stalls:returnTo", window.location.href);
+
   // Redirect to stall page with hc query param
   const url = new URL("/html/stall/stall.html", window.location.origin);
   url.searchParams.set("hc", hcId);
