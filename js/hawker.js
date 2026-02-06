@@ -1,6 +1,5 @@
 // /js/hawker.js
-// Import Firebase wrapper functions to fetch hawker centres and food stalls
-import { getAllHawkerCentres, getAllFoodStalls } from "/js/firebase/wrapper.js";
+import { listHawkerCentres, listStalls } from "/js/firebase/wrapper.js";
 
 // Grab DOM elements used across the page
 const regionSelect = document.getElementById("region");
@@ -18,21 +17,18 @@ function renderHawkerCentres(centres) {
 
   // Loop through each hawker centre from Firebase
   Object.entries(centres).forEach(([hcId, centre]) => {
-    // Resolve Hawker Centre ID safely (handles inconsistent field names)
-    const realHcId = String(
-      centre.HawkerCentreID ?? centre.HCId ?? centre.HCID ?? hcId
-    );
+    const realHcId = String(centre.id ?? hcId);
 
     // Inject hawker centre card HTML
     hcGrid.innerHTML += `
       <div class="hc-card" data-hc-id="${realHcId}">
-          <div class="hc-image" style="background-image: url('${centre.ImageURL}');"></div>
+          <div class="hc-image" style="background-image: url('${centre.coverImage}');"></div>
           <div class="hc-info">
               <div class="hc-info-top">
-                  <strong>${centre.HCName}</strong>
-                  <span class="hc-price">${centre.PriceRange}</span>
+                  <strong>${centre.name}</strong>
+                  <span class="hc-price">${centre.priceRange}</span>
               </div>
-              <em>${centre.Region}</em>
+              <em>${centre.region}</em>
               <button class="hc-view-menu" type="button">View Menu</button>
           </div>
       </div>
@@ -45,10 +41,11 @@ function renderHawkerCentres(centres) {
 ========================== */
 // Fetch hawker centres from Firebase and set up region filtering
 async function init() {
-  const centres = await getAllHawkerCentres();
+  const centres = await listHawkerCentres();
   if (!centres) return;
 
-  // Initial render (no filters applied)
+  console.log(centres);
+
   renderHawkerCentres(centres);
 
   // Apply region filter only when "Filter" button is clicked
@@ -157,7 +154,7 @@ featuredGrid?.addEventListener("click", async (e) => {
       .toLowerCase();
 
     if (wantedName) {
-      const stallsObj = await getAllFoodStalls();
+      const stallsObj = await listStalls();
       const allStalls = Object.values(stallsObj || {}).filter(Boolean);
 
       const match = allStalls.find(
