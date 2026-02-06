@@ -1,18 +1,19 @@
-import { listStallComplaints, getUser, getStall } from "/js/firebase/wrapper.js";
+import { listStallComplaints, getUser, getStall, updateComplaint } from "/js/firebase/wrapper.js";
 
 // --- Get Stall ID from URL ---
 const urlParams = new URLSearchParams(window.location.search);
-const STALL_ID = urlParams.get('id'); 
+// const STALL_ID = urlParams.get('id'); 
+const STALL_ID = 305; // change this after stall is fixed
 
 // --- DOM Elements ---
 const complaintsList = document.getElementById('complaints-list');
 const stallTitle = document.querySelector('.stall-title');
-const stallHeader = document.querySelector('.stall-header'); // <--- Select the header box
+const stallHeader = document.querySelector('.stall-header'); 
 const filterBtn = document.getElementById('filter-btn');
 const issueFilter = document.getElementById('issue-filter');
 const dateFilter = document.getElementById('date-filter');
 
-// --- Initialization ---
+// Initialization
 async function initPage() {
     if (!STALL_ID) {
         if (stallTitle) stallTitle.textContent = "Error: No Stall ID";
@@ -28,26 +29,21 @@ async function initPage() {
             listStallComplaints(STALL_ID)
         ]);
 
-        // --- UPDATE HEADER INFO ---
+        // UPDATE HEADER INFO
         if (stall) {
             console.log("Stall found:", stall.name);
             stallTitle.textContent = stall.name;
 
-            // <--- Update Background Image --->
-            // Checks for 'image' or 'coverImage' property in your DB
+            // Update Background Image
             const imageUrl = stall.image || stall.coverImage; 
-            
             if (imageUrl) {
                 stallHeader.style.backgroundImage = `url('${imageUrl}')`;
-            } else {
-                // Keep default CSS image or set a specific fallback
-                console.log("No image found for stall, keeping default.");
             }
         } else {
             stallTitle.textContent = "Stall Not Found";
         }
 
-        // --- PROCESS COMPLAINTS ---
+        // PROCESS COMPLAINTS
         const rawComplaints = complaintsMap ? Object.values(complaintsMap) : [];
         let complaintsData = [];
 
@@ -71,7 +67,8 @@ async function initPage() {
                     customerName: userName,
                     category: item.category || "General",
                     comments: item.comments || "No details provided.",
-                    date: item.dateCreated
+                    date: item.dateCreated,
+                    status: item.status || 'open'
                 };
             });
 
@@ -86,7 +83,7 @@ async function initPage() {
     }
 }
 
-// --- Render Function ---
+// Render Function
 function renderComplaints(data) {
     complaintsList.innerHTML = '';
 
@@ -100,6 +97,11 @@ function renderComplaints(data) {
     sortedData.forEach(complaint => {
         const dateObj = new Date(complaint.date);
         const dateStr = isNaN(dateObj) ? "Unknown Date" : dateObj.toLocaleDateString();
+
+        // Determine State (Green = Active/Unread, Red = Read/Closed)
+        const isClosed = complaint.status === 'closed';
+        const btnClass = isClosed ? 'btn-mark-read closed' : 'btn-mark-read';
+        const btnText = isClosed ? 'Read' : 'Mark as Read';
 
         const card = document.createElement('article');
         card.classList.add('complaint-card');
@@ -117,14 +119,35 @@ function renderComplaints(data) {
                 <ul>
                     <li>${complaint.comments}</li>
                 </ul>
+                <div class="card-actions">
+                    <button class="${btnClass}" data-id="${complaint.id}">${btnText}</button>
+                </div>
             </div>
         `;
+
+        // Attach Click Listener
+        const btn = card.querySelector('.btn-mark-read');
+        btn.addEventListener('click', async () => {
+            if (btn.classList.contains('closed')) return;
+
+            try {
+                await updateComplaint(complaint.id, { status: 'closed' });
+                
+                btn.textContent = "Read";
+                btn.classList.add('closed');
+                complaint.status = 'closed';
+                
+            } catch (error) {
+                console.error("Failed to mark as read:", error);
+                alert("Error updating status.");
+            }
+        });
 
         complaintsList.appendChild(card);
     });
 }
 
-// --- 5. Filter Logic ---
+// Filter Logic
 if (filterBtn) {
     filterBtn.addEventListener('click', () => {
         const data = window.currentComplaintsData || [];
@@ -132,10 +155,14 @@ if (filterBtn) {
         const selectedDate = dateFilter.value; 
 
         const filteredData = data.filter(item => {
+            // Category Check 
             const itemCat = String(item.category).toLowerCase().trim();
             const filterCat = selectedCategory.toLowerCase().trim();
-            const categoryMatch = selectedCategory === 'All' || itemCat === filterCat;
+            
+            // Checks if the filter word exists inside the category string
+            const categoryMatch = selectedCategory === 'All' || itemCat.includes(filterCat);
 
+            // Date Check
             let dateMatch = true;
             if (selectedDate && item.date) {
                 const itemDateObj = new Date(item.date);
