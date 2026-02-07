@@ -1,4 +1,3 @@
-// ../../js/dish.js
 // Dish detail page
 // URL: dish.html?stall=<stallId>&item=<menuItemId>
 
@@ -228,7 +227,7 @@ async function fetchMenuItem(wrapper, stallId, itemId) {
       })();
 
     sessionStorage.setItem("cart:returnTo", stallMenuUrl);
-    window.location.href = new URL("/user/cart.html", window.location.href).href;
+    window.location.href = new URL("/html/user/cart.html", window.location.href).href;
   });
 
   if (!itemId) {
@@ -279,7 +278,7 @@ async function fetchMenuItem(wrapper, stallId, itemId) {
           : `/images/dishes/${itemId}.jpg`;
     }
 
-    setImgWithFallback(el.banner, finalImg, "/images/dishes/placeholder.jpg", dishName);
+    setImgWithFallback(el.banner, finalImg, "", dishName);
     // --------------------------
 
     // Favorites

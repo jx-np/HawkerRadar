@@ -14,14 +14,11 @@ import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signOut,
-    onAuthStateChanged
+    onAuthStateChanged,
+    updateEmail
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
 const auth = getAuth();
-
-/* =========================================
-    stuff to not touch
-========================================= */
 
 const dbRef = (path) => ref(db, path);
 
@@ -31,10 +28,6 @@ async function getOnce(path) {
     const snap = await get(dbRef(path));
     return snapshotToValue(snap);
 }
-
-/* =========================================
-   Hawker Centres
-========================================= */
 
 /**
  * Create or overwrite a Hawker Centre
@@ -131,10 +124,6 @@ export async function deleteHawkerCentre(id) {
     // does not cascade delete stalls, etc
     await deleteEntity('hawkerCentres', id);
 }
-
-/* =========================================
-    Stalls
-========================================= */
 
 /**
  * Create or overwrite a Stall.
@@ -248,10 +237,6 @@ export async function deleteStall(id) {
     // NOTE: does not auto-delete menuItems, orders, feedback, complaints
     await deleteEntity('stalls', id);
 }
-
-/* =========================================
-   Menu Items + Promotions
-========================================= */
 
 /**
  * Create or overwrite a Menu Item.
@@ -398,10 +383,6 @@ export async function removeMenuItemPromotion(menuItemId, promotionId) {
     await remove(dbRef(`menuItems/${menuItemId}/promotions/${promotionId}`));
 }
 
-/* =========================================
-   Users + Auth
-========================================= */
-
 /**
  * Register a user with Firebase Auth and create a profile in /users
  * @param {{email: string, password: string, nric?: string, name?: string, contactNo?: string, roles?: object}} payload
@@ -522,6 +503,14 @@ export async function getUser(id) {
  * });
  */
 export async function updateUser(id, partial) {
+    if (partial.email && auth.currentUser && auth.currentUser.uid === id) {
+        try {
+            await updateEmail(auth.currentUser, partial.email);
+        } catch (error) {
+            throw error;
+        }
+    }
+    
     return updateEntity('users', id, partial);
 }
 
@@ -537,9 +526,134 @@ export async function deleteUser(id) {
     await deleteEntity('users', id);
 }
 
-/* =========================================
-   Orders
-========================================= */
+/**
+ * Add a payment method to a user
+ * @param {string} userId - The user's ID
+ * @param {{
+ *   type: string,
+ *   lastFourDigits: string,
+ *   cardHolder: string,
+ *   expiryDate: string,
+ *   [key: string]: any
+ * }} paymentMethod - Payment method details
+ * @returns {Promise<{cardId: string, ...}>} The added payment method with cardId
+ * @example
+ * // Add a payment method
+ * const card = await addPaymentMethod('user-789', {
+ *     type: 'Visa',
+ *     lastFourDigits: '4242',
+ *     cardHolder: 'JOHN DOE',
+ *     expiryDate: '12/25'
+ * });
+ * console.log(card.cardId); // 'card_1234567890'
+ */
+export async function addPaymentMethod(userId, paymentMethod) {
+    if (!userId) throw new Error('userId is required');
+    if (!paymentMethod) throw new Error('paymentMethod is required');
+
+    const user = await getUser(userId);
+    if (!user) throw new Error('User not found');
+
+    const cardId = `card_${Date.now()}`;
+    const paymentMethods = user.paymentMethods || {};
+    
+    paymentMethods[cardId] = {
+        ...paymentMethod,
+        addedAt: new Date().toISOString()
+    };
+
+    await updateUser(userId, { paymentMethods });
+
+    return { cardId, ...paymentMethods[cardId] };
+}
+
+/**
+ * Remove a payment method from a user's profile
+ * @param {string} userId - The user's ID
+ * @param {string} cardId - The card ID to remove
+ * @example
+ * // Remove a payment method
+ * await removePaymentMethod('user-789', 'card_1234567890');
+ */
+export async function removePaymentMethod(userId, cardId) {
+    if (!userId) throw new Error('userId is required');
+    if (!cardId) throw new Error('cardId is required');
+
+    const user = await getUser(userId);
+    if (!user) throw new Error('User not found');
+
+    const paymentMethods = { ...user.paymentMethods };
+    delete paymentMethods[cardId];
+
+    await updateUser(userId, { paymentMethods });
+}
+
+/**
+ * Get all payment methods for a user
+ * @param {string} userId - The user's ID
+ * @returns {Promise<object>} Object containing all payment methods with cardId as keys
+ * @example
+ * // Get user's payment methods
+ * const methods = await getPaymentMethods('user-789');
+ * Object.entries(methods).forEach(([cardId, card]) => {
+ *     console.log(`${card.type} ending in ${card.lastFourDigits}`);
+ * });
+ */
+export async function getPaymentMethods(userId) {
+    if (!userId) throw new Error('userId is required');
+
+    const user = await getUser(userId);
+    if (!user) return {};
+
+    return user.paymentMethods || {};
+}
+
+/**
+ * Alias for getPaymentMethods - get all payment methods for a user
+ * @param {string} userId - The user's ID
+ * @returns {Promise<object>} Object containing all payment methods
+ * @example
+ * // List user's payment methods
+ * const methods = await listPaymentMethods('user-789');
+ */
+export async function listPaymentMethods(userId) {
+    return getPaymentMethods(userId);
+}
+
+/**
+ * Update a specific payment method
+ * @param {string} userId - The user's ID
+ * @param {string} cardId - The card ID to update
+ * @param {object} updates - Fields to update
+ * @example
+ * // Update card expiry date
+ * await updatePaymentMethod('user-789', 'card_1234567890', {
+ *     expiryDate: '12/26'
+ * });
+ */
+export async function updatePaymentMethod(userId, cardId, updates) {
+    if (!userId) throw new Error('userId is required');
+    if (!cardId) throw new Error('cardId is required');
+    if (!updates) throw new Error('updates are required');
+
+    const user = await getUser(userId);
+    if (!user) throw new Error('User not found');
+
+    const paymentMethods = user.paymentMethods || {};
+    if (!paymentMethods[cardId]) {
+        throw new Error('Payment method not found');
+    }
+
+    paymentMethods[cardId] = {
+        ...paymentMethods[cardId],
+        ...updates,
+        updatedAt: new Date().toISOString()
+    };
+
+    await updateUser(userId, { paymentMethods });
+
+    return paymentMethods[cardId];
+}
 
 /**
  * Create an Order.
@@ -709,10 +823,6 @@ export async function listStallOrders(stallId) {
     return result;
 }
 
-/* =========================================
-   Feedback
-========================================= */
-
 /**
  * Create Feedback.
  * If `feedback.id` not provided, uses a push key.
@@ -828,10 +938,6 @@ export async function listUserFeedback(userId) {
     }
     return result;
 }
-
-/* =========================================
-   Complaints
-========================================= */
 
 /**
  * Create a Complaint.

@@ -264,13 +264,13 @@
 //     card.querySelector(".stall-card__btn").addEventListener("click", (e) => {
 //       e.stopPropagation();
 //       sessionStorage.setItem("stallList:returnTo", window.location.href);
-//       window.location.href = `/html/Stall/stall_dish.html?stall=${encodeURIComponent(sid)}`;
+//       window.location.href = `/html/stall/stall_dish.html?stall=${encodeURIComponent(sid)}`;
 //     });
 
 //     // view menu (card click)
 //     card.addEventListener("click", () => {
 //         sessionStorage.setItem("stallList:returnTo", window.location.href);
-//         window.location.href = `/html/Stall/stall_dish.html?stall=${encodeURIComponent(sid)}`;
+//         window.location.href = `/html/stall/stall_dish.html?stall=${encodeURIComponent(sid)}`;
 //     });
 
 //     gridEl.appendChild(card);

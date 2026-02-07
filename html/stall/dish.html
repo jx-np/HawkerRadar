@@ -10,7 +10,7 @@
     <link rel="icon" href="/img/TabLogo.png">
     <link rel="stylesheet" href="/css/Essential/navbar.css" />
     <link rel="stylesheet" href="/css/Essential/footer.css" />
-    <link rel="stylesheet" href="/css/Stall/dish.css" />
+    <link rel="stylesheet" href="/css/stall/dish.css" />
 
     <link
       rel="stylesheet"
@@ -51,7 +51,7 @@
             <img
               class="dish-hero__banner"
               id="dish-banner"
-              src="/images/dishes/placeholder.jpg"
+              src=""
               alt="Dish banner"
             />
 
@@ -91,7 +91,7 @@
           <span class="dish-in-cart" id="inCart">In cart: 0</span>
         </div>
 
-        <a class="dish-view-cart" id="viewCart" href="/user/cart.html">View Cart</a>
+        <a class="dish-view-cart" id="viewCart" href="/html/user/cart.html">View Cart</a>
       </section>
 
       <aside class="dish-bottom" aria-label="Add to cart">
@@ -114,6 +114,7 @@
       // who the hell wrote this
       window.DISH_PAGE = { wrapperPath: "/js/firebase/wrapper.js" };
     </script>
-    <script type="module" src="/js/dish.js"></script>
+    <script type="module" src="/js/utils/navbar.js"></script>
+    <script type="module" src="/js/stall/dish.js"></script>
   </body>
 </html>

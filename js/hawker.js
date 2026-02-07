@@ -44,8 +44,6 @@ async function init() {
   const centres = await listHawkerCentres();
   if (!centres) return;
 
-  console.log(centres);
-
   renderHawkerCentres(centres);
 
   // Apply region filter only when "Filter" button is clicked
