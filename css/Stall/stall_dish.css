@@ -80,8 +80,9 @@ body{
   font-size: 32px;
 }
 [aria-pressed="true"] .material-symbols-outlined,
-.is-favorited .material-symbols-outlined{
-  font-variation-settings: 'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 32;
+.is-favorited .material-symbols-outlined {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 32;
+  color: #ff0000; /* ✅ ADD THIS LINE (Red) */
 }
 
 /* ===========================

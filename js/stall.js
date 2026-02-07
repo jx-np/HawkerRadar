@@ -1,12 +1,7 @@
 import {
   getHawkerCentre,
-  getAllFoodStalls,
-  getAllCuisines,
-  getAllMenuItemCuisines,
+  listStallsByHawkerCentre,
 } from "/js/firebase/wrapper.js";
-
-// fallback direct read (in case your node names differ)
-import { db, ref, get } from "/js/firebase/realtimedb.js";
 
 function applyHeaderOffset() {
   const header = document.querySelector(".site-header");
@@ -19,24 +14,24 @@ window.addEventListener("resize", applyHeaderOffset);
 window.addEventListener("load", applyHeaderOffset);
 
 const el = {
+  pageBackBtn: document.getElementById("pageBackBtn"),
   hcName: document.getElementById("hcName"),
   hcAddress: document.getElementById("hcAddress"),
   hcBanner: document.getElementById("hcBanner"),
-
   cuisineSelect: document.getElementById("cuisineSelect"),
   filterBtn: document.getElementById("filterBtn"),
-
   favGrid: document.getElementById("favGrid"),
   resultsGrid: document.getElementById("resultsGrid"),
   favEmpty: document.getElementById("favEmpty"),
   resultsEmpty: document.getElementById("resultsEmpty"),
-
   tpl: document.getElementById("tpl-stall-card"),
 };
 
 function getHcId() {
   const url = new URL(window.location.href);
-  return url.searchParams.get("hc") || sessionStorage.getItem("selectedHcId") || "";
+  return (
+    url.searchParams.get("hc") || sessionStorage.getItem("selectedHcId") || ""
+  );
 }
 
 function setHeroImage(url) {
@@ -51,63 +46,30 @@ function setHeroImage(url) {
 function favKey(hcId) {
   return `favStalls:${hcId}`;
 }
+
 function loadFavSet(hcId) {
   try {
-    return new Set(JSON.parse(localStorage.getItem(favKey(hcId)) || "[]").map(String));
+    return new Set(
+      JSON.parse(localStorage.getItem(favKey(hcId)) || "[]").map(String)
+    );
   } catch {
     return new Set();
   }
 }
+
 function saveFavSet(hcId, set) {
   localStorage.setItem(favKey(hcId), JSON.stringify([...set]));
 }
 
-async function readAny(pathList) {
-  for (const p of pathList) {
-    const snap = await get(ref(db, p));
-    if (snap.exists()) return snap.val();
-  }
-  return null;
-}
-
-async function getAllFoodStallsSafe() {
-  const viaWrapper = await getAllFoodStalls();
-  if (viaWrapper) return viaWrapper;
-
-  // fallback if your Firebase node name is different
-  return await readAny(["foodStall", "FoodStall", "foodstall", "FOODSTALL"]);
-}
-
-function buildCuisineMaps(cuisinesObj, micObj) {
-  const cuisineById = new Map();
-  Object.values(cuisinesObj || {}).forEach((c) => {
-    if (c?.CuisineID != null) cuisineById.set(String(c.CuisineID), c.CuisineDesc || "");
-  });
-
-  const stallToCuisine = new Map(); // StallID -> Set(desc)
-  Object.values(micObj || {}).forEach((mic) => {
-    if (!mic?.StallID || mic?.CuisineID == null) return;
-    const sid = String(mic.StallID);
-    const desc = cuisineById.get(String(mic.CuisineID));
-    if (!desc) return;
-
-    if (!stallToCuisine.has(sid)) stallToCuisine.set(sid, new Set());
-    stallToCuisine.get(sid).add(desc);
-  });
-
-  return { cuisineById, stallToCuisine };
-}
-
-function renderStalls(hcId, stalls, favSet, stallToCuisine) {
-  // Dropdown options
+function renderStalls(hcId, stalls, favSet) {
+  // 1. Build Dropdown Options
   const cuisineSet = new Set();
   stalls.forEach((s) => {
-    const set = stallToCuisine.get(String(s.StallID));
-    if (!set) return;
-    for (const c of set) cuisineSet.add(c);
+    if (s.cuisine) {
+      cuisineSet.add(s.cuisine);
+    }
   });
 
-  // reset dropdown (keep first option)
   el.cuisineSelect.innerHTML = `<option value="">All Cuisines</option>`;
   [...cuisineSet].sort().forEach((c) => {
     const opt = document.createElement("option");
@@ -118,48 +80,77 @@ function renderStalls(hcId, stalls, favSet, stallToCuisine) {
 
   const selectedCuisine = el.cuisineSelect.value || "";
 
-  const favStalls = stalls.filter((s) => favSet.has(String(s.StallID))).slice(0, 3);
+  // 2. Filter Stalls
+  const favStalls = stalls
+    .filter((s) => favSet.has(String(s.id)))
+    .slice(0, 3);
+
   const results = selectedCuisine
-    ? stalls.filter((s) => {
-        const set = stallToCuisine.get(String(s.StallID));
-        return set ? set.has(selectedCuisine) : false;
-      })
+    ? stalls.filter((s) => s.cuisine === selectedCuisine)
     : stalls;
 
-  // render helper
+  // 3. Render Helper
   const renderGrid = (grid, emptyEl, list) => {
     grid.innerHTML = "";
     emptyEl.style.display = list.length ? "none" : "block";
 
     list.forEach((stall) => {
-      const sid = String(stall.StallID);
-
+      const sid = String(stall.id);
       const card = el.tpl.content.firstElementChild.cloneNode(true);
       card.dataset.stallId = sid;
 
-      card.querySelector(".stall-card__name").textContent = stall.StallName || `Stall ${sid}`;
-      card.querySelector(".stall-card__unit").textContent = `Stall Unit: ${stall.StallUnitNo || "-"}`;
-
-      const cuisines = stallToCuisine.get(sid);
+      // Text Content
+      card.querySelector(".stall-card__name").textContent =
+        stall.name || `Stall ${sid}`;
+      card.querySelector(".stall-card__unit").textContent = `Unit: ${
+        stall.unitNo || "-"
+      }`;
       card.querySelector(".stall-card__cuisine").textContent =
-        cuisines && cuisines.size ? [...cuisines].join(", ") : "Cuisine Type";
+        stall.cuisine || "Cuisine Type";
 
-      // fav button
+      // Image
+      const imgEl = card.querySelector(".stall-card__img");
+      const imageUrl = stall.storeImage || "";
+
+      if (imgEl && imageUrl) {
+        imgEl.style.backgroundImage = `url('${imageUrl}')`;
+        imgEl.style.backgroundSize = "cover";
+        imgEl.style.backgroundPosition = "top center";
+      }
+
+      // Fav Button Logic
       const favBtn = card.querySelector(".stall-card__fav");
-      favBtn.setAttribute("aria-pressed", favSet.has(sid) ? "true" : "false");
+      if (favBtn) {
+        // Force state update immediately
+        const isFav = favSet.has(sid);
+        favBtn.setAttribute("aria-pressed", isFav ? "true" : "false");
 
-      favBtn.addEventListener("click", () => {
-        if (favSet.has(sid)) favSet.delete(sid);
-        else favSet.add(sid);
-        saveFavSet(hcId, favSet);
-        renderStalls(hcId, stalls, favSet, stallToCuisine); // re-render
-      });
+        favBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          
+          if (favSet.has(sid)) {
+             favSet.delete(sid);
+          } else {
+             favSet.add(sid);
+          }
+          
+          console.log(`Toggled Favorite for ${sid}. New State:`, favSet.has(sid));
+          
+          saveFavSet(hcId, favSet);
+          renderStalls(hcId, stalls, favSet); // Re-render to update UI
+        });
+      }
 
-      // view menu
-      card.querySelector(".stall-card__btn").addEventListener("click", () => {
-        sessionStorage.setItem("stallList:returnTo", window.location.href); // ✅ add this
-        window.location.href = `./stall_dish.html?stall=${encodeURIComponent(sid)}`;
-      });
+      // Card Click
+      const actionBtn = card.querySelector(".stall-card__btn");
+      if (actionBtn) {
+        actionBtn.addEventListener("click", () => {
+          sessionStorage.setItem("stallList:returnTo", window.location.href);
+          window.location.href = `./stall_dish.html?stall=${encodeURIComponent(
+            sid
+          )}`;
+        });
+      }
 
       grid.appendChild(card);
     });
@@ -170,6 +161,16 @@ function renderStalls(hcId, stalls, favSet, stallToCuisine) {
 }
 
 (async function init() {
+  if (el.pageBackBtn) {
+    el.pageBackBtn.addEventListener("click", () => {
+      if (document.referrer && document.referrer.includes(window.location.host)) {
+        window.history.back();
+      } else {
+        window.location.href = "/html/home/home.html";
+      }
+    });
+  }
+
   const hcId = getHcId();
   if (!hcId) {
     el.hcName.textContent = "Missing Hawker Centre ID";
@@ -179,33 +180,21 @@ function renderStalls(hcId, stalls, favSet, stallToCuisine) {
   sessionStorage.setItem("selectedHcId", hcId);
 
   const centre = await getHawkerCentre(hcId);
-  el.hcName.textContent = centre?.HCName || `Hawker Centre ${hcId}`;
-  el.hcAddress.textContent = centre?.HCAddress || "";
-  setHeroImage(centre?.ImageURL || "");
+  el.hcName.textContent = centre?.name || `Hawker Centre ${hcId}`;
+  el.hcAddress.textContent = centre?.address || "";
+  setHeroImage(centre?.coverImage || "");
 
-  const stallsObj = await getAllFoodStallsSafe();
-  const allStalls = Object.values(stallsObj || {});
-
-  // IMPORTANT: wrapper uses HawkerCentreID (capital C)
-  const stallsForHc = allStalls.filter((s) => String(s?.HawkerCentreID) === String(hcId));
-
-  // cuisines (optional)
-  const [cuisinesObj, micObj] = await Promise.all([
-    getAllCuisines().catch(() => null),
-    getAllMenuItemCuisines().catch(() => null),
-  ]);
-
-  const { stallToCuisine } = buildCuisineMaps(cuisinesObj, micObj);
+  const stallsMap = await listStallsByHawkerCentre(hcId);
+  const stallsForHc = Object.values(stallsMap || {});
 
   const favSet = loadFavSet(hcId);
 
-  // Debug logs (super useful)
   console.log("[stall] hcId:", hcId);
-  console.log("[stall] total stalls in DB:", allStalls.length);
-  console.log("[stall] stallsForHc:", stallsForHc.length);
-  console.log("[stall] sample stall object:", allStalls[0]);
+  console.log("[stall] stalls found:", stallsForHc.length);
 
-  renderStalls(hcId, stallsForHc, favSet, stallToCuisine);
+  renderStalls(hcId, stallsForHc, favSet);
 
-  el.filterBtn.addEventListener("click", () => renderStalls(hcId, stallsForHc, favSet, stallToCuisine));
+  el.filterBtn.addEventListener("click", () =>
+    renderStalls(hcId, stallsForHc, favSet)
+  );
 })();

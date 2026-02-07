@@ -25,26 +25,28 @@ body{
 }
 
 /* ✅ Material Symbols (icons) */
-.material-symbols-outlined{
-  font-family: "Material Symbols Outlined";
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined' !important; /* Force the font family */
   font-weight: normal;
   font-style: normal;
-  display: inline-block;
+  font-size: 30px; /* Adjust size if needed */
   line-height: 1;
-  text-transform: none;
   letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
   white-space: nowrap;
+  word-wrap: normal;
   direction: ltr;
-
-  font-feature-settings: "liga";
-  -webkit-font-feature-settings: "liga";
-  -webkit-font-smoothing: antialiased;
-
-  font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 28;
-  font-size: 30px;
+  
+  /* Default settings (Black Outline) */
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 28;
+  color: inherit; 
 }
-[aria-pressed="true"] .material-symbols-outlined{
-  font-variation-settings: 'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 28;
+
+/* 2. When button is pressed: Fill it and turn it RED */
+button.stall-card__fav[aria-pressed="true"] .material-symbols-outlined {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 28 !important;
+  color: #ff0000 !important; /* Force Red */
 }
 
 /* Page container */

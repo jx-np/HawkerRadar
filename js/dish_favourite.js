@@ -13,7 +13,7 @@ const cfg = {
     ratingValue: "stall-rating-value",
     ratingCount: "stall-rating-count",
     banner: "stall-banner",
-    ratingContainer: "stall-rating", 
+    ratingContainer: "stall-rating",
 
     favoritesScroller: "hc-favorites-scroller",
     dishList: "dish-list",
@@ -57,14 +57,18 @@ function smartBack() {
     window.location.replace(returnTo);
     return;
   }
-  const hcId = sessionStorage.getItem("selectedHcId") || sessionStorage.getItem("lastHcId");
+  const hcId =
+    sessionStorage.getItem("selectedHcId") ||
+    sessionStorage.getItem("lastHcId");
   if (hcId) {
     const u = new URL("./stall.html", window.location.href);
     u.searchParams.set("hc", String(hcId));
     window.location.replace(u.href);
     return;
   }
-  window.location.replace(new URL("/html/home/home.html", window.location.origin).href);
+  window.location.replace(
+    new URL("/html/home/home.html", window.location.origin).href
+  );
 }
 document.getElementById("pageBackBtn")?.addEventListener("click", smartBack);
 
@@ -127,43 +131,45 @@ function setPressed(btn, pressed) {
 
 /* ---------------- Wrapper loader ---------------- */
 async function loadWrapper() {
-  const wrapperPath = window.STALL_PAGE?.wrapperPath || "/js/firebase/wrapper.js";
+  const wrapperPath =
+    window.STALL_PAGE?.wrapperPath || "/js/firebase/wrapper.js";
   const wrapperUrl = new URL(wrapperPath, document.baseURI).href;
   return import(wrapperUrl);
 }
 
-/* ---------------- Data Normalizers ---------------- */
+/* ---------------- Data Normalizers (UPDATED FOR NEW WRAPPER) ---------------- */
 function stallNameOf(s) {
-  return s?.name ?? s?.StallName ?? "Stall";
+  return s?.name || "Stall";
 }
 function stallUnitOf(s) {
-  const u = s?.unitNo ?? s?.StallUnitNo ?? "";
-  return u ? `Stall Unit: ${u}` : "";
+  const u = s?.unitNo || ""; // Updated: uses 'unitNo'
+  return u ? `Unit: ${u}` : "";
 }
 function stallDescOf(s) {
-  return s?.description ?? s?.StallDesc ?? "";
+  return s?.description || ""; // Updated: uses 'description'
 }
 function menuItemCodeOf(mi, key) {
-  return String(mi?.id ?? key ?? "").trim();
+  return String(mi?.id || key || "").trim();
 }
 function menuItemNameOf(mi) {
-  return mi?.name ?? mi?.ItemDesc ?? "Item";
+  return mi?.name || "Item"; // Updated: uses 'name'
 }
 function menuItemCatOf(mi) {
-  return (mi?.category ?? "").trim();
+  return (mi?.category || "").trim(); // Updated: uses 'category'
 }
 function menuItemPriceOf(mi) {
-  return mi?.price ?? 0;
+  return mi?.price || 0; // Updated: uses 'price'
 }
 
 /* ---------------- Rating Calculation ---------------- */
 function computeRating(feedbackList) {
-  if (!feedbackList || typeof feedbackList !== 'object') return { avg: 0, count: 0 };
+  if (!feedbackList || typeof feedbackList !== "object")
+    return { avg: 0, count: 0 };
 
   let sum = 0;
   let count = 0;
 
-  Object.values(feedbackList).forEach(fb => {
+  Object.values(feedbackList).forEach((fb) => {
     if (fb) {
       const r = Number(fb.rating);
       if (Number.isFinite(r)) {
@@ -214,8 +220,12 @@ function cartTotals(cart) {
   return { count, total };
 }
 
-function fmtCount(n) { return String(n).padStart(2, "0"); }
-function fmtMoney(n) { return `$${(Number(n) || 0).toFixed(2)}`; }
+function fmtCount(n) {
+  return String(n).padStart(2, "0");
+}
+function fmtMoney(n) {
+  return `$${(Number(n) || 0).toFixed(2)}`;
+}
 
 function updateCartBar(cart) {
   const { count, total } = cartTotals(cart);
@@ -232,13 +242,17 @@ function setRowQtyUI(row, qty) {
 }
 
 /* ---------------- FAVORITES (localStorage) ---------------- */
-function localFavKey(stallId) { return `hc:fav:${stallId}`; }
+function localFavKey(stallId) {
+  return `hc:fav:${stallId}`;
+}
 function loadFavSet(stallId) {
   try {
     const raw = localStorage.getItem(localFavKey(stallId));
     const arr = raw ? JSON.parse(raw) : [];
     return new Set(Array.isArray(arr) ? arr.map(String) : []);
-  } catch { return new Set(); }
+  } catch {
+    return new Set();
+  }
 }
 function saveFavSet(stallId, set) {
   localStorage.setItem(localFavKey(stallId), JSON.stringify([...set]));
@@ -249,8 +263,12 @@ function stallFavKey(hcId) {
 }
 function loadStallFavSet(hcId) {
   try {
-    return new Set(JSON.parse(localStorage.getItem(stallFavKey(hcId)) || "[]").map(String));
-  } catch { return new Set(); }
+    return new Set(
+      JSON.parse(localStorage.getItem(stallFavKey(hcId)) || "[]").map(String)
+    );
+  } catch {
+    return new Set();
+  }
 }
 function saveStallFavSet(hcId, set) {
   localStorage.setItem(stallFavKey(hcId), JSON.stringify([...set]));
@@ -294,7 +312,10 @@ function renderDishRows({ stallId, items, dishMap, cart }) {
     if (priceEl) priceEl.textContent = priceText;
 
     const imgEl = node.querySelector(".dish-row__thumb");
-    const guessImg = mi.image ? mi.image : `/images/dishes/${stallId}_${itemCode}.jpg`;
+    // Updated: uses 'image' from JSON
+    const guessImg = mi.image
+      ? mi.image
+      : `/images/dishes/${stallId}_${itemCode}.jpg`;
     setImgWithFallback(imgEl, guessImg, cfg.dishPlaceholderImg, itemName);
 
     dishMap.set(itemCode, {
@@ -348,7 +369,9 @@ function renderFavorites({ likedSet, dishMap }) {
     if (priceEl) priceEl.textContent = dish.priceText;
     setImgWithFallback(imgEl, dish.img, cfg.dishPlaceholderImg, dish.name);
 
-    const favBtn = card.querySelector(`[data-action="${cfg.actions.toggleFavorite}"]`);
+    const favBtn = card.querySelector(
+      `[data-action="${cfg.actions.toggleFavorite}"]`
+    );
     setPressed(favBtn, true);
     container.appendChild(card);
   });
@@ -358,7 +381,9 @@ function syncHearts(likedSet) {
   $$(`#${cfg.ids.dishList} [data-item-code]`).forEach((row) => {
     const code = row.getAttribute("data-item-code");
     const pressed = likedSet.has(code);
-    const btn = row.querySelector(`[data-action="${cfg.actions.toggleFavorite}"]`);
+    const btn = row.querySelector(
+      `[data-action="${cfg.actions.toggleFavorite}"]`
+    );
     setPressed(btn, pressed);
     row.classList.toggle("is-favorited", pressed);
   });
@@ -382,7 +407,7 @@ async function fetchFeedback(wrapper, stallId) {
   if (wrapper?.listStallFeedback) {
     return await wrapper.listStallFeedback(stallId);
   }
-  return {}; 
+  return {};
 }
 
 /* ---------------- Main ---------------- */
@@ -415,18 +440,26 @@ async function fetchFeedback(wrapper, stallId) {
     // Banner
     const bannerEl = document.getElementById(cfg.ids.banner);
     if (bannerEl) {
-      const storeImg = stall.storeImage ? stall.storeImage : `/images/stalls/${stallId}.jpg`;
-      setImgWithFallback(bannerEl, storeImg, cfg.stallPlaceholderImg, stallNameOf(stall));
-      
+      // Updated: uses 'storeImage' from JSON
+      const storeImg = stall.storeImage
+        ? stall.storeImage
+        : `/images/stalls/${stallId}.jpg`;
+      setImgWithFallback(
+        bannerEl,
+        storeImg,
+        cfg.stallPlaceholderImg,
+        stallNameOf(stall)
+      );
+
       // ✅ FIX: Force the image to align to the top
-      bannerEl.style.objectPosition = "center top"; 
+      bannerEl.style.objectPosition = "center top";
     }
 
     // Rating
     const { avg, count } = computeRating(feedbackObj);
     const ratingEl = document.getElementById(cfg.ids.ratingValue);
     const countEl = document.getElementById(cfg.ids.ratingCount);
-    
+
     if (ratingEl) ratingEl.textContent = avg ? avg.toFixed(1) : "0.0";
     if (countEl) countEl.textContent = `(${count})`;
 
@@ -434,7 +467,7 @@ async function fetchFeedback(wrapper, stallId) {
     if (ratingContainer) {
       ratingContainer.style.cursor = "pointer";
       ratingContainer.onclick = () => {
-        const url = new URL("/feedback/reviews.html", window.location.href);
+        const url = new URL("/html/feedback/reviews.html", window.location.href);
         url.searchParams.set("stall", stallId);
         window.location.href = url.href;
       };
@@ -447,7 +480,8 @@ async function fetchFeedback(wrapper, stallId) {
       let stallFavSet = loadStallFavSet(hcId);
       setPressed(stallFavBtn, stallFavSet.has(String(stallId)));
       stallFavBtn.addEventListener("click", (e) => {
-        e.preventDefault(); e.stopPropagation();
+        e.preventDefault();
+        e.stopPropagation();
         stallFavSet = loadStallFavSet(hcId);
         const sid = String(stallId);
         if (stallFavSet.has(sid)) stallFavSet.delete(sid);
@@ -467,7 +501,7 @@ async function fetchFeedback(wrapper, stallId) {
     renderDishRows({ stallId, items: itemsArr, dishMap, cart });
 
     function openDishPage(code) {
-      if(!code) return;
+      if (!code) return;
       const url = new URL("./dish.html", window.location.href);
       url.searchParams.set("stall", String(stallId));
       url.searchParams.set("item", String(code));
@@ -475,17 +509,21 @@ async function fetchFeedback(wrapper, stallId) {
       window.location.href = url.href;
     }
 
-    document.getElementById(cfg.ids.dishList)?.addEventListener("click", (e) => {
-      if (e.target.closest("[data-action]")) return;
-      const row = e.target.closest('li.dish-row[data-item-code]');
-      if (row) openDishPage(row.getAttribute("data-item-code"));
-    });
+    document
+      .getElementById(cfg.ids.dishList)
+      ?.addEventListener("click", (e) => {
+        if (e.target.closest("[data-action]")) return;
+        const row = e.target.closest("li.dish-row[data-item-code]");
+        if (row) openDishPage(row.getAttribute("data-item-code"));
+      });
 
-    document.getElementById(cfg.ids.favoritesScroller)?.addEventListener("click", (e) => {
-      if (e.target.closest("[data-action]")) return;
-      const card = e.target.closest('article.favorite-card[data-item-code]');
-      if (card) openDishPage(card.getAttribute("data-item-code"));
-    });
+    document
+      .getElementById(cfg.ids.favoritesScroller)
+      ?.addEventListener("click", (e) => {
+        if (e.target.closest("[data-action]")) return;
+        const card = e.target.closest("article.favorite-card[data-item-code]");
+        if (card) openDishPage(card.getAttribute("data-item-code"));
+      });
 
     let likedSet = loadFavSet(stallId);
     syncHearts(likedSet);
@@ -499,7 +537,8 @@ async function fetchFeedback(wrapper, stallId) {
       const itemCode = holder?.getAttribute("data-item-code");
       if (!itemCode) return;
 
-      e.preventDefault(); e.stopPropagation();
+      e.preventDefault();
+      e.stopPropagation();
 
       if (action === cfg.actions.toggleFavorite) {
         if (likedSet.has(itemCode)) likedSet.delete(itemCode);
@@ -507,7 +546,10 @@ async function fetchFeedback(wrapper, stallId) {
         saveFavSet(stallId, likedSet);
         syncHearts(likedSet);
         renderFavorites({ likedSet, dishMap });
-      } else if (action === cfg.actions.cartPlus || action === cfg.actions.cartMinus) {
+      } else if (
+        action === cfg.actions.cartPlus ||
+        action === cfg.actions.cartMinus
+      ) {
         cart = loadCart();
         const dish = dishMap.get(itemCode);
         if (!dish) return;
@@ -518,7 +560,7 @@ async function fetchFeedback(wrapper, stallId) {
             itemCode: String(itemCode),
             name: dish.name,
             unitPrice: dish.unitPrice,
-            qty: 0
+            qty: 0,
           };
         }
         if (action === cfg.actions.cartPlus) cart.items[key].qty++;
@@ -528,25 +570,26 @@ async function fetchFeedback(wrapper, stallId) {
         }
         saveCart(cart);
         const newQty = cart.items[key]?.qty ?? 0;
-        const row = document.querySelector(`#${cfg.ids.dishList} [data-item-code="${CSS.escape(itemCode)}"]`);
+        const row = document.querySelector(
+          `#${cfg.ids.dishList} [data-item-code="${CSS.escape(itemCode)}"]`
+        );
         if (row) setRowQtyUI(row, newQty);
         updateCartBar(cart);
       }
     });
 
     window.addEventListener("pageshow", () => {
-        cart = loadCart();
-        updateCartBar(cart);
-        $$(`#${cfg.ids.dishList} [data-item-code]`).forEach(row => {
-            const code = row.getAttribute("data-item-code");
-            const k = cartItemKey(stallId, code);
-            setRowQtyUI(row, cart.items?.[k]?.qty ?? 0);
-        });
-        likedSet = loadFavSet(stallId);
-        syncHearts(likedSet);
-        renderFavorites({ likedSet, dishMap });
+      cart = loadCart();
+      updateCartBar(cart);
+      $$(`#${cfg.ids.dishList} [data-item-code]`).forEach((row) => {
+        const code = row.getAttribute("data-item-code");
+        const k = cartItemKey(stallId, code);
+        setRowQtyUI(row, cart.items?.[k]?.qty ?? 0);
+      });
+      likedSet = loadFavSet(stallId);
+      syncHearts(likedSet);
+      renderFavorites({ likedSet, dishMap });
     });
-
   } catch (err) {
     console.error(err);
     safeSetText(cfg.ids.stallName, "Error loading page");
