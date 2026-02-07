@@ -1,0 +1,96 @@
+<html>
+    <head>
+        <meta name="author" content="Neo You Sheng Xavier">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Stall Management</title>
+        <link rel="icon" href="/img/TabLogo.png">
+        <link rel="stylesheet" href="/css/auth/stall_manage.css">
+        <link rel="stylesheet" href="/css/Essential/footer.css">
+        <link rel="stylesheet" href="/css/Essential/navbar.css">
+
+    </head>
+    <body>
+        <!-- Nav -->
+        <header class="site-header">
+        <div class="logo">
+            <a href="/html/home/home.html" class="link-wrapper">
+            <div class="logo-box"></div>
+            </a>
+        </div>
+
+        <nav class="nav-center">
+            <a href="/html/home/home.html">Home</a>
+            <a href="#">Hawker Centres</a>
+            <a href="#">Order History</a>
+        </nav>
+
+        <div class="nav-right">
+            <a href="/html/auth/login.html">Login / Register</a>
+        </div>
+        </header>
+        <!--End of Header-->
+
+        <!--Content of Stall Management-->
+        <main>
+            <section class="page-header">
+                <h1>Store Management</h1>
+            </section>
+
+            <section class="container reviews-wrapper">
+                <div class="reviews-header">
+                    <h2>My Managed Stalls</h2>
+                    <hr>
+                </div>
+
+                <div id="loading" class="state-msg">Loading your stalls...</div>
+                <div id="emptyState" class="state-msg hidden">
+                    You are not managing any stalls yet.<br>
+                    Click the button below to link a stall.
+                </div>
+
+                <div id="stallsGrid" class="stall-grid">
+                    </div>
+            </section>
+        </main>
+
+        <div class="sticky-action-bar">
+            <div class="container">
+                <button id="openAddModalBtn" class="btn-add-stall">
+                    Add Stall to Manage
+                </button>
+            </div>
+        </div>
+
+        <div id="addStallModal" class="modal-overlay hidden">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3>Link Existing Stall</h3>
+                    <button id="closeModalBtn" class="close-btn">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Enter the <strong>Stall ID</strong> (e.g. 301) to add it to your dashboard.</p>
+                    <input type="text" id="stallIdInput" placeholder="Enter Stall ID..." class="modal-input">
+                </div>
+                <div class="modal-footer">
+                    <button id="confirmAddBtn" class="btn-confirm">Add Stall</button>
+                </div>
+            </div>
+        </div>
+    
+        <!--Footer-->
+        <footer class="site-footer">
+            <a href="/html/Footer Stuff/ContactUs.html">Contact Us</a>
+            <span>|</span>
+            <a href="/html/Footer Stuff/FAQ.html">FAQs</a>
+            <span>|</span>
+            <a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">
+                NEA Info
+            </a>
+        </footer>
+
+        <script type="module" src="/js/user/stall_manage.js"></script>
+        <script type="module" src="/js/utils/navbar.js"></script>
+    </body>
+</html>

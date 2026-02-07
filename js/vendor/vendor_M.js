@@ -23,8 +23,8 @@ const el = {
 
 // Get stall ID from URL "?stallId=xyz"
 const urlParams = new URLSearchParams(window.location.search);
-// const STALL_ID = urlParams.get('stallId');
-const STALL_ID = 301;
+const STALL_ID = urlParams.get('stallId');
+
 // Default placeholder image if none exists
 const PLACEHOLDER_IMG = "/images/stalls/stall-banner-placeholder.jpg";
 const DISH_PLACEHOLDER = "https://placehold.co/100x100?text=No+Image";

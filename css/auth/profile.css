@@ -78,6 +78,34 @@ html, body {
 }
 
 /* ==========================
+   STALL MANAGEMENT BUTTON
+========================== */
+.stall-manage-btn {
+  display: inline-block; /* Ensures it behaves like a button box */
+  width: fit-content;
+  margin-bottom: 15px;   /* Spacing between this and the Save button */
+  margin-right: 10px;    /* Spacing if they end up side-by-side */
+  padding: clamp(10px, 1.2vh, 12px) clamp(20px, 2vw, 28px);
+  
+  background: #28a745;   /* Green background */
+  color: #ffffff;
+  border: 1px solid #28a745;
+  border-radius: 4px;
+  
+  text-decoration: none; /* Removes underline from link */
+  font-size: 14px;       /* Matches generic button size usually */
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.stall-manage-btn:hover {
+  background: #ffffff;
+  color: #28a745;
+  border: 1px solid #28a745;
+}
+
+/* ==========================
    FORM ELEMENTS
 ========================= */
 .info-group {
