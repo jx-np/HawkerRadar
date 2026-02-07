@@ -1,4 +1,4 @@
-import { registerUserWithEmail } from '/js/firebase/wrapper.js';
+import { registerUser } from '/js/modules/auth.js';
 
 const form = document.getElementById('registerForm');
 const msgEl = document.getElementById('registerMessage');
@@ -31,23 +31,21 @@ if (form) {
         }
 
         try {
-            // Build roles object based on selected role
-            const roles = {};
-            if (role === 'vendor') {
-                roles.vendor = true;
-            } else {
-                roles.customer = true;
+            // Call auth module register
+            const payload = { email, password, name: fullName, contactNo: phone, role };
+            const res = await registerUser(payload);
+            
+            if (res && res.reason) {
+                showMessage(res.reason || 'Registration failed');
+                return;
             }
-
-            // Call Firebase register
-            const payload = { email, password, name: fullName, contactNo: phone, roles };
-            const res = await registerUserWithEmail(payload);
+            
             console.log('Registration successful:', res);
-
             showMessage('Registration successful — redirecting to login...', false);
-            // setTimeout(() => {
-            //     window.location.href = 'login.html';
-            // }, 900);
+            // added delay for feel
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 900);
         } catch (error) {
             console.error('Registration error:', error);
             showMessage(error.message || 'Registration failed');
