@@ -1,6 +1,6 @@
-import { db, ref, set, get, query, equalTo, orderByChild, update } from "../firebase/realtimedb.js";
-import { hashPassword, verifyPassword } from "../utils/passwordHash.js";
-import { log, ValidateEmail, generateId, getCurrentTimestamp, internalError } from "../utils/helpers.js";
+import { db, ref, set, get, query, equalTo, orderByChild, update } from "/firebase/realtimedb.js";
+import { hashPassword, verifyPassword } from "/utils/passwordHash.js";
+import { log, ValidateEmail, generateId, getCurrentTimestamp, internalError } from "/utils/helpers.js";
 
 // session localstorage
 const SESSION_KEY = 'session';

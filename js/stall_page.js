@@ -236,7 +236,7 @@ function renderGrid({ hcId, stalls, favSet, stallToCuisine, gridEl, emptyEl, onR
       
       // 2. If no DB image, fallback to local convention
       if (!imgUrl) {
-          imgUrl = `../../images/stalls/${sid}.jpg`;
+          imgUrl = `/images/stalls/${sid}.jpg`;
       }
 
       imgDiv.style.backgroundImage = `url("${imgUrl}")`;
@@ -260,13 +260,13 @@ function renderGrid({ hcId, stalls, favSet, stallToCuisine, gridEl, emptyEl, onR
     card.querySelector(".stall-card__btn").addEventListener("click", (e) => {
       e.stopPropagation();
       sessionStorage.setItem("stallList:returnTo", window.location.href);
-      window.location.href = `../../html/Stall/stall_dish.html?stall=${encodeURIComponent(sid)}`;
+      window.location.href = `/html/Stall/stall_dish.html?stall=${encodeURIComponent(sid)}`;
     });
 
     // view menu (card click)
     card.addEventListener("click", () => {
         sessionStorage.setItem("stallList:returnTo", window.location.href);
-        window.location.href = `../../html/Stall/stall_dish.html?stall=${encodeURIComponent(sid)}`;
+        window.location.href = `/html/Stall/stall_dish.html?stall=${encodeURIComponent(sid)}`;
     });
 
     gridEl.appendChild(card);

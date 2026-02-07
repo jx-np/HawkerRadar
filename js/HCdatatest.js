@@ -1,4 +1,4 @@
-import { addHawkerCentre } from '../js/firebase/wrapper.js';
+import { addHawkerCentre } from '/js/firebase/wrapper.js';
 
 const hawkerCentres = {
     "101": { "HCName": "Maxwell Food Centre", "HCAddress": "1 Kadayanallur St", "OperatorID": 1, "PriceRange": "$$", "Region": "Central", "ImageURL": "https://image2url.com/r2/default/images/1770114949002-15726699-204b-4473-bb42-f64f498e1dc1.jpg" },

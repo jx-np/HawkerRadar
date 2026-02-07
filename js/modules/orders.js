@@ -1,4 +1,4 @@
-import { internalError } from "../utils/helpers.js";
+import { internalError } from "/utils/helpers.js";
 
 
 export const ORDER_STATUS = {

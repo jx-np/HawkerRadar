@@ -30,8 +30,8 @@ const cfg = {
     cartMinus: "cart-minus",
   },
 
-  dishPlaceholderImg: "../../images/dishes/placeholder.jpg",
-  stallPlaceholderImg: "../../images/stalls/stall-banner-placeholder.jpg",
+  dishPlaceholderImg: "/images/dishes/placeholder.jpg",
+  stallPlaceholderImg: "/images/stalls/stall-banner-placeholder.jpg",
 
   cartVersion: 1,
 };
@@ -71,7 +71,7 @@ document.getElementById("pageBackBtn")?.addEventListener("click", smartBack);
 document.getElementById("view-cart")?.addEventListener("click", (e) => {
   e.preventDefault();
   sessionStorage.setItem("cart:returnTo", window.location.href);
-  window.location.href = new URL("../user/cart.html", window.location.href).href;
+  window.location.href = new URL("/user/cart.html", window.location.href).href;
 });
 
 /* ---------------- Helpers ---------------- */
@@ -294,7 +294,7 @@ function renderDishRows({ stallId, items, dishMap, cart }) {
     if (priceEl) priceEl.textContent = priceText;
 
     const imgEl = node.querySelector(".dish-row__thumb");
-    const guessImg = mi.image ? mi.image : `../../images/dishes/${stallId}_${itemCode}.jpg`;
+    const guessImg = mi.image ? mi.image : `/images/dishes/${stallId}_${itemCode}.jpg`;
     setImgWithFallback(imgEl, guessImg, cfg.dishPlaceholderImg, itemName);
 
     dishMap.set(itemCode, {
@@ -415,7 +415,7 @@ async function fetchFeedback(wrapper, stallId) {
     // Banner
     const bannerEl = document.getElementById(cfg.ids.banner);
     if (bannerEl) {
-      const storeImg = stall.storeImage ? stall.storeImage : `../../images/stalls/${stallId}.jpg`;
+      const storeImg = stall.storeImage ? stall.storeImage : `/images/stalls/${stallId}.jpg`;
       setImgWithFallback(bannerEl, storeImg, cfg.stallPlaceholderImg, stallNameOf(stall));
       
       // ✅ FIX: Force the image to align to the top
@@ -434,7 +434,7 @@ async function fetchFeedback(wrapper, stallId) {
     if (ratingContainer) {
       ratingContainer.style.cursor = "pointer";
       ratingContainer.onclick = () => {
-        const url = new URL("../feedback/reviews.html", window.location.href);
+        const url = new URL("/feedback/reviews.html", window.location.href);
         url.searchParams.set("stall", stallId);
         window.location.href = url.href;
       };
