@@ -1,4 +1,3 @@
-// ../../js/cart.js
 const CART_VERSION = 1;
 
 // ---------- header offset (fixed navbar) ----------
