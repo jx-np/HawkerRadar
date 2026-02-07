@@ -250,7 +250,14 @@ async function fetchMenuItem(wrapper, stallId, itemId) {
     // resolve stallId
     const resolvedStallId = (paramStallId || dishStallIdOf(mi) || "").toString().trim();
     navStallId = resolvedStallId;
-
+    // ---------- NAV CONTEXT (helps cart fallback + stable back) ----------
+    try {
+      if (resolvedStallId) sessionStorage.setItem("lastStallId", String(resolvedStallId));
+      const menuUrl = sessionStorage.getItem("dish:returnTo");
+      if (menuUrl) sessionStorage.setItem("stallMenu:url", String(menuUrl));
+    } catch {
+      // ignore
+    }
     // Back button
     el.back?.addEventListener("click", () => {
       smartBackToMenu(resolvedStallId);
