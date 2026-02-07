@@ -30,8 +30,8 @@ const cfg = {
     cartMinus: "cart-minus",
   },
 
-  dishPlaceholderImg: "/images/dishes/placeholder.jpg",
-  stallPlaceholderImg: "/images/stalls/stall-banner-placeholder.jpg",
+  dishPlaceholderImg: "",
+  stallPlaceholderImg: "",
 
   cartVersion: 1,
 };
@@ -75,7 +75,7 @@ document.getElementById("pageBackBtn")?.addEventListener("click", smartBack);
 document.getElementById("view-cart")?.addEventListener("click", (e) => {
   e.preventDefault();
   sessionStorage.setItem("cart:returnTo", window.location.href);
-  window.location.href = new URL("/user/cart.html", window.location.href).href;
+  window.location.href = new URL("/html/user/cart.html", window.location.href).href;
 });
 
 /* ---------------- Helpers ---------------- */

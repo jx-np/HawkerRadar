@@ -2,7 +2,10 @@ import {
     getUser, 
     updateUser, 
     onAuthChanged,
-    logout 
+    logout,
+    addPaymentMethod,
+    removePaymentMethod,
+    getPaymentMethods
 } from '/js/firebase/wrapper.js';
 
 let currentUser = null;
@@ -14,6 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             currentUserId = user.uid;
             await loadUserProfile();
             loadProfilePhoto();
+            updateNavbarProfileButton();
         } else {
             window.location.href = '/html/auth/login.html';
         }
@@ -61,11 +65,7 @@ function saveProfilePhoto(base64Image) {
     localStorage.setItem(photoKey, base64Image);
 }
 
-// =========================================
-// EVENT LISTENERS
-// =========================================
 function setupEventListeners() {
-    // Upload Photo Button
     document.getElementById('uploadPhotoBtn').addEventListener('click', () => {
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
@@ -95,6 +95,24 @@ function setupEventListeners() {
             }
         });
     });
+
+    const navbarProfileBtn = document.getElementById('navbarProfileBtn');
+    if (navbarProfileBtn && navbarProfileBtn.textContent === 'Log out') {
+        navbarProfileBtn.addEventListener('click', () => {
+            logout();
+        });
+    }
+}
+
+function updateNavbarProfileButton() {
+    const navbarProfileBtn = document.querySelector('.nav-right a');
+    if (navbarProfileBtn) {
+        navbarProfileBtn.textContent = 'Log out';
+        navbarProfileBtn.href = '/html/auth/login.html';
+        navbarProfileBtn.onclick = function() {
+            logout();
+        };
+    }
 }
 
 function handlePhotoUpload(file) {
@@ -158,7 +176,7 @@ async function saveProfileChanges() {
         document.getElementById('displayEmail').textContent = updatedData.email;
         document.getElementById('displayUsername').textContent = updatedData.name;
 
-        showNotification('Profile updated!');
+        showNotification('Profile updated');
 
         await loadUserProfile();
 
@@ -319,22 +337,19 @@ async function saveNewCard(modal) {
     }
 
     try {
-        const cardId = `card_${Date.now()}`;
-        
         const lastFourDigits = cardNumber.slice(-4);
 
-        const paymentMethods = currentUser.paymentMethods || {};
-        paymentMethods[cardId] = {
+        const paymentMethod = {
             type: cardType,
             lastFourDigits: lastFourDigits,
             cardHolder: cardHolder,
-            expiryDate: expiryDate,
-            addedAt: new Date().toISOString()
+            expiryDate: expiryDate
         };
 
-        await updateUser(currentUserId, { paymentMethods });
+        await addPaymentMethod(currentUserId, paymentMethod);
 
-        currentUser.paymentMethods = paymentMethods;
+        // Reload user to get updated payment methods
+        currentUser = await getUser(currentUserId);
 
         loadPaymentMethods();
         modal.remove();
@@ -352,12 +367,10 @@ async function deleteCard(cardId) {
     }
 
     try {
-        const paymentMethods = { ...currentUser.paymentMethods };
-        delete paymentMethods[cardId];
+        await removePaymentMethod(currentUserId, cardId);
 
-        await updateUser(currentUserId, { paymentMethods });
-
-        currentUser.paymentMethods = paymentMethods;
+        // Reload user to get updated payment methods
+        currentUser = await getUser(currentUserId);
 
         loadPaymentMethods();
         showNotification('Payment method removed');

@@ -1,3 +1,6 @@
+import { getPaymentMethods } from "/js/firebase/wrapper.js";
+import { getCurrentUser } from "/js/modules/auth.js";
+
 const CART_VERSION = 1;
 
 // ---------- header offset (fixed navbar) ----------
@@ -27,7 +30,7 @@ function smartBack() {
   // rebuild stall menu if we know stall id
   const lastStallId = sessionStorage.getItem("lastStallId");
   if (lastStallId) {
-    const u = new URL("/html/Stall/stall_dish.html", window.location.origin);
+    const u = new URL("/html/stall/stall_dish.html", window.location.origin);
     u.searchParams.set("stall", String(lastStallId));
     window.location.href = u.href;
     return;
@@ -155,10 +158,82 @@ function render() {
 
 render();
 
+// ---------- Payment Methods ----------
+const savedCardsEl = document.getElementById("savedCards");
+
+async function loadPaymentMethods() {
+  if (!savedCardsEl) return;
+
+  try {
+    const wrapper = await loadWrapper();
+    const userId = getCustomerId();
+
+    const user = getCurrentUser();
+
+    if (!user) {
+      savedCardsEl.innerHTML = '<p class="no-cards-msg">Please log in to use saved payment methods.</p>';
+      return;
+    }
+
+    const paymentMethods = await getPaymentMethods(user.id);
+    const paymentArray = Object.entries(paymentMethods || {});
+
+    if (paymentArray.length === 0) {
+      savedCardsEl.innerHTML = '<p class="no-cards-msg">No cards saved.</p>';
+      return;
+    }
+
+    // Clear container
+    savedCardsEl.innerHTML = '';
+
+    // Display each payment method
+    paymentArray.forEach(([cardId, card]) => {
+      const cardDiv = document.createElement('div');
+      cardDiv.className = 'payment-card-item';
+      cardDiv.dataset.cardId = cardId;
+
+      const cardType = card.type || 'Card';
+      const maskedNumber = card.lastFourDigits ? `**** ${card.lastFourDigits}` : '**** ****';
+      const cardHolder = card.cardHolder || 'Card Holder';
+      const expiryDate = card.expiryDate || 'MM/YY';
+
+      cardDiv.innerHTML = `
+        <div class="card-radio">
+          <input type="radio" name="paymentMethod" value="${cardId}" id="card_${cardId}">
+          <label for="card_${cardId}">
+            <div class="card-info">
+              <div class="card-type-badge">${cardType}</div>
+              <div class="card-number">${maskedNumber}</div>
+              <div class="card-details">
+                <span class="card-holder">${cardHolder}</span>
+                <span class="card-expiry">Exp: ${expiryDate}</span>
+              </div>
+            </div>
+          </label>
+        </div>
+      `;
+
+      savedCardsEl.appendChild(cardDiv);
+    });
+
+    // Auto-select first card
+    const firstRadio = savedCardsEl.querySelector('input[type="radio"]');
+    if (firstRadio) firstRadio.checked = true;
+
+  } catch (error) {
+    console.error('Error loading payment methods:', error);
+    savedCardsEl.innerHTML = '<p class="error-msg">Failed to load payment methods.</p>';
+  }
+}
+
+// Load payment methods on page load
+loadPaymentMethods();
+
 // keep UI fresh if you come back from other pages
 window.addEventListener("pageshow", () => {
   cart = loadCart();
   render();
+  loadPaymentMethods();
 });
 
 // ---------- checkout flow ----------
@@ -204,7 +279,11 @@ placeOrderBtn?.addEventListener("click", async () => {
     }
 
     const userId = getCustomerId();
-    const payType = "Card"; // placeholder
+    
+    // Get selected payment method
+    const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
+    const payType = selectedPayment ? "Card" : "Cash"; // Default to Cash if no card selected
+    const paymentMethodId = selectedPayment ? selectedPayment.value : null;
 
     // Because wrapper Orders require stallId, we create ONE order per stall
     const byStall = groupItemsByStall(items);
@@ -219,6 +298,7 @@ placeOrderBtn?.addEventListener("click", async () => {
         userId,
         stallId,
         payType,
+        paymentMethodId, // Include selected payment method
         status: "Placed",
         totals: {
           subtotal,

@@ -10,8 +10,8 @@
     <link rel="icon" href="" />
     <link rel="stylesheet" href="/css/Essential/navbar.css" />
     <link rel="stylesheet" href="/css/Essential/footer.css" />
-    <link rel="stylesheet" href="/css/feedback/stall.css" />
-    <link rel="stylesheet" href="/css/Stall/stall_dish.css" />
+    <link rel="stylesheet" href="/css/stall/stall.css" />
+    <link rel="stylesheet" href="/css/stall/stall_dish.css" />
 
     <!-- Material Symbols (full set; avoids missing icon issues) -->
     <link
@@ -56,7 +56,7 @@
             <img
               class="stall-hero__banner"
               id="stall-banner"
-              src="/images/stalls/stall-banner-placeholder.jpg"
+              src=""
               alt="Stall banner"
             />
 
@@ -106,7 +106,7 @@
         <span class="cart-bar__count" id="cart-count">00</span>
 
         <!-- ✅ cart page location you said -->
-        <a class="cart-bar__view" id="view-cart" href="/user/cart.html">Checkout</a>
+        <a class="cart-bar__view" id="view-cart" href="/html/user/cart.html">Checkout</a>
 
         <span class="cart-bar__total" id="cart-total">$00.00</span>
       </aside>
@@ -191,6 +191,7 @@
     <script>
       window.STALL_PAGE = { wrapperPath: "/js/firebase/wrapper.js" };
     </script>
-    <script type="module" src="/js/dish_favourite.js"></script>
+    <script type="module" src="/js/utils/navbar.js"></script>
+    <script type="module" src="/js/stall/dish_favourite.js"></script>
   </body>
 </html>

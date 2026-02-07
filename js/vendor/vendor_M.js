@@ -181,7 +181,7 @@ function renderList() {
 
     const urlFromDb = dishImageUrlOf(mi);
     const guessImg = `/images/dishes/${stallId}_${id}.jpg`;
-    setImgWithFallback(img, urlFromDb || guessImg, "/images/dishes/placeholder.jpg", dishName);
+    setImgWithFallback(img, urlFromDb || guessImg, "", dishName);
 
     el.list.appendChild(frag);
   }
@@ -214,7 +214,7 @@ async function loadAll() {
 
   // banner (best-effort)
   const stallBannerGuess = `/images/stalls/${stallId}.jpg`;
-  setImgWithFallback(el.stallBanner, stall?.coverImage || stall?.bannerImage || stallBannerGuess, "/images/stalls/stall-banner-placeholder.jpg", stallNameOf(stall));
+  setImgWithFallback(el.stallBanner, stall?.coverImage || stall?.bannerImage || stallBannerGuess, stallNameOf(stall));
 
   const obj = wrapper?.listMenuItemsByStall ? await wrapper.listMenuItemsByStall(stallId) : null;
 
