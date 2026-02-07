@@ -1,4 +1,4 @@
-import { loginUser } from '/js/modules/auth.js';
+import { loginWithEmail } from '/js/firebase/wrapper.js';
 
 // New login.html places the form inside `.auth-form` — select it flexibly
 const form = document.querySelector('.auth-form form') || document.querySelector('form');
@@ -53,17 +53,16 @@ if (form) {
             return;
         }
 
-        const res = await loginUser(email, password);
-        console.log('loginUser result', res);
-
-        if (res && res.reason) {
-            showMessage(res.reason || 'Login failed');
-            return;
+        try {
+            const user = await loginWithEmail(email, password);
+            console.log('Login successful:', user);
+            showMessage('Login successful — redirecting...', false);
+            setTimeout(() => {
+                window.location.href = '/html/home/home.html';
+            }, 700);
+        } catch (error) {
+            console.error('Login error:', error);
+            showMessage(error.message || 'Login failed');
         }
-
-        showMessage('Login successful — redirecting...', false);
-        setTimeout(() => {
-            window.location.href = '/html/home/home.html';
-        }, 700);
     });
 }
