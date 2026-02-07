@@ -1,417 +1,266 @@
-// /js/vendor_M.js
-// Vendor management: edit dish price, delete dish, add dish
-// Open like: vendor_M.html?stall=301
+import {
+    getStall,
+    updateStall,
+    listMenuItemsByStall,
+    createMenuItem,
+    updateMenuItem
+} from "/js/firebase/wrapper.js";
 
-function applyHeaderOffset() {
-  const header = document.querySelector(".site-header");
-  if (!header) return;
-  const h = Math.ceil(header.getBoundingClientRect().height);
-  document.documentElement.style.setProperty("--site-header-h", `${h}px`);
-}
-applyHeaderOffset();
-window.addEventListener("resize", applyHeaderOffset);
-window.addEventListener("load", applyHeaderOffset);
-
-/* ---------- helpers ---------- */
-function money(n) {
-  const v = Number(n) || 0;
-  return `$${v.toFixed(2)}`;
-}
-
-function toNumberPrice(v) {
-  const n = Number(String(v ?? "").replace(/[^0-9.]/g, ""));
-  return Number.isFinite(n) ? n : 0;
-}
-
-function setStatus(msg) {
-  const el = document.getElementById("statusText");
-  if (el) el.textContent = msg || "";
-}
-
-function getStallId() {
-  const url = new URL(window.location.href);
-  const fromUrl = (url.searchParams.get("stall") || "").trim();
-  if (fromUrl) return fromUrl;
-
-  // fallbacks (optional)
-  const fromSession = (sessionStorage.getItem("vendor:stallId") || "").trim();
-  if (fromSession) return fromSession;
-
-  const lastStall = (sessionStorage.getItem("lastStallId") || "").trim();
-  if (lastStall) return lastStall;
-
-  return "";
-}
-
-async function loadWrapper() {
-  const wrapperPath = window.VENDOR_PAGE?.wrapperPath || "/js/firebase/wrapper.js";
-  const wrapperUrl = new URL(wrapperPath, document.baseURI).href;
-  return import(wrapperUrl);
-}
-
-function setImgWithFallback(imgEl, primary, fallback, alt = "") {
-  if (!imgEl) return;
-  imgEl.alt = alt || "";
-  imgEl.src = primary || fallback || "";
-  imgEl.addEventListener(
-    "error",
-    () => {
-      if (fallback && imgEl.src !== fallback) imgEl.src = fallback;
-    },
-    { once: true }
-  );
-}
-
-/* ---------- normalizers ---------- */
-function stallNameOf(s) {
-  return (s?.name ?? s?.StallName ?? s?.stallName ?? "Stall").toString();
-}
-function stallUnitOf(s) {
-  return (s?.unit ?? s?.unitNo ?? s?.UnitNo ?? s?.StallUnit ?? s?.stallUnit ?? "—").toString();
-}
-function stallHcIdOf(s) {
-  return (s?.hawkerCentreId ?? s?.HawkerCentreID ?? s?.hawkerCentreID ?? s?.hcId ?? "").toString();
-}
-
-function dishIdGuess(mi, key) {
-  return String(mi?.id ?? mi?.ItemCode ?? mi?.itemCode ?? key ?? "").trim();
-}
-function dishNameOf(mi, id) {
-  return (mi?.name ?? mi?.ItemDesc ?? mi?.itemDesc ?? `Item ${id}`).toString();
-}
-function dishDescOf(mi) {
-  return (mi?.description ?? mi?.desc ?? mi?.ItemLongDesc ?? mi?.ItemDescLong ?? "").toString().trim();
-}
-function dishCuisineOf(mi) {
-  return (mi?.cuisine ?? mi?.Cuisine ?? mi?.ItemCuisine ?? "").toString().trim();
-}
-function dishCategoryOf(mi) {
-  return (mi?.category ?? mi?.Category ?? mi?.ItemCategory ?? "").toString().trim();
-}
-function dishPriceOf(mi) {
-  return mi?.price ?? mi?.ItemPrice ?? mi?.unitPrice ?? mi?.cost ?? 0;
-}
-function dishImageUrlOf(mi) {
-  return (mi?.imageUrl ?? mi?.imgUrl ?? mi?.image ?? "").toString().trim();
-}
-
-/* ---------- DOM ---------- */
+// =============================
+// Constants & Elements
+// =============================
 const el = {
-  stallBanner: document.getElementById("stall-banner"),
-  stallName: document.getElementById("stall-name"),
-  stallHc: document.getElementById("stall-hc"),
-  stallUnit: document.getElementById("stall-unit"),
-
-  list: document.getElementById("dish-list"),
-  tpl: document.getElementById("tpl-vendor-dish"),
-
-  addBtn: document.getElementById("addDishBtn"),
-
-  dlgPrice: document.getElementById("dlgPrice"),
-  priceForm: document.getElementById("priceForm"),
-  priceDishName: document.getElementById("priceDishName"),
-  priceInput: document.getElementById("priceInput"),
-  priceCancelBtn: document.getElementById("priceCancelBtn"),
-
-  dlgAdd: document.getElementById("dlgAdd"),
-  addForm: document.getElementById("addForm"),
-  addName: document.getElementById("addName"),
-  addDesc: document.getElementById("addDesc"),
-  addCuisine: document.getElementById("addCuisine"),
-  addCategory: document.getElementById("addCategory"),
-  addPrice: document.getElementById("addPrice"),
-  addImageUrl: document.getElementById("addImageUrl"),
-  addCancelBtn: document.getElementById("addCancelBtn"),
+    loadingOverlay: document.getElementById('loadingOverlay'),
+    // Hero
+    stallBanner: document.getElementById('stallBanner'),
+    editBannerBtn: document.getElementById('editBannerBtn'),
+    stallNameTitle: document.getElementById('stallNameTitle'),
+    // Add Dish
+    addDishForm: document.getElementById('addDishForm'),
+    // Dish List
+    dishListContainer: document.getElementById('dishListContainer'),
 };
 
-/* ---------- state ---------- */
-let wrapper = null;
-let stallId = "";
-let menuItems = []; // { id, mi }
+// Get stall ID from URL "?stallId=xyz"
+const urlParams = new URLSearchParams(window.location.search);
+// const STALL_ID = urlParams.get('stallId');
+const STALL_ID = 301;
+// Default placeholder image if none exists
+const PLACEHOLDER_IMG = "/images/stalls/stall-banner-placeholder.jpg";
+const DISH_PLACEHOLDER = "https://placehold.co/100x100?text=No+Image";
 
-/* dialogs state */
-let editingItemId = "";
-let editingItemName = "";
 
-/* ---------- render ---------- */
-function clearList() {
-  if (!el.list) return;
-  while (el.list.firstChild) el.list.removeChild(el.list.firstChild);
-}
-
-function renderList() {
-  clearList();
-
-  if (!el.list || !el.tpl) return;
-
-  if (!menuItems.length) {
-    const li = document.createElement("li");
-    li.style.padding = "14px 0";
-    li.style.color = "rgba(0,0,0,0.65)";
-    li.textContent = "No dishes yet. Click + to add one.";
-    el.list.appendChild(li);
-    return;
-  }
-
-  for (const row of menuItems) {
-    const { id, mi } = row;
-    const frag = el.tpl.content.cloneNode(true);
-
-    const root = frag.querySelector(".vendor-dish");
-    root.dataset.itemId = id;
-
-    const img = frag.querySelector(".vendor-dish__img");
-    const nameEl = frag.querySelector(".vendor-dish__name");
-    const descEl = frag.querySelector(".vendor-dish__desc");
-    const cuisineEl = frag.querySelector(".vendor-dish__cuisine");
-    const categoryEl = frag.querySelector(".vendor-dish__category");
-    const priceEl = frag.querySelector(".vendor-dish__price");
-
-    const dishName = dishNameOf(mi, id);
-    const dishDesc = dishDescOf(mi) || "Description";
-    const cuisine = dishCuisineOf(mi) || "—";
-    const category = dishCategoryOf(mi) || "—";
-    const price = toNumberPrice(dishPriceOf(mi));
-
-    if (nameEl) nameEl.textContent = dishName;
-    if (descEl) descEl.textContent = dishDesc;
-    if (cuisineEl) cuisineEl.textContent = cuisine;
-    if (categoryEl) categoryEl.textContent = category;
-    if (priceEl) priceEl.textContent = money(price);
-
-    const urlFromDb = dishImageUrlOf(mi);
-    const guessImg = `/images/dishes/${stallId}_${id}.jpg`;
-    setImgWithFallback(img, urlFromDb || guessImg, "/images/dishes/placeholder.jpg", dishName);
-
-    el.list.appendChild(frag);
-  }
-}
-
-/* ---------- load data ---------- */
-async function loadAll() {
-  stallId = getStallId();
-  if (!stallId) {
-    setStatus("Missing stall id. Open like vendor_M.html?stall=301");
-    if (el.stallName) el.stallName.textContent = "Missing Stall";
-    return;
-  }
-
-  // store for other pages (optional)
-  sessionStorage.setItem("lastStallId", String(stallId));
-  sessionStorage.setItem("vendor:stallId", String(stallId));
-
-  setStatus("Loading…");
-
-  wrapper = await loadWrapper();
-
-  const stall = wrapper?.getStall ? await wrapper.getStall(stallId) : null;
-
-  if (el.stallName) el.stallName.textContent = stall ? stallNameOf(stall) : `Stall ${stallId}`;
-  if (el.stallUnit) el.stallUnit.textContent = `Store Number: ${stall ? stallUnitOf(stall) : "—"}`;
-
-  const hcId = stall ? stallHcIdOf(stall) : "";
-  if (el.stallHc) el.stallHc.textContent = hcId ? `Hawker Centre: ${hcId}` : "Hawker Centre";
-
-  // banner (best-effort)
-  const stallBannerGuess = `/images/stalls/${stallId}.jpg`;
-  setImgWithFallback(el.stallBanner, stall?.coverImage || stall?.bannerImage || stallBannerGuess, "/images/stalls/stall-banner-placeholder.jpg", stallNameOf(stall));
-
-  const obj = wrapper?.listMenuItemsByStall ? await wrapper.listMenuItemsByStall(stallId) : null;
-
-  const rows = [];
-  if (obj && typeof obj === "object") {
-    for (const [key, mi] of Object.entries(obj)) {
-      if (!mi) continue;
-      const id = dishIdGuess(mi, key);
-      if (!id) continue;
-      rows.push({ id, mi });
+// =============================
+// Main Initialization
+// =============================
+async function init() {
+    if (!STALL_ID) {
+        alert("No Stall ID provided in URL.");
+        el.loadingOverlay.textContent = "Error: Missing Stall ID";
+        return;
     }
-  }
 
-  rows.sort((a, b) => dishNameOf(a.mi, a.id).localeCompare(dishNameOf(b.mi, b.id)));
-
-  menuItems = rows;
-  renderList();
-  setStatus("");
-}
-
-/* ---------- actions ---------- */
-async function onEditPrice(itemId) {
-  const row = menuItems.find((x) => String(x.id) === String(itemId));
-  if (!row) return;
-
-  editingItemId = row.id;
-  editingItemName = dishNameOf(row.mi, row.id);
-
-  if (el.priceDishName) el.priceDishName.textContent = editingItemName;
-  if (el.priceInput) el.priceInput.value = String(toNumberPrice(dishPriceOf(row.mi)));
-
-  el.dlgPrice?.showModal?.();
-}
-
-async function savePriceFromDialog() {
-  const v = toNumberPrice(el.priceInput?.value);
-  if (!editingItemId) return;
-
-  setStatus("Saving price…");
-
-  // update both `price` and `ItemPrice` so all your pages read it correctly
-  await wrapper.updateMenuItem(editingItemId, {
-    price: v,
-    ItemPrice: v,
-    updatedAt: new Date().toISOString(),
-  });
-
-  // update local state
-  const row = menuItems.find((x) => String(x.id) === String(editingItemId));
-  if (row) {
-    row.mi = { ...row.mi, price: v, ItemPrice: v };
-  }
-
-  renderList();
-  setStatus("Saved ✅");
-
-  setTimeout(() => setStatus(""), 900);
-}
-
-async function onDeleteDish(itemId) {
-  const row = menuItems.find((x) => String(x.id) === String(itemId));
-  if (!row) return;
-
-  const name = dishNameOf(row.mi, row.id);
-  const ok = window.confirm(`Delete "${name}"?\nThis cannot be undone.`);
-  if (!ok) return;
-
-  setStatus("Deleting…");
-  await wrapper.deleteMenuItem(row.id);
-
-  menuItems = menuItems.filter((x) => String(x.id) !== String(row.id));
-  renderList();
-  setStatus("Deleted ✅");
-  setTimeout(() => setStatus(""), 900);
-}
-
-function newMenuItemId() {
-  // simple unique id (works fine with your wrapper.createMenuItem which needs an id)
-  const r = Math.floor(Math.random() * 1000);
-  return `MI_${Date.now()}_${r}`;
-}
-
-async function onAddDishOpen() {
-  // reset form
-  if (el.addName) el.addName.value = "";
-  if (el.addDesc) el.addDesc.value = "";
-  if (el.addCuisine) el.addCuisine.value = "";
-  if (el.addCategory) el.addCategory.value = "";
-  if (el.addPrice) el.addPrice.value = "";
-  if (el.addImageUrl) el.addImageUrl.value = "";
-
-  el.dlgAdd?.showModal?.();
-}
-
-async function onAddDishSubmit() {
-  const name = (el.addName?.value || "").trim();
-  const desc = (el.addDesc?.value || "").trim();
-  const cuisine = (el.addCuisine?.value || "").trim();
-  const category = (el.addCategory?.value || "").trim();
-  const price = toNumberPrice(el.addPrice?.value);
-  const imageUrl = (el.addImageUrl?.value || "").trim();
-
-  if (!name) throw new Error("Dish name is required");
-  if (!(price >= 0)) throw new Error("Price is invalid");
-
-  const id = newMenuItemId();
-
-  setStatus("Creating dish…");
-
-  const payload = {
-    id,
-    stallId: String(stallId),
-
-    // normalized fields
-    name,
-    description: desc,
-    cuisine,
-    category,
-    price,
-
-    // compatibility fields (helps other pages that read ItemPrice/ItemDesc)
-    ItemDesc: name,
-    ItemLongDesc: desc,
-    ItemPrice: price,
-    ItemCategory: category,
-
-    ...(imageUrl ? { imageUrl } : {}),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-
-  await wrapper.createMenuItem(payload);
-
-  // reload list (safe & consistent)
-  await loadAll();
-
-  setStatus("Created ✅");
-  setTimeout(() => setStatus(""), 900);
-}
-
-/* ---------- events ---------- */
-function bindEvents() {
-  // list click delegation (edit/delete)
-  el.list?.addEventListener("click", (e) => {
-    const btn = e.target.closest("button[data-action]");
-    if (!btn) return;
-
-    const li = btn.closest(".vendor-dish");
-    const itemId = li?.dataset?.itemId;
-    if (!itemId) return;
-
-    const action = btn.dataset.action;
-    if (action === "edit-price") onEditPrice(itemId);
-    if (action === "delete") onDeleteDish(itemId);
-  });
-
-  // dialogs
-  el.priceCancelBtn?.addEventListener("click", () => el.dlgPrice?.close?.());
-  el.priceForm?.addEventListener("submit", async (e) => {
-    e.preventDefault();
     try {
-      await savePriceFromDialog();
-      el.dlgPrice?.close?.();
-    } catch (err) {
-      alert(err?.message || String(err));
-      setStatus("");
+        // Load initial data in parallel
+        await Promise.all([
+            loadStallInfo(),
+            loadDishList()
+        ]);
+    } catch (error) {
+        console.error("Init failed:", error);
+        alert("Failed to load stall data. See console.");
+    } finally {
+        el.loadingOverlay.classList.add('hidden');
     }
-  });
 
-  el.addCancelBtn?.addEventListener("click", () => el.dlgAdd?.close?.());
-  el.addForm?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    try {
-      await onAddDishSubmit();
-      el.dlgAdd?.close?.();
-    } catch (err) {
-      alert(err?.message || String(err));
-      setStatus("");
-    }
-  });
-
-  el.addBtn?.addEventListener("click", onAddDishOpen);
-
-  // wireframe-only icon (not implemented)
-  document.getElementById("edit-stall-btn")?.addEventListener("click", () => {
-    alert("Stall editing not implemented (only dishes are editable here).");
-  });
+    attachEventListeners();
 }
 
-/* ---------- init ---------- */
-(async function init() {
-  try {
-    bindEvents();
-    await loadAll();
-  } catch (err) {
-    console.error(err);
-    setStatus(err?.message || String(err));
-    if (el.stallName) el.stallName.textContent = "Error loading page";
-  }
-})();
+// =============================
+// Data Loading & Rendering
+// =============================
+
+// 1. Load Stall Info (Banner & Name)
+async function loadStallInfo() {
+    const stallData = await getStall(STALL_ID);
+    
+    if (!stallData) {
+        throw new Error("Stall not found in database.");
+    }
+
+    // Update UI based on schema (using 'name' and 'storeImage')
+    el.stallNameTitle.textContent = stallData.name || "Unnamed Stall";
+    el.stallBanner.src = stallData.storeImage || PLACEHOLDER_IMG;
+}
+
+// 2. Load and Render Dish List
+async function loadDishList() {
+    el.dishListContainer.innerHTML = '<p>Loading dishes...</p>';
+    const menuItemsMap = await listMenuItemsByStall(STALL_ID);
+    
+    el.dishListContainer.innerHTML = ''; // Clear loading text
+
+    if (!menuItemsMap || Object.keys(menuItemsMap).length === 0) {
+        el.dishListContainer.innerHTML = '<p>No dishes found for this stall.</p>';
+        return;
+    }
+
+    // Loop through items and render cards
+    Object.entries(menuItemsMap).forEach(([dishId, dish]) => {
+        const dishCard = document.createElement('div');
+        dishCard.className = 'dish-card';
+        // Ensure price is a number for the input
+        const unitPrice = Number(dish.price) || 0;
+
+        dishCard.innerHTML = `
+            <img src="${dish.image || DISH_PLACEHOLDER}" alt="${dish.name}" class="dish-card__img" onerror="this.src='${DISH_PLACEHOLDER}'">
+            <div class="dish-card__details">
+                <h3 class="dish-card__title">${dish.name || 'Unknown Dish'}</h3>
+                <p class="dish-card__desc">${dish.description || ''}</p>
+                <small style="color: #666;">Category: ${dish.category || 'N/A'}</small>
+            </div>
+            <div class="dish-card__actions">
+                <label class="price-input-group">
+                    <span class="price-input-label">$</span>
+                    <input type="number" class="price-input" 
+                           data-dish-id="${dishId}" 
+                           data-original-price="${unitPrice.toFixed(2)}"
+                           value="${unitPrice.toFixed(2)}" step="0.01" min="0">
+                </label>
+                <button class="btn btn-save" data-action="save-price" data-dish-id="${dishId}" disabled>Save Price</button>
+            </div>
+        `;
+
+        el.dishListContainer.appendChild(dishCard);
+    });
+
+    // Add listeners to newly created inputs to enable "Save" button only when changed
+    setupPriceInputListeners();
+}
+
+
+// =============================
+// Event Handlers & Actions
+// =============================
+
+function attachEventListeners() {
+    // A. Edit Banner Image
+    el.editBannerBtn.addEventListener('click', handleEditBanner);
+
+    // B. Add New Dish Form Submit
+    el.addDishForm.addEventListener('submit', handleAddDish);
+
+    // C. Dish List Actions (Event delegation for dynamically added buttons)
+    el.dishListContainer.addEventListener('click', handleDishAction);
+}
+
+
+// --- Action A: Edit Banner ---
+async function handleEditBanner() {
+    const currentUrl = el.stallBanner.src === window.location.origin + PLACEHOLDER_IMG ? '' : el.stallBanner.src;
+    const newUrl = prompt("Enter new Banner Image URL:", currentUrl);
+
+    // If user clicked cancel or entered nothing, do nothing
+    if (newUrl === null || newUrl.trim() === "") return;
+
+    el.editBannerBtn.textContent = "Updating...";
+    el.editBannerBtn.disabled = true;
+
+    try {
+        // Call wrapper update function
+        await updateStall(STALL_ID, {
+            storeImage: newUrl.trim()
+        });
+        
+        // Refresh display
+        await loadStallInfo();
+        alert("Banner updated successfully!");
+    } catch (error) {
+        console.error("Update banner failed:", error);
+        alert("Failed to update banner. check console.");
+    } finally {
+        el.editBannerBtn.textContent = "Change Banner Image";
+        el.editBannerBtn.disabled = false;
+    }
+}
+
+
+// --- Action B: Add New Dish ---
+async function handleAddDish(e) {
+    e.preventDefault();
+
+    const submitBtn = el.addDishForm.querySelector('button[type="submit"]');
+    submitBtn.textContent = "Adding...";
+    submitBtn.disabled = true;
+
+    // 1. Gather data from form inputs
+    const dishData = {
+        stallId: STALL_ID, // Required by wrapper
+        name: document.getElementById('newDishName').value.trim(),
+        description: document.getElementById('newDishDesc').value.trim(),
+        price: parseFloat(document.getElementById('newDishPrice').value),
+        category: document.getElementById('newDishCategory').value.trim(),
+        image: document.getElementById('newDishImage').value.trim(),
+        available: true // Default to available
+    };
+
+    try {
+        // 2. Call wrapper create function
+        await createMenuItem(dishData);
+        
+        // 3. Reset form and reload list
+        el.addDishForm.reset();
+        await loadDishList();
+        alert("Dish added successfully!");
+
+    } catch (error) {
+        console.error("Add dish failed:", error);
+        alert("Failed to add dish. Check console.");
+    } finally {
+        submitBtn.textContent = "Add Dish to Menu";
+        submitBtn.disabled = false;
+    }
+}
+
+
+// --- Action C: Update Price (and input monitoring) ---
+function setupPriceInputListeners() {
+    const inputs = el.dishListContainer.querySelectorAll('.price-input');
+    inputs.forEach(input => {
+        input.addEventListener('input', (e) => {
+            const dishId = e.target.dataset.dishId;
+            const originalPrice = e.target.dataset.originalPrice;
+            // Find associated save button
+            const saveBtn = el.dishListContainer.querySelector(`button[data-dish-id="${dishId}"]`);
+            // Enable button only if value has changed and is valid
+            if (saveBtn) {
+                saveBtn.disabled = (e.target.value === originalPrice || !e.target.value);
+            }
+        });
+    });
+}
+
+async function handleDishAction(e) {
+    // We only care about clicks on elements with data-action="save-price"
+    const saveBtn = e.target.closest('[data-action="save-price"]');
+    if (!saveBtn) return;
+
+    const dishId = saveBtn.dataset.dishId;
+    // Find the input associated with this dish ID
+    const input = el.dishListContainer.querySelector(`.price-input[data-dish-id="${dishId}"]`);
+    if (!input) return;
+
+    const newPrice = parseFloat(input.value);
+    if (isNaN(newPrice) || newPrice < 0) {
+        alert("Please enter a valid price.");
+        return;
+    }
+
+    saveBtn.textContent = "Saving...";
+    saveBtn.disabled = true;
+    input.disabled = true;
+
+    try {
+        // Call wrapper update function
+        await updateMenuItem(dishId, {
+            price: newPrice
+        });
+
+        // Update the "original price" data attribute so the "save" button disables correctly next time
+        input.dataset.originalPrice = newPrice.toFixed(2);
+        alert("Price updated!");
+
+    } catch (error) {
+        console.error("Update price failed:", error);
+        alert("Failed to update price.");
+        // Reset input value on failure if needed
+        input.value = input.dataset.originalPrice;
+    } finally {
+        saveBtn.textContent = "Save Price";
+        // Keep disabled until input changes again
+        input.disabled = false;
+    }
+}
+
+// Start the app
+init();
