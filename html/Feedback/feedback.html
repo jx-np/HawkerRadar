@@ -31,8 +31,8 @@
 
         <!-- HEADER -->
         <section class="page-header">
-            <h1>Feedback</h1>
-            <p>Give us feedback to improve!</p>
+            <h1>Reviews</h1>
+            <p>Share your experience and help others discover great food!</p>
         </section>
 
         <!--Content of feedback form-->
@@ -64,11 +64,50 @@
                 </div>
 
                 <label>Comments:</label>
-                <textarea id="comments" placeholder="Description"></textarea>
+                <textarea id="comments" placeholder="How was the food?"></textarea>
+
+                <div class="complaint-toggle-wrapper">
+                    <input type="checkbox" id="addComplaintCheck">
+                    <label for="addComplaintCheck" class="toggle-label">Add Complaint</label>
+                </div>
+
+                <div id="complaintSection" style="display: none;">
+                    <div class="complaint-divider"></div>
+                    <h3>Complaint Details</h3>
+                    
+                    <label>Complaint Category:</label>
+                    <div class="category-container">
+                        <div class="category" data-value="Cleanliness">
+                            <span class="box"></span><span class="text">Cleanliness</span>
+                        </div>
+                        <div class="category" data-value="Food Quality">
+                            <span class="box"></span><span class="text">Food Quality</span>
+                        </div>
+                        <div class="category" data-value="Price">
+                            <span class="box"></span><span class="text">Price</span>
+                        </div>
+                        <div class="category" data-value="Service">
+                            <span class="box"></span><span class="text">Service</span>
+                        </div>
+                        <div class="category" data-value="Waiting Time">
+                            <span class="box"></span><span class="text">Waiting Time</span>
+                        </div>
+                        <div class="category" data-value="Others" id="othersCategory">
+                            <span class="box"></span><span class="text">Others</span>
+                        </div>
+                        <input type="text" id="othersInput" placeholder="Please specify..." style="display: none;">
+                    </div>
+
+                    <label>Date of Incident:</label>
+                    <input type="date" id="incidentDate">
+
+                    <label>Description of Issue:</label>
+                    <textarea id="complaintDescription" placeholder="Specific details about the complaint..." rows="4"></textarea>
+                </div>
 
                 <input type="hidden" id="ratingValue" name="rating">
 
-                <button type="submit" class="submit-btn">Submit Feedback</button>
+                <button type="submit" class="submit-btn">Submit Review</button>
             </form>
         </main>
         

@@ -1,4 +1,4 @@
-// /js/stall_page.js
+// js/stall_page.js
 
 import { db, ref, get } from "/js/firebase/realtimedb.js";
 
@@ -103,6 +103,11 @@ function stallHcIdOf(s) {
     null
   );
 }
+// Helper to get image from DB object
+function stallImageOf(s) {
+  return s?.storeImage || s?.image || s?.ImageURL || s?.coverImage || "";
+}
+
 function hcNameOf(hc, hcId) {
   return hc?.HCName ?? hc?.name ?? hc?.HawkerCentreName ?? `Hawker Centre ${hcId}`;
 }
@@ -116,39 +121,33 @@ function hcImageOf(hc) {
 /* ---------- data fetchers ---------- */
 async function fetchHawkerCentre(wrapper, hcId) {
   if (wrapper?.getHawkerCentre) return await wrapper.getHawkerCentre(hcId);
-  // fallback: common node guesses (only if needed)
   return await readAny([`hawkerCentres/${hcId}`, `HawkerCentre/${hcId}`, `hawkerCentre/${hcId}`]);
 }
 
 async function fetchStallsForHc(wrapper, hcId) {
-  // ✅ NEW wrapper style
   if (wrapper?.listStallsByHawkerCentre) {
     const obj = await wrapper.listStallsByHawkerCentre(hcId);
     return Object.values(obj || {}).filter(Boolean);
   }
 
-  // Older style
   if (wrapper?.getAllFoodStalls) {
     const obj = await wrapper.getAllFoodStalls();
     const all = Object.values(obj || {}).filter(Boolean);
     return all.filter((s) => String(stallHcIdOf(s)) === String(hcId));
   }
 
-  // Generic list
   if (wrapper?.listStalls) {
     const obj = await wrapper.listStalls();
     const all = Object.values(obj || {}).filter(Boolean);
     return all.filter((s) => String(stallHcIdOf(s)) === String(hcId));
   }
 
-  // last resort DB fallback
   const raw = await readAny(["stalls", "Stalls", "foodStall", "FoodStall"]);
   const all = Object.values(raw || {}).filter(Boolean);
   return all.filter((s) => String(stallHcIdOf(s)) === String(hcId));
 }
 
 async function buildStallCuisineMap(wrapper) {
-  // ✅ OLD DB style (Cuisine + MenuItemCuisine join table)
   if (wrapper?.getAllCuisines && wrapper?.getAllMenuItemCuisines) {
     const [cuisinesObj, micObj] = await Promise.all([
       wrapper.getAllCuisines().catch(() => null),
@@ -172,7 +171,6 @@ async function buildStallCuisineMap(wrapper) {
     return stallToCuisine;
   }
 
-  // ✅ NEW wrapper style: derive “cuisine” from menu items (category/cuisine field)
   const miObj =
     (wrapper?.listMenuItems ? await wrapper.listMenuItems().catch(() => null) : null) ||
     (wrapper?.getAllMenuItems ? await wrapper.getAllMenuItems().catch(() => null) : null) ||
@@ -205,6 +203,8 @@ function showEmpty(emptyEl, len) {
 function setHeroImage(url) {
   if (!el.hcBanner) return;
   el.hcBanner.src = url || "";
+  // Ensure banner also aligns to top if you want consistency
+  el.hcBanner.style.objectPosition = "center top"; 
 }
 
 function renderGrid({ hcId, stalls, favSet, stallToCuisine, gridEl, emptyEl, onRefresh }) {
@@ -222,7 +222,7 @@ function renderGrid({ hcId, stalls, favSet, stallToCuisine, gridEl, emptyEl, onR
 
     // content
     card.querySelector(".stall-card__name").textContent = stallNameOf(s, sid);
-    card.querySelector(".stall-card__unit").textContent = `Stall Unit: ${stallUnitOf(s)}`;
+    card.querySelector(".stall-card__unit").textContent = `Unit: ${stallUnitOf(s)}`;
 
     const cset = stallToCuisine.get(sid);
     card.querySelector(".stall-card__cuisine").textContent =
@@ -231,9 +231,18 @@ function renderGrid({ hcId, stalls, favSet, stallToCuisine, gridEl, emptyEl, onR
     // image
     const imgDiv = card.querySelector(".stall-card__img");
     if (imgDiv) {
-      imgDiv.style.backgroundImage = `url("../../images/stalls/${sid}.jpg")`;
+      // 1. Try to get image from DB object
+      let imgUrl = stallImageOf(s);
+      
+      // 2. If no DB image, fallback to local convention
+      if (!imgUrl) {
+          imgUrl = `../../images/stalls/${sid}.jpg`;
+      }
+
+      imgDiv.style.backgroundImage = `url("${imgUrl}")`;
       imgDiv.style.backgroundSize = "cover";
-      imgDiv.style.backgroundPosition = "center";
+      // ✅ UPDATED: Align image to the top
+      imgDiv.style.backgroundPosition = "center top";
     }
 
     // fav
@@ -247,11 +256,17 @@ function renderGrid({ hcId, stalls, favSet, stallToCuisine, gridEl, emptyEl, onR
       onRefresh?.();
     });
 
-    // view menu
+    // view menu (button click)
     card.querySelector(".stall-card__btn").addEventListener("click", (e) => {
       e.stopPropagation();
       sessionStorage.setItem("stallList:returnTo", window.location.href);
-      window.location.href = `./stall_dish.html?stall=${encodeURIComponent(sid)}`;
+      window.location.href = `../../html/Stall/stall_dish.html?stall=${encodeURIComponent(sid)}`;
+    });
+
+    // view menu (card click)
+    card.addEventListener("click", () => {
+        sessionStorage.setItem("stallList:returnTo", window.location.href);
+        window.location.href = `../../html/Stall/stall_dish.html?stall=${encodeURIComponent(sid)}`;
     });
 
     gridEl.appendChild(card);
