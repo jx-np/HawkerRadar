@@ -16,27 +16,25 @@ window.addEventListener("load", applyHeaderOffset);
 
 // ---------- Back button ----------
 function smartBack() {
-  // Always go back to the stall menu (not last browser page)
   const returnTo =
     sessionStorage.getItem("cart:returnTo") ||
     sessionStorage.getItem("dish:returnTo") ||
     sessionStorage.getItem("stallMenu:url");
 
   if (returnTo) {
-    window.location.href = returnTo;
+    window.location.replace(returnTo);
     return;
   }
 
-  // rebuild stall menu if we know stall id
   const lastStallId = sessionStorage.getItem("lastStallId");
   if (lastStallId) {
     const u = new URL("/html/stall/stall_dish.html", window.location.origin);
     u.searchParams.set("stall", String(lastStallId));
-    window.location.href = u.href;
+    window.location.replace(u.href);
     return;
   }
 
-  window.location.href = new URL("/html/home/home.html", window.location.origin).href;
+  window.location.replace(new URL("/html/home/home.html", window.location.origin).href);
 }
 document.getElementById("pageBackBtn")?.addEventListener("click", smartBack);
 
@@ -340,5 +338,5 @@ successOk?.addEventListener("click", () => {
 
   // optional: auto return to where they came from
   const returnTo = sessionStorage.getItem("cart:returnTo");
-  if (returnTo) window.location.href = returnTo;
+  if (returnTo) window.location.replace(returnTo);
 });
