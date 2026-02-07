@@ -46,6 +46,7 @@ body {
     color: white;
     text-decoration: none;
     width: fit-content;
+    cursor: pointer;
 }
 
 .hero-content {
@@ -125,6 +126,30 @@ select#star-filter {
 
 .btn-filter:hover {
     background-color: #bbb;
+}
+
+.btn-add-review {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    /* margin-left: auto pushes this item to the far right of the flex container */
+    margin-left: auto; 
+    padding: 8px 20px; /* Wider padding for text */
+    height: 38px;      /* Match height of inputs */
+    background-color: #28a745; 
+    color: white;
+    font-size: 14px;   /* Adjusted font size for text */
+    font-weight: 700;  /* Bold text */
+    text-decoration: none;
+    border-radius: 4px;
+    border: 1px solid #218838;
+    transition: background 0.2s;
+    cursor: pointer;
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.btn-add-review:hover {
+    background-color: #1e7e34; 
 }
 
 /* Review Card Styles */
@@ -224,8 +249,9 @@ select#star-filter {
     }
 
     select#star-filter,
-    .btn-filter {
-        width: 100%; /* Full width inputs */
+    .btn-filter,
+    .btn-add-review { /* Add new button to full width rule */
+        width: 100%; 
     }
 
     /* Review Cards */
