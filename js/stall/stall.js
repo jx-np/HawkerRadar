@@ -146,9 +146,14 @@ function renderStalls(hcId, stalls, favSet) {
       if (actionBtn) {
         actionBtn.addEventListener("click", () => {
           sessionStorage.setItem("stallList:returnTo", window.location.href);
-          window.location.href = `./stall_dish.html?stall=${encodeURIComponent(
-            sid
-          )}`;
+
+          const url = new URL("./stall_dish.html", window.location.href);
+          url.searchParams.set("stall", String(sid));
+
+          sessionStorage.setItem("stallMenu:url", url.href);
+          sessionStorage.setItem("lastStallId", String(sid));
+
+          window.location.href = url.href;
         });
       }
 
@@ -163,11 +168,9 @@ function renderStalls(hcId, stalls, favSet) {
 (async function init() {
   if (el.pageBackBtn) {
     el.pageBackBtn.addEventListener("click", () => {
-      if (document.referrer && document.referrer.includes(window.location.host)) {
-        window.history.back();
-      } else {
-        window.location.href = "/html/home/home.html";
-      }
+      const returnTo = sessionStorage.getItem("stalls:returnTo");
+      const fallbackHome = new URL("/html/home/home.html", window.location.origin).href;
+      window.location.replace(returnTo || fallbackHome);
     });
   }
 
@@ -177,7 +180,7 @@ function renderStalls(hcId, stalls, favSet) {
     return;
   }
 
-  sessionStorage.setItem("selectedHcId", hcId);
+  sessionStorage.setItem("lastHcId", hcId);
 
   const centre = await getHawkerCentre(hcId);
   el.hcName.textContent = centre?.name || `Hawker Centre ${hcId}`;

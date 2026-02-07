@@ -432,6 +432,14 @@ async function fetchFeedback(wrapper, stallId) {
       safeSetText(cfg.ids.stallName, "Stall not found");
       return;
     }
+    if (!stall) {
+      safeSetText(cfg.ids.stallName, "Stall not found");
+      return;
+    }
+
+    safeSetText(cfg.ids.stallName, stallNameOf(stall));
+    safeSetText(cfg.ids.stallUnit, stallUnitOf(stall));
+    safeSetText(cfg.ids.stallDesc, stallDescOf(stall));
 
     safeSetText(cfg.ids.stallName, stallNameOf(stall));
     safeSetText(cfg.ids.stallUnit, stallUnitOf(stall));
