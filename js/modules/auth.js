@@ -15,9 +15,8 @@ const CURRENT_USER_KEY = 'currentUser';
 // enums
 export const USER_ROLES = {
     CUSTOMER: 'customer',
-    STALL_OWNER: 'stallOwner',
-    OPERATOR: 'operator',
-    VENDOR: 'vendor'
+    STALL_OWNER: 'vendor',
+    OPERATOR: 'operator'
 };
 
 let cachedUser = null;
@@ -66,7 +65,7 @@ export async function registerUser(userData) {
             return internalError(null, "Invalid email");
         }
 
-        // Register via Firebase Auth and create profile
+        // if stallowner must set as vendor everything else will be a normal customer for now.
         const roles = {};
         if (role === 'vendor') {
             roles.vendor = true;
