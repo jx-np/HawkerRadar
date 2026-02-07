@@ -1,5 +1,8 @@
 // js/user/orderhistory.js
-// Order history page — load and display user orders
+// Order history page — load and display user orders from Firebase
+
+import { getCurrentUser, isAuthenticated } from "/js/modules/auth.js";
+import { getAllOrderItems, getAllFoodStalls, listenToAllOrders } from "/js/firebase/wrapper.js";
 
 function applyHeaderOffset() {
   const header = document.querySelector(".site-header");
@@ -14,52 +17,6 @@ window.addEventListener("load", applyHeaderOffset);
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => root.querySelectorAll(sel);
 
-// Mock order data (replace with Firebase calls)
-const mockOrders = [
-  {
-    id: "ORD001",
-    stallName: "Taste of Chicken Rice",
-    date: new Date("2026-02-06"),
-    time: "2:30 PM",
-    status: "completed",
-    subtotal: 25.00,
-    tax: 1.50,
-    total: 26.50,
-    items: [
-      { name: "Chicken Rice", qty: 2, price: 10.00 },
-      { name: "Egg", qty: 1, price: 5.00 },
-    ],
-  },
-  {
-    id: "ORD002",
-    stallName: "Fresh Noodle",
-    date: new Date("2026-02-05"),
-    time: "1:15 PM",
-    status: "completed",
-    subtotal: 18.00,
-    tax: 1.08,
-    total: 19.08,
-    items: [
-      { name: "Laksa Noodle", qty: 1, price: 12.00 },
-      { name: "Drink", qty: 1, price: 6.00 },
-    ],
-  },
-  {
-    id: "ORD003",
-    stallName: "Dumpling House",
-    date: new Date("2026-01-28"),
-    time: "12:00 PM",
-    status: "cancelled",
-    subtotal: 15.00,
-    tax: 0.90,
-    total: 15.90,
-    items: [
-      { name: "Dumplings (10pc)", qty: 1, price: 12.00 },
-      { name: "Soy Sauce", qty: 1, price: 3.00 },
-    ],
-  },
-];
-
 function formatDate(date) {
   const options = { year: "numeric", month: "short", day: "numeric" };
   return date.toLocaleDateString("en-SG", options);
@@ -69,12 +26,83 @@ function formatMoney(n) {
   return `$${Number(n).toFixed(2)}`;
 }
 
+// Store orders globally for filtering
+let allOrders = [];
+let unsubscribeListener = null;
+
+async function fetchUserOrders() {
+  const user = getCurrentUser();
+  if (!user) return [];
+
+  try {
+    const orderItemsObj = await getAllOrderItems();
+    const stallsObj = await getAllFoodStalls();
+    
+    // Group order items by OrderID and filter by current user's CustomerID
+    const ordersMap = new Map();
+    const orderItemsArr = Object.values(orderItemsObj || {});
+    
+    orderItemsArr.forEach((item) => {
+      // Check if order belongs to current user (CustomerID or UserId property)
+      if (String(item?.CustomerID || item?.UserId) !== String(user.userId)) return;
+      
+      const orderId = String(item?.OrderID || "");
+      if (!orderId) return;
+      
+      if (!ordersMap.has(orderId)) {
+        ordersMap.set(orderId, {
+          id: orderId,
+          date: item.OrderDate ? new Date(item.OrderDate) : new Date(),
+          time: item.OrderTime || formatTimeFromDate(item.OrderDate),
+          status: item.OrderStatus || "received",
+          items: [],
+          subtotal: 0,
+          stallId: item.StallID,
+          stallName: "",
+        });
+      }
+      
+      const orderData = ordersMap.get(orderId);
+      const itemPrice = Number(item?.UnitPrice || 0);
+      const itemQty = Number(item?.Quantity || 1);
+      orderData.items.push({
+        name: item.ItemDesc || item.ItemName || "Item",
+        qty: itemQty,
+        price: itemPrice,
+      });
+      orderData.subtotal += itemPrice * itemQty;
+    });
+    
+    // Fill in stall names
+    const stallsArr = Object.values(stallsObj || {});
+    for (const order of ordersMap.values()) {
+      const stall = stallsArr.find((s) => String(s?.StallID) === String(order.stallId));
+      if (stall) order.stallName = stall.StallName || stall.StallDesc || `Stall ${order.stallId}`;
+    }
+    
+    // Convert to array and sort by date (newest first)
+    const orders = Array.from(ordersMap.values());
+    orders.sort((a, b) => b.date - a.date);
+    
+    return orders;
+  } catch (err) {
+    console.error("Failed to fetch user orders:", err);
+    return [];
+  }
+}
+
+function formatTimeFromDate(dateString) {
+  if (!dateString) return "N/A";
+  const d = new Date(dateString);
+  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
 function filterOrders() {
   const timeFilter = $("select#timeFilter").value;
   const statusFilter = $("select#statusFilter").value;
 
   const now = new Date();
-  const filtered = mockOrders.filter((order) => {
+  const filtered = allOrders.filter((order) => {
     // Time filter
     if (timeFilter) {
       const days = parseInt(timeFilter, 10);
@@ -133,11 +161,13 @@ function renderOrders() {
       itemsList.appendChild(itemNode);
     });
 
-    // Meta (subtotal, tax, total)
+    // Meta (subtotal, tax, total) - calculate tax as 6% of subtotal
+    const tax = order.subtotal * 0.06;
+    const total = order.subtotal + tax;
     const metaRows = card.querySelectorAll(".order-meta-row");
     if (metaRows[0]) metaRows[0].querySelector(".order-meta-value").textContent = formatMoney(order.subtotal);
-    if (metaRows[1]) metaRows[1].querySelector(".order-meta-value").textContent = formatMoney(order.tax);
-    if (metaRows[2]) metaRows[2].querySelector(".order-meta-value").textContent = formatMoney(order.total);
+    if (metaRows[1]) metaRows[1].querySelector(".order-meta-value").textContent = formatMoney(tax);
+    if (metaRows[2]) metaRows[2].querySelector(".order-meta-value").textContent = formatMoney(total);
 
     // Buttons
     const viewBtn = card.querySelector(".order-btn--view");
@@ -170,7 +200,44 @@ function initFilterHandlers() {
   });
 }
 
-(function init() {
+async function init() {
+  const user = getCurrentUser();
+  
+  // Show login prompt if not authenticated
+  if (!user || !isAuthenticated()) {
+    const container = $("div#ordersContainer");
+    if (container) {
+      container.innerHTML = '<div style="padding: 40px 20px; text-align: center; color: rgba(0,0,0,0.7);"><p style="margin-bottom: 15px;">Please <a href="../auth/login.html" style="color: #FF3838; text-decoration: underline;">log in</a> to view your order history.</p></div>';
+    }
+    return;
+  }
+
+  // Fetch user orders from Firebase
+  allOrders = await fetchUserOrders();
+  
+  // Initial render
   renderOrders();
+  
+  // Attach filter handlers
   initFilterHandlers();
-})();
+
+  // Set up real-time listener for orders changes
+  if (unsubscribeListener) {
+    unsubscribeListener();
+  }
+  unsubscribeListener = listenToAllOrders(async (ordersData) => {
+    console.log('Orders updated in real-time:', ordersData);
+    // Re-fetch user-filtered orders when any orders change
+    allOrders = await fetchUserOrders();
+    renderOrders();
+  });
+
+  // Clean up listener on page unload
+  window.addEventListener('beforeunload', () => {
+    if (unsubscribeListener) {
+      unsubscribeListener();
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", init);

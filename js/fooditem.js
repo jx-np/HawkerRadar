@@ -2,6 +2,7 @@
 // Loads menu items for a single stall and renders them using #tpl-dish-row
 
 import { getAllMenuItems } from "/js/firebase/wrapper.js";
+import { getCurrentUser, isAuthenticated } from "/js/modules/auth.js";
 import { initStallCart } from "/js/stall_cart.js";
 
 function applyHeaderOffset() {
@@ -49,6 +50,13 @@ async function render() {
   if (!listEl || !tpl) return console.warn("Missing template or list container");
   if (!stallId) {
     listEl.innerHTML = "<li class=\"stall-empty\">Missing stall id</li>";
+    return;
+  }
+
+  // Check if user is authenticated before showing cart functionality
+  const user = getCurrentUser();
+  if (!user || !isAuthenticated()) {
+    listEl.innerHTML = "<li class=\"stall-empty\"><div style=\"padding: 20px; text-align: center;\"><p>Please <a href=\"../auth/login.html\" style=\"color: #FF3838; text-decoration: underline;\">log in</a> to add items to your cart.</p></div></li>";
     return;
   }
 

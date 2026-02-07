@@ -1,7 +1,7 @@
 // js/stall/orders.js
 // Orders view for stall owners — lists orders and allows updating status
 
-import { getAllOrderItems, getStall, updateOrderStatus } from "/js/firebase/wrapper.js";
+import { getAllOrderItems, getStall, updateOrderStatus, listenToStallOrders } from "/js/firebase/wrapper.js";
 import { getCurrentUser, hasRole } from "/js/modules/auth.js";
 
 function applyHeaderOffset(){
@@ -28,6 +28,8 @@ function clearNode(n){ while(n.firstChild) n.removeChild(n.firstChild); }
 
 function money(v){ return `$${Number(v||0).toFixed(2)}`; }
 
+let unsubscribeListener = null;
+
 async function fetchAndBuild(){
   const stallId = getStallId();
   const listEl = document.getElementById('ordersList');
@@ -35,9 +37,16 @@ async function fetchAndBuild(){
   const tpl = document.getElementById('tpl-order-row');
   if(!listEl || !tpl) return;
 
+  // Check if user is logged in first
+  const user = getCurrentUser();
+  if (!user) {
+    listEl.innerHTML = '<div style="padding:20px; color:rgba(0,0,0,0.7)"><p>Please <a href="../auth/login.html" style="color:#FF3838; text-decoration:underline;">log in</a> to view and manage orders.</p></div>';
+    emptyEl.style.display = 'none';
+    return;
+  }
+
   // Authorization: ensure logged-in user is stall owner for this stall
   try{
-    const user = getCurrentUser();
     const stall = stallId ? await getStall(stallId) : null;
     const ownerIdCandidates = [stall?.ownerId, stall?.userId, stall?.owner, stall?.OwnerID, stall?.Owner];
     const isOwner = user && (hasRole('stallOwner') || hasRole('STALL_OWNER') || user.role === 'stallOwner') && ownerIdCandidates.some(Boolean) && ownerIdCandidates.map(String).includes(String(user?.userId || user?.userId));
@@ -157,6 +166,25 @@ function init(){
   if(stall){ document.querySelector('main')?.setAttribute('data-stall-id', stall); }
 
   fetchAndBuild();
+
+  // Set up real-time listener for this stall's orders after initial load
+  const stallId = getStallId();
+  if (stallId) {
+    // Clean up existing listener if any
+    if (unsubscribeListener) unsubscribeListener();
+    
+    // Set up new listener
+    unsubscribeListener = listenToStallOrders(stallId, (ordersData) => {
+      console.log('Orders updated in real-time:', ordersData);
+      // Re-render orders when data changes
+      fetchAndBuild();
+    });
+
+    // Clean up listener on page unload
+    window.addEventListener('beforeunload', () => {
+      if (unsubscribeListener) unsubscribeListener();
+    });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', init);
