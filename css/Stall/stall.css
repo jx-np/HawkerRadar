@@ -178,9 +178,13 @@ body{
   overflow: hidden;
   box-shadow: var(--shadow);
 }
-.stall-card__img{
-  height: 120px;
-  background: var(--img);
+.stall-card__img {
+  height: 160px; /* Adjust height as needed */
+  width: 100%;
+  background-color: #ddd; /* Fallback color while loading */
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 .stall-card__body{
   padding: 12px;
