@@ -1,134 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Hawker Centre Management System</title>
+  <head>
+      <meta charset="UTF-8">
+      <meta name="author" content="<Marc Edward Domingo Rasco>">
+      <title>Hawker Centre Management System</title>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="../../css/Essential/navbar.css">
-    <link rel="stylesheet" href="../../css/home/main_home.css">
-    <link rel="stylesheet" href="../../css/Essential/footer.css">
-</head>
+      <!-- CSS -->
+      <link rel="stylesheet" href="../../css/Essential/navbar.css">
+      <link rel="stylesheet" href="../../css/home/main_home.css">
+      <link rel="stylesheet" href="../../css/Essential/footer.css">
+  </head>
 
-<!--main_featured.css ↓↓-->
+  <!--main_featured.css ↓↓-->
 
-<body>
-  <div class="container">
-    
-    <!-- Header = MAKE SURE TO COPY -->
-    <header class="site-header">
-      <div class="logo">
-        <a href="../../html/home/home.html" class="link-wrapper">
-          <div class="logo-box"></div>
-        </a>
-      </div>
-
-      <nav class="nav-center">
-        <a href="../../html/home/home.html">Home</a>
-        <a href="#">Hawker Centres</a>
-        <a href="#">Order History</a>
-      </nav>
-
-      <div class="nav-right">
-        <a href="../../html/auth/login.html">Login / Register</a>
-      </div>
-    </header>
-    <!--End of Header-->
-
-    <!-- Hero Section -->
-    <section class="hero"> 
-      <div class="hero-text">
-        <h1>Welcome!</h1>
-      </div>
-      <div class="hero-buttons">
-        <button id="scrollToHawker">Search for Hawker Centres!</button>
-        <button>Search for Your Cuisines!</button>
-      </div>
-    </section>
-
-    <!-- Featured Stalls -->
-    <section class="featured">
-      <h2>Featured Stalls</h2>
-
-      <div class="feature-stall-grid">
-        <div class="feature-stall-card">
-          <div class="feature-stall-image" data-stall="Maxwell""></div>
-          <div class="feature-stall-info">
-            <strong>Tian Tian Hainanese Chicken Rice</strong>
-            <em>Chinese (Hainanese)</em>
-            <button>View Menu</button>
-          </div>
-        </div>
-
-        <div class="feature-stall-card">
-          <div class="feature-stall-image" data-stall="Satay"></div>
-          <div class="feature-stall-info">
-            <strong>City Satay</strong>
-            <em>Malay</em>
-            <button>View Menu</button>
-          </div>
-        </div>
-
-        <div class="feature-stall-card">
-          <div class="feature-stall-image" data-stall="Crawford"></div>
-          <div class="feature-stall-info">
-            <strong>Hill Street Tai Hwa Pork Noodle</strong>
-            <em>Chinese</em>
-            <button>View Menu</button>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!--main_featured.css ↑↑-->
-
-
-    <!--main_hawkercentre.css ↓↓-->
-
-    <!-- Advertisement Banner-->
-    <section class="ad-banner">
-        <h2>Explore the best hawker delights near you!</h2>
-    </section>
-
-    <section class="hawkercentre results">
+  <body>
+    <div class="container">
       
-      <!-- Filter Bar-->
-      <div class="filter-bar">
-        <label for="region">Filter by:</label>
+      <!-- Header = MAKE SURE TO COPY -->
+      <header class="site-header">
+        <div class="logo">
+          <a href="../../html/home/home.html" class="link-wrapper">
+            <div class="logo-box"></div>
+          </a>
+        </div>
 
-        <select id="region" name="region">
-          <option value="">All Regions</option>
-          <option value="central">Central Region</option>
-          <option value="north">North Region</option>
-          <option value="east">East Region</option>
-          <option value="west">West Region</option>
-        </select>
+        <nav class="nav-center">
+          <a href="../../html/home/home.html">Home</a>
+          <a href="#">Hawker Centres</a>
+          <a href="#">Order History</a>
+        </nav>
 
-        <button type="button">Filter</button>
-      </div>
-    </section>
+        <div class="nav-right">
+          <a href="../../html/auth/login.html">Login / Register</a>
+        </div>
+      </header>
+      <!--End of Header-->
 
-    <!-- Selection -->
-    <section class="hawkercentre selection">
-      <h2>Results</h2> <!-- added heading -->
-      <div class="hc-grid" id="hcGrid"></div>
-    </section>
+      <!-- Hero Section -->
+      <section class="hero"> 
+        <div class="hero-text">
+          <h1>Welcome!</h1>
+        </div>
+        <div class="hero-buttons">
+          <button id="scrollToHawker">Search for Hawker Centres!</button>
+          <button>Search for Your Cuisines!</button>
+        </div>
+      </section>
 
-    <button id="backToTop" style="display:none;">Back To Top</button>
+      <!-- Featured Stalls -->
+      <section class="featured">
+        <h2>Featured Stalls</h2>
 
-    <!--main_hawkercentre.css ↑↑-->
-    
-    <!-- Footer - MAKE SURE TO COPY!-->
-    <footer class="site-footer">
-      <a href="../../html/Footer Stuff/ContactUs.html">Contact Us</a>
-      <span>|</span>
-      <a href="../../html/Footer Stuff/FAQ.html">FAQs</a>
-      <span>|</span>
-      <a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">
-        NEA Info
-      </a>
-    </footer>
+        <div class="feature-stall-grid">
+          <div class="feature-stall-card">
+            <div class="feature-stall-image" data-stall="Maxwell""></div>
+            <div class="feature-stall-info">
+              <strong>Tian Tian Hainanese Chicken Rice</strong>
+              <em>Chinese (Hainanese)</em>
+              <button>View Menu</button>
+            </div>
+          </div>
 
-  </div>
-  <script type="module" src="/js/hawker.js"></script>
-  <script type="module" src="/js/utils/navbar.js"></script>
-</body>
+          <div class="feature-stall-card">
+            <div class="feature-stall-image" data-stall="Satay"></div>
+            <div class="feature-stall-info">
+              <strong>City Satay</strong>
+              <em>Malay</em>
+              <button>View Menu</button>
+            </div>
+          </div>
+
+          <div class="feature-stall-card">
+            <div class="feature-stall-image" data-stall="Crawford"></div>
+            <div class="feature-stall-info">
+              <strong>Hill Street Tai Hwa Pork Noodle</strong>
+              <em>Chinese</em>
+              <button>View Menu</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!--main_featured.css ↑↑-->
+
+
+      <!--main_hawkercentre.css ↓↓-->
+
+      <!-- Advertisement Banner-->
+      <section class="ad-banner">
+          <h2>Explore the best hawker delights near you!</h2>
+      </section>
+
+      <section class="hawkercentre results">
+        
+        <!-- Filter Bar-->
+        <div class="filter-bar">
+          <label for="region">Filter by:</label>
+
+          <select id="region" name="region">
+            <option value="">All Regions</option>
+            <option value="central">Central Region</option>
+            <option value="north">North Region</option>
+            <option value="east">East Region</option>
+            <option value="west">West Region</option>
+          </select>
+
+          <button type="button">Filter</button>
+        </div>
+      </section>
+
+      <!-- Selection -->
+      <section class="hawkercentre selection">
+        <h2>Results</h2> <!-- added heading -->
+        <div class="hc-grid" id="hcGrid"></div>
+      </section>
+
+      <button id="backToTop" style="display:none;">Back To Top</button>
+
+      <!--main_hawkercentre.css ↑↑-->
+      
+      <!-- Footer - MAKE SURE TO COPY!-->
+      <footer class="site-footer">
+        <a href="../../html/Footer Stuff/ContactUs.html">Contact Us</a>
+        <span>|</span>
+        <a href="../../html/Footer Stuff/FAQ.html">FAQs</a>
+        <span>|</span>
+        <a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">
+          NEA Info
+        </a>
+      </footer>
+
+    </div>
+    <script type="module" src="/js/hawker.js"></script>
+    <script type="module" src="/js/utils/navbar.js"></script>
+  </body>
+</html>

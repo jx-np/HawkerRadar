@@ -1,0 +1,253 @@
+/* ==========================
+   GLOBAL
+========================= */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding-top: 40px; 
+  font-family: 'Satoshi', sans-serif;
+  background: #fff;
+  color: #333;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+/* ==========================
+   CONTAINER (global + profile)
+========================= */
+.container {
+  display: flex;
+  flex-wrap: wrap;               /* keeps profile layout compatible */
+  flex-direction: row;           /* profile uses left/right layout by default */
+  max-width: 1400px;
+  margin: 40px auto 0 auto;
+  background: #fff;
+  padding: clamp(20px, 2vw, 30px);
+  gap: clamp(20px, 2vw, 40px);
+  flex: 1;                       /* pushes footer down if page has little content */
+}
+
+/* ==========================
+   SIDEBAR (left panel)
+========================= */
+.profile-sidebar {
+  flex: 0 0 260px;
+  text-align: center;
+  border-right: 1px solid #ddd;
+  padding-right: 30px;
+}
+
+.profile-image img {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ddd;
+  margin-bottom: 15px;
+}
+
+.profile-sidebar h2 {
+  margin-bottom: 5px;
+  font-weight: 700;
+  font-size: clamp(18px, 1.5vw, 22px);
+}
+
+.profile-sidebar p {
+  color: #777;
+  font-size: clamp(12px, 0.9vw, 14px);
+  margin-bottom: 6px;
+}
+
+
+/* ==========================
+   PROFILE DETAILS (right panel)
+========================= */
+.profile-details {
+  flex: 1;                      /* take remaining space */
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-details h1 {
+  margin-bottom: 25px;
+  font-size: clamp(20px, 2vw, 28px);
+  font-weight: 700;
+}
+
+/* ==========================
+   FORM ELEMENTS
+========================= */
+.info-group {
+  margin-bottom: 18px;
+  position: relative;
+}
+
+.info-group label {
+  font-size: clamp(13px, 1vw, 16px);
+  color: #555;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.info-group {
+  margin-bottom: 18px;
+  position: relative; /* keep relative for positioning the link */
+  display: flex;
+  align-items: center; /* vertically center input and link */
+  gap: 12px; /* spacing between input and link */
+}
+
+.info-group input {
+  width: 60%; /* shrink width */
+  max-width: 400px; /* prevent too wide on large screens */
+  padding: clamp(8px, 1vh, 12px);
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: clamp(13px, 1vw, 16px);
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.change-link {
+  position: relative; /* now part of flex layout */
+  font-size: clamp(12px, 0.9vw, 14px);
+  color: #FF3838;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.change-link:hover {
+  text-decoration: underline;
+}
+
+
+.save-btn {
+  width: fit-content; /* shrink to content */
+  padding: clamp(10px, 1.2vh, 12px) clamp(20px, 2vw, 28px);
+  background: #1677ff;
+  color: #ffffff;
+  border: 1px solid #1677ff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.save-btn:hover {
+  background: #ffffff;
+  color: #1677ff;
+  border: 1px solid #1677ff;
+}
+
+/* ==========================
+   PAYMENT SECTION
+========================= */
+.payment-section {
+  margin-top: 35px;
+}
+
+.payment-section h3 {
+  margin-bottom: 18px;
+  font-size: clamp(18px, 1.8vw, 22px);
+  font-weight: 700;
+}
+
+.payment-cards {
+  display: flex;
+  gap: clamp(12px, 1vw, 20px);
+  flex-wrap: wrap;
+}
+
+/* ==========================
+   PAYMENT CARD
+========================= */
+.payment-card {
+  width: 260px;
+  height: 150px;
+  border-radius: 14px;
+  padding: 18px;
+  background: linear-gradient(135deg, #9b9b9b, #7e7e7e);
+  color: white;
+  position: relative;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+  font-size: clamp(12px, 1vw, 16px);
+  transition: all 0.3s ease;
+}
+
+.payment-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 18px rgba(0,0,0,0.2);
+}
+
+.card-brand { position: absolute; top: 15px; right: 18px; font-weight: bold; font-size: clamp(14px,1.1vw,18px);}
+.card-number { margin-top: 45px; letter-spacing: 2px; font-size: clamp(14px,1vw,16px);}
+.card-bottom { position: absolute; bottom: 18px; left: 18px; font-size: clamp(11px,0.9vw,13px);}
+.card-actions { position: absolute; bottom: -18px; right: 10px; display: flex; gap: 8px;}
+.card-actions button { border: none; background: #eee; padding: 6px 8px; border-radius: 6px; cursor: pointer; transition: all 0.3s ease;}
+.card-actions button:hover { background: #ddd;}
+
+/* ==========================
+   UPLOAD PHOTO & ADD CARD BUTTONS
+========================== */
+#uploadPhotoBtn,
+.add-card-btn  {
+  width: fit-content; /* shrink to content */
+  padding: clamp(10px, 1.2vh, 12px) clamp(20px, 2vw, 28px);
+  background: #FFB2B2;        /* light red background */
+  color: #FF3838;             /* bright red text */
+  border: 1px solid #FFB2B2;  /* subtle border matching bg */
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+#uploadPhotoBtn:hover,
+.add-card-btn:hover {
+  background: #fff;           /* white hover bg */
+  color: #FFB2B2;             /* light red text on hover */
+  border: 1px solid #FF3838;  /* bright red border on hover */
+}
+
+
+
+
+/* ==========================
+   RESPONSIVE
+========================= */
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;  /* stack sidebar + details */
+    padding: clamp(15px, 2vw, 30px);
+  }
+
+  .profile-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 20px;
+    padding-right: 0;
+  }
+
+  .payment-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: clamp(10px, 3vw, 20px);
+    gap: 16px;
+  }
+
+  .profile-details h1 {
+    font-size: clamp(18px, 4vw, 22px);
+  }
+
+  .payment-section h3 {
+    font-size: clamp(16px, 3vw, 20px);
+  }
+}

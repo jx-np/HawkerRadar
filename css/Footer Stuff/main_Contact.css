@@ -6,26 +6,32 @@ body {
   margin: 0;
   font-family: 'Satoshi', sans-serif;
   background: #fff;
-  padding-top:100px;
+  padding-top: 90px;
   display: flex;
   flex-direction: column;
 }
+
+/* ==========================
+   CONTAINER
+========================== */
 .container {
   width: min(100%, 1500px);
   margin: 0 auto;
   box-sizing: border-box;
 
-  flex: 1; /* pushes footer down */
+  flex: 1;
   display: flex;
   flex-direction: column;
-
   background: #fff;
 }
 
+/* ==========================
+   CONTACT LAYOUT
+========================== */
 .contact-wrapper {
   display: flex;
-  gap: 40px;
-  padding: 60px 40px;
+  gap: clamp(24px, 3vw, 40px);
+  padding: clamp(32px, 4vw, 60px) clamp(24px, 3vw, 40px);
   background: #fff;
 }
 
@@ -37,30 +43,36 @@ body {
 /* vertical divider */
 .ContactForm {
   border-left: 1px solid #ccc;
-  padding-left: 40px;
+  padding-left: clamp(24px, 3vw, 40px);
 }
 
+/* ==========================
+   IMAGE
+========================== */
 .Contact-image {
-  height: 200px;
+  height: clamp(140px, 18vh, 200px);
   background-image: url("../../img/close-up-prudential-building-boston.jpg");
   background-size: cover;
   background-position: center;
   border-radius: 8px;
-  margin-bottom: 32px;
+  margin-bottom: clamp(20px, 3vh, 32px);
 }
 
+/* ==========================
+   HEADERS
+========================== */
 .CIHeader,
 .CFHeader {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 32px;
+  margin-bottom: clamp(16px, 2vh, 32px);
 }
 
 .CIHeader h2,
 .CFHeader h2 {
   margin: 0;
-  font-size: 22px;
+  font-size: clamp(18px, 1.6vw, 22px);
   white-space: nowrap;
 }
 
@@ -72,99 +84,136 @@ body {
   background: #999;
 }
 
+/* ==========================
+   FORM
+========================== */
 .contact-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: clamp(12px, 1.5vh, 16px);
 }
 
 .contact-form input,
 .contact-form textarea {
-  padding: 14px;
+  padding: clamp(10px, 1.2vh, 14px);
   border: 1px solid #ccc;
   border-radius: 4px;
+  font-size: clamp(14px, 1vw, 16px);
 }
 
 .contact-form textarea {
-  height: 140px;
+  height: clamp(90px, 14vh, 140px);
+  resize: none;
 }
 
 .contact-form button {
   width: fit-content;
-  padding: 12px 28px;
-  background: #1677ff;   /* red background */
-  color: #ffffff;         /* white text */
-  border: 1px solid #1677ff;  /* small border matching bg */
+  padding: clamp(10px, 1.2vh, 12px) clamp(20px, 2vw, 28px);
+  background: #1677ff;
+  color: #ffffff;
+  border: 1px solid #1677ff;
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.3s;  /* smooth hover */
+  transition: all 0.3s;
   font-weight: bold;
 }
 
 .contact-form button:hover {
-  background: #ffffff;    /* invert background */
-  color: #1677ff;         /* invert text color */
-  border: 1px solid #1677ff; /* maintain 1px outline */
+  background: #ffffff;
+  color: #1677ff;
+  border: 1px solid #1677ff;
 }
 
-
+/* ==========================
+   INFO SECTION
+========================== */
 .Info {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: clamp(16px, 2vh, 24px);
 }
 
 .Info-item {
   display: flex;
   align-items: center;
   gap: 24px;
-  font-size: 20px;
+  font-size: clamp(16px, 1.2vw, 20px);
   color: #333;
 }
 
 .Map-icon,
 .Mail-icon,
 .Phone-icon {
-    width: 36px;
-    height: 36px;
-
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-
-    flex-shrink: 0; /* prevents squashing */
+  width: clamp(28px, 3vw, 36px);
+  height: clamp(28px, 3vw, 36px);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-shrink: 0;
 }
 
-.Map-icon {
-  background-image: url(../../img/MapIcon.png);
+.Map-icon { background-image: url(../../img/MapIcon.png); }
+.Mail-icon { background-image: url(../../img/MailIcon.png); }
+.Phone-icon { background-image: url(../../img/PhoneIcon.png); }
+
+/* ==========================
+   HEIGHT-BASED OPTIMIZATION
+   (Laptop fix – VERY important)
+========================== */
+@media (max-height: 800px) {
+  .contact-wrapper {
+    padding: 32px 28px;
+  }
+
+  .Contact-image {
+    height: 120px;
+    margin-bottom: 20px;
+  }
+
+  .contact-form textarea {
+    height: 90px;
+  }
+
+  .CIHeader,
+  .CFHeader {
+    margin-bottom: 16px;
+  }
 }
-.Mail-icon {
-  background-image: url(../../img/MailIcon.png) ;
-}
-.Phone-icon {
-  background-image: url(../../img/PhoneIcon.png);
+
+/* ==========================
+   MOBILE STACK
+========================== */
+@media (max-width: 900px) {
+  .contact-wrapper {
+    flex-direction: column;
+  }
+
+  .ContactForm {
+    border-left: none;
+    padding-left: 0;
+  }
 }
 
 /* ==========================
    FONTS
 ========================== */
 @font-face {
-    font-family: 'Satoshi';
-    src: url('../../fonts/Satoshi-Regular.woff2') format('woff2');
-    font-weight: 400;
-    font-style: normal;
+  font-family: 'Satoshi';
+  src: url('../../fonts/Satoshi-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: 'Satoshi';
-    src: url('../../fonts/Satoshi-Bold.woff2') format('woff2');
-    font-weight: 700;
-    font-style: normal;
+  font-family: 'Satoshi';
+  src: url('../../fonts/Satoshi-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: 'Satoshi';
-    src: url('../../fonts/Satoshi-BlackItalic.woff2') format('woff2');
-    font-weight: 900;
-    font-style: italic;
+  font-family: 'Satoshi';
+  src: url('../../fonts/Satoshi-BlackItalic.woff2') format('woff2');
+  font-weight: 900;
+  font-style: italic;
 }

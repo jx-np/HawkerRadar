@@ -1,3 +1,7 @@
+body{
+  font-family: 'Satoshi', sans-serif;
+}
+
 .cart-main{
   max-width: 780px;
   margin: calc(var(--site-header-h, 80px) + 18px) auto 48px;
@@ -231,4 +235,28 @@
 /* remove spacing from cart title since topbar now handles it */
 .cart-title{
   margin: 0;
+}
+
+/* ==========================
+   FONTS
+========================== */
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-Regular.otf') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-Bold.otf') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-BlackItalic.otf') format('woff2');
+    font-weight: 900;
+    font-style: italic;
 }

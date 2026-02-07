@@ -22,7 +22,7 @@ body {
     height: 300px;
     background-color: #d9d9d9;
     background-size: cover;
-    background-image: url('../../img/Hill_Street_Tai_Hwa_Pork_Noodle.jpg');
+    background-image: url();
     background-position: top;
     position: relative;
     border-radius: 8px; 
@@ -38,6 +38,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.1));
+    background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.8));
 }
 
 .back-arrow {
@@ -45,6 +46,7 @@ body {
     color: white;
     text-decoration: none;
     width: fit-content;
+    cursor: pointer;
 }
 
 .hero-content {
@@ -126,6 +128,30 @@ select#star-filter {
     background-color: #bbb;
 }
 
+.btn-add-review {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    /* margin-left: auto pushes this item to the far right of the flex container */
+    margin-left: auto; 
+    padding: 8px 20px; /* Wider padding for text */
+    height: 38px;      /* Match height of inputs */
+    background-color: #28a745; 
+    color: white;
+    font-size: 14px;   /* Adjusted font size for text */
+    font-weight: 700;  /* Bold text */
+    text-decoration: none;
+    border-radius: 4px;
+    border: 1px solid #218838;
+    transition: background 0.2s;
+    cursor: pointer;
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.btn-add-review:hover {
+    background-color: #1e7e34; 
+}
+
 /* Review Card Styles */
 .review-card {
     border: 2px solid #ccc;
@@ -174,6 +200,76 @@ select#star-filter {
     margin-left: 20px;
     color: #333;
     line-height: 1.4;
+}
+
+/* ==========================
+   MOBILE RESPONSIVENESS
+========================== */
+@media screen and (max-width: 768px) {
+    
+    /* Adjust Container & Spacing */
+    .container {
+        width: 100%;
+        padding: 0 20px;
+        margin-bottom: 40px;
+    }
+
+    /* Hero Section (Banner) */
+    .hero-section {
+        height: 220px; /* Reduce height */
+        margin-top: 80px; /* Reduce top gap */
+    }
+
+    .hero-overlay {
+        padding: 15px 20px;
+    }
+
+    .stall-name {
+        font-size: 1.8rem; /* Smaller title */
+        margin-bottom: 5px;
+    }
+
+    .stall-rating-summary {
+        font-size: 1.4rem; /* Smaller stars */
+    }
+
+    #hero-review-count {
+        font-size: 1.1rem;
+    }
+
+    .back-arrow {
+        font-size: 1.5rem;
+    }
+
+    /* Filter Controls (Stack Vertical) */
+    .filter-container {
+        flex-direction: column; /* Stack items */
+        align-items: stretch;   /* Full width */
+        gap: 15px;
+    }
+
+    select#star-filter,
+    .btn-filter,
+    .btn-add-review { /* Add new button to full width rule */
+        width: 100%; 
+    }
+
+    /* Review Cards */
+    .review-card {
+        padding: 15px 20px; /* Reduce padding */
+    }
+
+    .card-header {
+        flex-wrap: wrap; /* Allow wrapping if name is long */
+    }
+
+    .user-name {
+        font-size: 1rem;
+    }
+
+    .star-display {
+        font-size: 1rem;
+    }
 }
 
 /* ==========================

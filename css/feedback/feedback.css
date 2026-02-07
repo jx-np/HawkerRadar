@@ -35,7 +35,8 @@ label {
 }
 
 input[type="text"],
-textarea {
+textarea,
+input[type="date"] {
     width: 400px;
     padding: 10px;
     margin-top: 8px;
@@ -49,7 +50,7 @@ textarea {
 
 textarea {
     width: 600px;
-    height: 180px;
+    height: 120px; /* Reduced slightly for review comment */
     resize: none;
 }
 
@@ -62,15 +63,8 @@ textarea {
     transition: color 0.2s ease;
 }
 
-/* Hovered stars */
-.star.hover {
-    color: #f4c430;
-}
-
-/* Selected stars */
-.star.selected {
-    color: #e0a800;
-}
+.star.hover { color: #f4c430; }
+.star.selected { color: #e0a800; }
 
 .rating {
     margin-top: 10px;
@@ -84,6 +78,84 @@ textarea {
     margin-left: 10px;
 }
 
+/* COMPLAINT SECTION STYLES */
+.complaint-toggle-wrapper {
+    margin-top: 25px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#addComplaintCheck {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.toggle-label {
+    margin-top: 0; /* Reset label margin */
+    font-size: 18px;
+    cursor: pointer;
+    color: #C00000;
+}
+
+.complaint-divider {
+    height: 1px;
+    background-color: #ddd;
+    margin: 20px 0;
+    width: 100%;
+    max-width: 600px;
+}
+
+#complaintSection h3 {
+    color: #C00000;
+    margin-top: 0;
+}
+
+/* Category Checkboxes (From Reference) */
+.category-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.category {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+    width: fit-content;
+}
+
+.box {
+    width: 18px;
+    height: 18px;
+    background-color: white;
+    border: 1px solid #ccc;
+    position: relative;
+}
+
+.category.selected .box::after {
+    content: "✔";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #C00000;
+}
+
+#othersInput {
+    margin-left: 30px;
+    width: 300px;
+}
+
+/* SUBMIT BUTTON */
 .submit-btn {
     margin-top: 40px;
     font-size: 16px;
@@ -96,7 +168,6 @@ textarea {
     cursor: pointer;
     transition: all 0.3s;
     font-weight: bold;
-    cursor: pointer;
     display: block;
     width: 200px;  
     margin-bottom: 40px;
@@ -105,7 +176,78 @@ textarea {
 .submit-btn:hover {
     background: #ffffff;
     color: #C00000;    
-    border: 1px solid #C00000;
+}
+
+/* AUTOCOMPLETE STYLES */
+.autocomplete-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+}
+
+.suggestions-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.suggestions-list li {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.suggestions-list li:hover {
+    background-color: #f0f0f0;
+}
+
+.suggestions-list li strong {
+    color: #C00000;
+}
+
+/* MOBILE */
+@media screen and (max-width: 768px) {
+    .feedback-container {
+        padding: 30px 20px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    input[type="text"],
+    textarea,
+    input[type="date"],
+    #othersInput,
+    .autocomplete-wrapper {
+        width: 100%; 
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .page-header {
+        padding: 30px 20px;
+    }
+
+    .page-header h1 {
+        font-size: 32px;
+        margin-top: 60px;
+    }
+
+    .submit-btn {
+        width: 100%;
+        margin-bottom: 20px;
+    }
 }
 
 /* ==========================

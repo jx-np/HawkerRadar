@@ -1,0 +1,323 @@
+/* ==========================
+   GLOBAL STYLES
+========================== */
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: 'Satoshi', sans-serif;
+    background: #fff;
+    padding-top: 90px; /* header space */
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    width: min(100%, 1400px);
+    margin: 0 auto;
+    box-sizing: border-box;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+}
+
+/* ==========================
+   PAGE BASE
+========================== */
+
+.stalls-page {
+    padding: 40px;
+}
+
+/* ==========================
+   HERO SECTION
+========================== */
+
+.hc-hero {
+    position: relative;
+    margin-bottom: 32px;
+}
+
+.hc-hero__banner-shell {
+    height: 280px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.hc-hero__banner {
+    width: 100%;
+    height: 100%;
+}
+
+.hc-hero__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hc-hero__title {
+    font-size: 42px;
+    margin: 18px 0 4px 0;
+    color: #FF3838;
+    font-weight: 700;
+}
+
+.hc-hero__subtitle {
+    color: #666;
+    font-size: 16px;
+}
+
+/* Back button */
+.page-back-btn {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.55);
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.left-arrow {
+    width: 10px;
+    height: 10px;
+    border-left: 4px solid white;
+    border-bottom: 4px solid white;
+    transform: rotate(45deg);
+}
+
+
+/* ==========================
+   FILTER BAR
+   (Matches home.css filter-bar)
+========================== */
+
+.stall-filter {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 24px 0 32px 0;
+    flex-wrap: wrap;
+}
+
+.stall-filter__label {
+    font-weight: 600;
+    font-size: 17px;
+}
+
+.stall-filter__select {
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #FFB2B2;
+    border-radius: 8px;
+    background: #FFF5F5;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.stall-filter__select:hover,
+.stall-filter__select:focus {
+    border-color: #FF3838;
+    outline: none;
+    box-shadow: 0 2px 6px rgba(255,56,56,0.2);
+}
+
+.stall-filter__btn {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 20px;
+    background: linear-gradient(to bottom, #FFE08F, #F9E7B2);
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.stall-filter__btn:hover {
+    background: #FFF1CB;
+    transform: translateY(-2px);
+}
+
+/* ==========================
+   SECTION TITLES
+========================== */
+
+.stall-section {
+    margin-top: 40px;
+}
+
+.stall-section__title {
+    margin-bottom: 24px;
+    border-bottom: 2px solid #FF3838;
+    padding-bottom: 10px;
+    font-size: 26px;
+    color: #FF3838;
+    text-transform: uppercase;
+}
+
+/* Empty message */
+.stall-empty {
+    color: #777;
+    margin-bottom: 18px;
+}
+
+/* ==========================
+   STALL GRID
+   (Matches featured + hc grid)
+========================== */
+
+.stall-grid {
+    display: grid;
+    gap: 24px;
+}
+
+/* Desktop 3 cards */
+@media (min-width: 1024px) {
+    .stall-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .stall-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .stall-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================
+   STALL CARD
+   (Styled like featured/hc cards)
+========================== */
+
+.stall-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #FFD6D6;
+    height: 320px;
+    border: 1px solid #FFB2B2;
+    transition: 0.3s ease;
+}
+
+.stall-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+/* Image */
+
+.stall-card__img {
+    height: 180px;
+    background: #ddd;
+    background-size: cover;
+    background-position: center;
+    border-bottom: 2px solid rgba(255,56,56,0.3);
+    transition: transform 0.4s;
+}
+
+.stall-card:hover .stall-card__img {
+    transform: scale(1.05);
+}
+
+/* Body */
+
+.stall-card__body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+/* Top row */
+
+.stall-card__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Stall name */
+
+.stall-card__name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #FF3838;
+    margin: 0;
+}
+
+/* Favorite button */
+
+.stall-card__fav {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 22px;
+}
+
+/* Meta info */
+
+.stall-card__meta {
+    margin-top: auto;
+    font-size: 15px;
+    color: #666;
+}
+
+/* View Menu button */
+
+.stall-card__btn {
+    margin-top: 12px;
+    padding: 8px 16px;
+    background: linear-gradient(to bottom, #FFE08F, #F9E7B2);
+    border: 1.5px solid #FFF1CB;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.stall-card__btn:hover {
+    background: #FFF1CB;
+    transform: translateY(-2px);
+}
+
+/* ==========================
+   FONTS
+========================== */
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-Regular.otf') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-Bold.otf') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../../fonts/Satoshi-BlackItalic.otf') format('woff2');
+    font-weight: 900;
+    font-style: italic;
+}

@@ -1,7 +1,8 @@
 <html>
     <head>
         <meta name="author" content="Neo You Sheng Xavier">
-        <title>Complaints</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Complaint form</title>
         <link rel="icon" href="">
         <link rel="stylesheet" href="../../css/Essential/navbar.css">
         <link rel="stylesheet" href="../../css/Essential/footer.css">
@@ -10,22 +11,23 @@
     <body>
         <!--Nav-->
         <header class="site-header">
-            <div class="logo">
-                <a href="../../html/home/home.html" class="link-wrapper">
-                <div class="logo-box"></div>
-                </a>
-            </div>
+        <div class="logo">
+            <a href="../../html/home/home.html" class="link-wrapper">
+            <div class="logo-box"></div>
+            </a>
+        </div>
 
-            <nav class="nav-center">
-                <a href="../../html/home/home.html">Home</a>
-                <a href="#">Hawker Centres</a>
-                <a href="#">Order History</a>
-            </nav>
+        <nav class="nav-center">
+            <a href="../../html/home/home.html">Home</a>
+            <a href="#">Hawker Centres</a>
+            <a href="#">Order History</a>
+        </nav>
 
-            <div class="nav-right">
-                <a href="../../html/auth/login.html">Login / Register</a>
-            </div>
+        <div class="nav-right">
+            <a href="../../html/auth/login.html">Login / Register</a>
+        </div>
         </header>
+        <!--End of Header-->
 
         <!--Content of complaint form-->
         <section class="page-header">
@@ -35,47 +37,42 @@
 
         <main class="complaint-container">
             <form id="complaintForm">
-                <label>Food Stall:</label>
-                <input type="text" id="foodStall" name="foodStall" placeholder="Enter Food Stall name" required>
-
+                
                 <label>Hawker Centre:</label>
-                <input type="text" id="hawkerCentre" name="hawkerCentre" placeholder="Enter Hawker Centre name" required>
+                <div class="autocomplete-wrapper">
+                    <input type="text" id="hawkerCentre" name="hawkerCentre" placeholder="Type to search hawker centre..." autocomplete="off" required>
+                    <input type="hidden" id="selectedHawkerId">
+                    <ul id="hawkerSuggestions" class="suggestions-list"></ul>
+                </div>
+
+                <label>Food Stall:</label>
+                <div class="autocomplete-wrapper">
+                    <input type="text" id="foodStall" name="foodStall" placeholder="Select a Hawker Centre first..." autocomplete="off" disabled required>
+                    <input type="hidden" id="selectedStallId" name="stallId">
+                    <ul id="stallSuggestions" class="suggestions-list"></ul>
+                </div>
 
                 <label>Complaint Category:</label>
-                <!--Change data-value base on firebase-->
                 <div class="category-container">
                     <div class="category" data-value="Cleanliness">
-                        <span class="box"></span>
-                        <span class="text">Cleanliness</span>
+                        <span class="box"></span><span class="text">Cleanliness</span>
                     </div>
                     <div class="category" data-value="Food Quality">
-                        <span class="box"></span>
-                        <span class="text">Food Quality</span>
-                    </div>
+                        <span class="box"></span><span class="text">Food Quality</span>
                     </div>
                     <div class="category" data-value="Price">
-                        <span class="box"></span>
-                        <span class="text">Price</span>
+                        <span class="box"></span><span class="text">Price</span>
                     </div>
                     <div class="category" data-value="Service">
-                        <span class="box"></span>
-                        <span class="text">Service</span>
+                        <span class="box"></span><span class="text">Service</span>
                     </div>
                     <div class="category" data-value="Waiting Time">
-                        <span class="box"></span>
-                        <span class="text">Waiting Time</span>
+                        <span class="box"></span><span class="text">Waiting Time</span>
                     </div>
                     <div class="category" data-value="Others" id="othersCategory">
-                        <span class="box"></span>
-                        <span class="text">Others</span>
+                        <span class="box"></span><span class="text">Others</span>
                     </div>
-
-                    <input
-                        type="text"
-                        id="othersInput"
-                        placeholder="Please specify..."
-                        style="display: none;"
-                    />
+                    <input type="text" id="othersInput" placeholder="Please specify..." style="display: none;">
                 </div>
 
                 <label>Date of Incident:</label>
@@ -102,6 +99,5 @@
         <!--Complaint Javascript-->
         <script type="module" src="/js/feedback/complaint.js"></script>
         <script type="module" src="/js/utils/navbar.js"></script>
-        <script type="module" src="/js/utils/footer.js"></script>
     </body>
 </html>

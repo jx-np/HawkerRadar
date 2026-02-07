@@ -23,12 +23,26 @@ body {
     height: 320px;
     position: relative;
     background-size: cover;
-    background-image: url('../../img/Hill_Street_Tai_Hwa_Pork_Noodle.jpg');
+    background-image: url();
     background-position: top;
     border-radius: 12px;
     margin-bottom: 40px;
     overflow: hidden;
     margin-top: 120px;
+}
+
+/* Dark Gradient Overlay for Text Readability */
+.stall-header::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Gradient from transparent at top to 80% black at bottom */
+    background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.8));
+    border-radius: 12px; 
+    z-index: 1; /* Sits above image, below text */
 }
 
 .stall-title {
@@ -38,7 +52,7 @@ body {
     font-size: 36px;
     font-weight: 600;
     color: white;
-    z-index: 2;
+    z-index: 2; /* Sits on top of overlay */
 }
 
 .header-bg {
@@ -56,7 +70,7 @@ body {
     left: 20px;
     font-size: 24px;
     color: white;
-    z-index: 2;
+    z-index: 2; /* Sits on top of overlay */
     cursor: pointer;
 }
 
@@ -93,6 +107,7 @@ body {
     align-items: center;
     gap: 10px;
     margin-bottom: 25px;
+    flex-wrap: wrap; 
 }
 
 .filter-controls label {
@@ -121,25 +136,15 @@ body {
 }
 
 .filter-controls input[type="date"] {
-    padding: 7px; /* 7px aligns vertically better with select's 8px usually */
+    padding: 7px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-family: 'Satoshi', sans-serif;
     color: #333;
 }
 
-/* Optional: Add a little spacing if the labels feel too tight */
 .filter-label-spacing {
     margin-left: 10px;
-}
-
-/* Update: Allow controls to wrap on smaller screens so it doesn't break */
-.filter-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 25px;
-    flex-wrap: wrap; /* Added this to prevent layout breaking on mobile */
 }
 
 /* Complaint Card */
@@ -198,6 +203,131 @@ body {
 .card-body li {
     font-size: 14px;
     line-height: 1.4;
+}
+
+/* Action Buttons */
+.card-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end; 
+}
+
+/* Default State: GREEN (Mark as Read) */
+.btn-mark-read {
+    padding: 8px 16px;
+    background-color: #28a745; /* Green */
+    color: white;
+    border: 1px solid #218838;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-mark-read:hover {
+    background-color: #218838; /* Darker Green */
+}
+
+/* Closed State: RED (Read) */
+.btn-mark-read.closed {
+    background-color: #dc3545 !important; /* Red */
+    border-color: #c82333 !important;
+    color: white !important;
+    cursor: default;
+    opacity: 0.8;
+}
+
+/* ==========================
+   MOBILE RESPONSIVENESS
+========================== */
+@media screen and (max-width: 768px) {
+    
+    /* Layout & Container */
+    .container {
+        width: 100%;
+        padding: 0 15px;
+        margin-bottom: 40px;
+    }
+
+    /* Stall Header Banner */
+    .stall-header {
+        height: 200px;
+        margin-top: 80px; 
+    }
+
+    .stall-title {
+        font-size: 24px; 
+        left: 20px;
+        bottom: 15px;
+    }
+
+    .back-arrow {
+        font-size: 20px;
+        top: 15px;
+        left: 15px;
+    }
+
+    /* Filter Controls (Stack them) */
+    .filter-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .filter-controls label {
+        margin-bottom: -5px;
+    }
+
+    .filter-label-spacing {
+        margin-left: 0;
+    }
+
+    .filter-controls select,
+    .filter-controls input[type="date"],
+    .filter-controls button {
+        width: 100%;
+        min-width: 0;
+    }
+
+    /* Complaint Cards */
+    .complaint-card {
+        padding: 15px;
+    }
+
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .user-name {
+        margin-right: 0;
+        margin-bottom: 4px;
+        font-size: 1.1rem;
+    }
+
+    .issue-type {
+        width: 100%;
+        margin-right: 0;
+        font-size: 0.95rem;
+    }
+
+    .date {
+        align-self: flex-start;
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 4px;
+    }
+
+    /* Mark as Read Button */
+    .card-actions {
+        margin-top: 20px;
+    }
+
+    .btn-mark-read {
+        width: 100%;
+        padding: 12px;
+    }
 }
 
 /* ==========================

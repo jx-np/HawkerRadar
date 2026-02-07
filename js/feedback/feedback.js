@@ -1,104 +1,288 @@
-import { addFeedback, getAllFeedback } from '/js/firebase/wrapper.js';
+import { createFeedback, createComplaint, listStalls, listHawkerCentres } from '/js/firebase/wrapper.js';
+import { db } from '/js/firebase/realtimedb.js'; 
+import { ref, get } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
+// DOM Elements
+const form = document.getElementById("feedbackForm");
 const stars = document.querySelectorAll(".star");
 const ratingText = document.querySelector(".rating-text");
 const ratingInput = document.getElementById("ratingValue");
-const form = document.getElementById("feedbackForm");
 
+// Complaint Elements
+const addComplaintCheck = document.getElementById("addComplaintCheck");
+const complaintSection = document.getElementById("complaintSection");
+const othersCategory = document.getElementById("othersCategory");
+const othersInput = document.getElementById("othersInput");
+const selectedCategories = new Set();
+
+// Inputs
+const hawkerInput = document.getElementById("hawkerCentre");
+const hawkerIdInput = document.getElementById("selectedHawkerId");
+const hawkerList = document.getElementById("hawkerSuggestions");
+
+const stallInput = document.getElementById("foodStall");
+const stallIdInput = document.getElementById("selectedStallId");
+const stallList = document.getElementById("stallSuggestions");
+
+// State
 let currentRating = 0;
+let allStalls = [];         
+let allHawkerCentres = [];  
+let filteredStalls = [];    
 
-// Unified Event Listeners (Fixes duplicate click & missing updateStars)
+// --- Load Data ---
+async function loadSearchData() {
+    try {
+        const [stallsData, hawkersData] = await Promise.all([
+            listStalls(),
+            listHawkerCentres()
+        ]);
+        if (stallsData) allStalls = Object.values(stallsData);
+        if (hawkersData) allHawkerCentres = Object.values(hawkersData);
+    } catch (error) {
+        console.error("Error loading search data:", error);
+    }
+}
+loadSearchData();
+
+// --- Search Logic (Hawker & Stall) ---
+// (Same as before, abbreviated for clarity)
+hawkerInput.addEventListener('input', () => {
+    const query = hawkerInput.value.toLowerCase();
+    hawkerList.innerHTML = '';
+    if (query.length < 1) { hawkerList.style.display = 'none'; return; }
+    const matches = allHawkerCentres.filter(item => (item.name || "").toLowerCase().includes(query));
+    if (matches.length > 0) {
+        matches.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = item.name;
+            li.addEventListener('click', () => {
+                hawkerInput.value = item.name;
+                hawkerIdInput.value = item.id;
+                hawkerList.style.display = 'none';
+                updateStallListForCentre(item.id);
+            });
+            hawkerList.appendChild(li);
+        });
+        hawkerList.style.display = 'block';
+    } else { hawkerList.style.display = 'none'; }
+});
+
+function updateStallListForCentre(hawkerId) {
+    stallInput.disabled = false;
+    stallInput.placeholder = "Type to search stall...";
+    stallInput.value = ""; 
+    stallIdInput.value = "";
+    filteredStalls = allStalls.filter(stall => stall.hawkerCentreId === hawkerId);
+}
+
+stallInput.addEventListener('input', () => {
+    const query = stallInput.value.toLowerCase();
+    stallList.innerHTML = '';
+    if (query.length < 1) { stallList.style.display = 'none'; return; }
+    const matches = filteredStalls.filter(item => (item.name || "").toLowerCase().includes(query));
+    if (matches.length > 0) {
+        matches.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = item.name;
+            li.addEventListener('click', () => {
+                stallInput.value = item.name;
+                stallIdInput.value = item.id;
+                stallList.style.display = 'none';
+            });
+            stallList.appendChild(li);
+        });
+        stallList.style.display = 'block';
+    } else { stallList.style.display = 'none'; }
+});
+
+document.addEventListener('click', (e) => {
+    if (!hawkerInput.contains(e.target)) hawkerList.style.display = 'none';
+    if (!stallInput.contains(e.target)) stallList.style.display = 'none';
+});
+
+// --- Star Rating ---
 stars.forEach(star => {
-    // 1. Handle Hover (Mouse Enter)
-    star.addEventListener("mouseenter", () => {
-        highlightHover(star.dataset.value);
-    });
-
-    // 2. Handle Hover End (Mouse Leave)
-    star.addEventListener("mouseleave", () => {
-        clearHover();
-        highlightSelected(); // Restores the visual selection
-    });
-
-    // 3. Handle Click (Selection)
+    star.addEventListener("mouseenter", () => highlightHover(star.dataset.value));
+    star.addEventListener("mouseleave", () => { clearHover(); highlightSelected(); });
     star.addEventListener("click", () => {
-        // Update State
         currentRating = Number(star.dataset.value);
-        
-        // Update Form Inputs
         ratingInput.value = currentRating;
         ratingText.textContent = `${currentRating}/5`;
-        
-        // Update Visuals (Replaces the missing updateStars function)
         highlightSelected(); 
     });
 });
+function highlightHover(rating) { stars.forEach(star => star.classList.toggle("hover", star.dataset.value <= rating)); }
+function clearHover() { stars.forEach(star => star.classList.remove("hover")); }
+function highlightSelected() { stars.forEach(star => star.classList.toggle("selected", star.dataset.value <= currentRating)); }
 
-// Hover Visuals
-function highlightHover(rating) {
-    stars.forEach(star => {
-        star.classList.toggle("hover", star.dataset.value <= rating);
-    });
-}
-
-function clearHover() {
-    stars.forEach(star => star.classList.remove("hover"));
-}
-
-// Selected Visuals
-function highlightSelected() {
-    stars.forEach(star => {
-        star.classList.toggle("selected", star.dataset.value <= currentRating);
-    });
-}
-
-// Form Submit
-form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    if (currentRating === 0) {
-        alert("Please select a rating.");
-        return;
-    }
-
-    try {
-        // --- NEW ID GENERATION LOGIC ---
-        
-        // Fetch all existing feedback
-        const allFeedbackData = await getAllFeedback();
-        
-        // Count them. 
-        // If data exists, count the keys. If null (empty db), count is 0.
-        const currentCount = allFeedbackData ? Object.keys(allFeedbackData).length : 0;
-        
-        // Generate ID (e.g., 0 -> 701, 15 -> 716)
-        const nextNumber = currentCount + 1;
-        const feedbackID = `7${String(nextNumber).padStart(2, '0')}`;
-        
-        // -------------------------------
-
-        const feedbackSuccess = await addFeedback(
-            feedbackID,
-            document.getElementById("comments").value, // Assuming you accessed values directly or via data obj
-            new Date().toISOString().replace('T', ' ').slice(0, 19),
-            currentRating,
-            501,
-            document.getElementById("foodStall").value
-        );
-
-        if (feedbackSuccess) {
-            alert("Feedback submitted successfully!");
-            form.reset();
-            currentRating = 0;
-            highlightSelected(); 
-            ratingText.textContent = "__/5";
-        } else {
-            alert("Error submitting feedback.");
-        }
-    } catch (error) {
-        console.error(error);
-        alert("Error submitting feedback.");
+// --- Complaint Toggle Logic ---
+addComplaintCheck.addEventListener('change', () => {
+    if (addComplaintCheck.checked) {
+        complaintSection.style.display = "block";
+    } else {
+        complaintSection.style.display = "none";
     }
 });
 
-console.log("Complaint JS loaded");
+// --- Complaint Category Logic ---
+document.querySelectorAll(".category").forEach(item => {
+    item.addEventListener("click", () => {
+        const value = item.dataset.value;
+        item.classList.toggle("selected");
+
+        if (item.classList.contains("selected")) {
+            selectedCategories.add(value);
+        } else {
+            selectedCategories.delete(value);
+        }
+
+        if (value === "Others") {
+            if (item.classList.contains("selected")) {
+                othersInput.style.display = "block";
+                othersInput.required = true;
+            } else {
+                othersInput.style.display = "none";
+                othersInput.required = false;
+                othersInput.value = "";
+            }
+        }
+    });
+});
+
+// --- Helper: Generate IDs ---
+async function generateNextId(nodeName) {
+    const snapshot = await get(ref(db, nodeName));
+    let count = 0;
+    if (snapshot.exists()) {
+        count = Object.keys(snapshot.val()).length;
+    }
+    return `7${String(count + 1).padStart(2, '0')}`;
+}
+
+async function generateNextComplaintId() {
+    const snapshot = await get(ref(db, 'complaints'));
+    let count = 0;
+    if (snapshot.exists()) {
+        count = Object.keys(snapshot.val()).length;
+    }
+    const numberPart = `7${String(count + 1).padStart(2, '0')}`;
+    return `complaint_${numberPart}`;
+}
+
+// --- Helper: Date ---
+function getFormattedDate() {
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+}
+
+// --- Submit Logic ---
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // 1. Validate Review
+    if (currentRating === 0) return alert("Please select a rating for your review.");
+    if (!stallIdInput.value) {
+        if(stallInput.value) {
+            stallIdInput.value = stallInput.value; 
+        } else {
+            return alert("Please select a valid food stall.");
+        }
+    }
+
+    // 2. Validate Complaint (Only if checked)
+    let complaintData = null;
+    if (addComplaintCheck.checked) {
+        if (selectedCategories.size === 0) {
+            alert("Please select at least one complaint category.");
+            return;
+        }
+        const incidentDate = document.getElementById("incidentDate").value;
+        const complaintDesc = document.getElementById("complaintDescription").value;
+        if (!incidentDate) {
+            alert("Please select the Date of Incident.");
+            return;
+        }
+        if (!complaintDesc.trim()) {
+            alert("Please describe the complaint issue.");
+            return;
+        }
+
+        // Process Categories
+        const categoriesArray = Array.from(selectedCategories);
+        if (categoriesArray.includes("Others")) {
+            const index = categoriesArray.indexOf("Others");
+            categoriesArray[index] = `Others: ${othersInput.value}`;
+        }
+        const categoryString = categoriesArray.join(", ");
+        
+        const complaintId = await generateNextComplaintId();
+        
+        complaintData = {
+            id: complaintId,
+            userId: "anonymous",
+            stallId: stallIdInput.value,
+            hawkerCentre: hawkerInput.value,
+            dateCreated: getFormattedDate(),
+            incidentDate: incidentDate,
+            category: categoryString,
+            description: complaintDesc, // Using separate description for complaint
+            status: "open"
+        };
+    }
+
+    try {
+        // --- A. Submit Review ---
+        const feedbackId = await generateNextId('feedback');
+        const feedbackData = {
+            id: feedbackId,
+            dateCreated: getFormattedDate(),
+            userId: "anonymous",
+            stallId: stallIdInput.value, 
+            hawkerCentre: hawkerInput.value,
+            rating: currentRating,
+            comments: document.getElementById("comments").value,
+        };
+
+        const reviewResult = await createFeedback(feedbackData);
+
+        // --- B. Submit Complaint (if exists) ---
+        let msg = `Review submitted! ID: ${feedbackId}`;
+        
+        if (complaintData) {
+            const complaintResult = await createComplaint(complaintData);
+            if (complaintResult) {
+                msg += `\nComplaint submitted! ID: ${complaintData.id}`;
+            }
+        }
+
+        if (reviewResult) {
+            alert(msg);
+            // Reset Form
+            form.reset();
+            currentRating = 0;
+            highlightSelected(); 
+            ratingText.textContent = " /5";
+            
+            // Reset Sections
+            addComplaintCheck.checked = false;
+            complaintSection.style.display = "none";
+            selectedCategories.clear();
+            document.querySelectorAll(".category").forEach(c => c.classList.remove("selected"));
+            othersInput.style.display = "none";
+
+            // Reset Search
+            stallInput.disabled = true;
+            stallInput.placeholder = "Select a Hawker Centre first...";
+            stallIdInput.value = "";
+            hawkerIdInput.value = "";
+        }
+
+    } catch (error) {
+        console.error("Submission failed:", error);
+        alert("Error: " + error.message);
+    }
+});
+
+console.log("Feedback+Complaint JS loaded");
