@@ -44,13 +44,13 @@ async function initPage() {
         return;
     }
 
-    // Check if user has the 'stallOwner' (Vendor) role
-    if (user.role !== 'stallOwner') {
+    // Check if user has the 'vendor' role
+    if (!user.roles || !user.roles.vendor) {
         document.body.innerHTML = `
             <div style="text-align: center; margin-top: 50px; font-family: sans-serif;">
                 <h1>Access Denied</h1>
                 <p>You do not have permission to view this page.</p>
-                <p>Current Role: <strong>${user.role || 'None'}</strong> (Required: <strong>Vendor</strong>)</p>
+                <p>Current Role: <strong>${user.roles?.vendor ? 'Vendor' : 'Customer'}</strong> (Required: <strong>Vendor</strong>)</p>
                 <a href="/">Return Home</a>
             </div>
         `;

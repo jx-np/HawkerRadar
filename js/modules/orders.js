@@ -1,5 +1,12 @@
-import { internalError } from "/utils/helpers.js";
+import { internalError, log, generateId, getCurrentTimestamp } from "/js/utils/helpers.js";
+import { getCurrentUser } from "/js/modules/auth.js";
+import { db, ref, set, update, remove } from "/js/firebase/realtimedb.js";
 
+export const PAYMENT_METHODS = {
+    CASH: 'Cash',
+    CARD: 'Card',
+    PAYNOW: 'PayNow'
+};
 
 export const ORDER_STATUS = {
     PENDING: 'pending',
@@ -65,7 +72,7 @@ export async function createOrder(orderData) {
 
         const cartItems = cartResponse.data.items;
         // ensure that the cart items are even from the right stall.
-        const filteredItems = cartItems.filter(item => item.stallId === stallId);
+        const cartItemsForStall = cartItems.filter(item => item.stallId === stallId);
 
         if (cartItemsForStall.length === 0) {
             return internalError(null, "No items from this stall in cart");
@@ -77,10 +84,10 @@ export async function createOrder(orderData) {
 
         const newOrder = {
             orderId,
-            userId: user ? user.userId : 'guest_' + generateId(),
+            userId: user ? user.id : 'guest_' + generateId(),
             stallId,
             userEmail: user ? user.email : 'guest@chimmy.xyz',
-            items: filteredItems,
+            items: cartItemsForStall,
             totalAmount,
             status: ORDER_STATUS.PENDING,
             paymentMethod,
@@ -99,7 +106,7 @@ export async function createOrder(orderData) {
         // remove from cart
         for (const item of cartItemsForStall) {
             if (user) {
-                await remove(ref(db, `carts/${user.userId}/${item.cartItemId}`));
+                await remove(ref(db, `carts/${user.id}/${item.cartItemId}`));
             } else {
                 let cart = JSON.parse(localStorage.getItem('guestCart') || '[]');
                 cart = cart.filter(c => c.cartItemId !== item.cartItemId);
@@ -111,7 +118,7 @@ export async function createOrder(orderData) {
             orderId,
             amount: totalAmount,
             method: paymentMethod,
-            userId: user ? user.userId : 'guest',
+            userId: user ? user.id : 'guest',
             createdAt: getCurrentTimestamp()
         };
 
