@@ -228,7 +228,7 @@ async function fetchMenuItem(wrapper, stallId, itemId) {
       })();
 
     sessionStorage.setItem("cart:returnTo", stallMenuUrl);
-    window.location.href = new URL("../user/cart.html", window.location.href).href;
+    window.location.href = new URL("/user/cart.html", window.location.href).href;
   });
 
   if (!itemId) {
@@ -275,11 +275,11 @@ async function fetchMenuItem(wrapper, stallId, itemId) {
     // 2. If no DB image, fallback to file path convention
     if (!finalImg) {
         finalImg = resolvedStallId
-          ? `../../images/dishes/${resolvedStallId}_${itemId}.jpg`
-          : `../../images/dishes/${itemId}.jpg`;
+          ? `/images/dishes/${resolvedStallId}_${itemId}.jpg`
+          : `/images/dishes/${itemId}.jpg`;
     }
 
-    setImgWithFallback(el.banner, finalImg, "../../images/dishes/placeholder.jpg", dishName);
+    setImgWithFallback(el.banner, finalImg, "/images/dishes/placeholder.jpg", dishName);
     // --------------------------
 
     // Favorites

@@ -1,6 +1,6 @@
-import { internalError, log, generateId, getCurrentTimestamp } from "../utils/helpers.js";
-import { getCurrentUser } from "./auth.js";
-import { db, ref, set, update, remove } from "../firebase/realtimedb.js";
+import { internalError, log, generateId, getCurrentTimestamp } from "/js/utils/helpers.js";
+import { getCurrentUser } from "/js/modules/auth.js";
+import { db, ref, set, update, remove } from "/js/firebase/realtimedb.js";
 
 export const PAYMENT_METHODS = {
     CASH: 'Cash',

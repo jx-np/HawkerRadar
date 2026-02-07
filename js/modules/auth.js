@@ -5,8 +5,8 @@ import {
     getUser,
     updateUser,
     onAuthChanged
-} from "../firebase/wrapper.js";
-import { log, ValidateEmail, internalError } from "../utils/helpers.js";
+} from "/js/firebase/wrapper.js";
+import { log, ValidateEmail, internalError } from "/js/utils/helpers.js";
 
 // session localstorage
 const SESSION_KEY = 'session';

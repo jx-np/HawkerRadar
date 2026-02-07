@@ -1,6 +1,6 @@
 import { createFeedback, createComplaint, listStalls, listHawkerCentres } from '/js/firebase/wrapper.js';
-import { db } from '/js/firebase/realtimedb.js'; 
-import { ref, get } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+// import { db } from '/js/firebase/realtimedb.js'; 
+// import { ref, get } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
 // DOM Elements
 const form = document.getElementById("feedbackForm");

@@ -180,8 +180,8 @@ function renderList() {
     if (priceEl) priceEl.textContent = money(price);
 
     const urlFromDb = dishImageUrlOf(mi);
-    const guessImg = `../../images/dishes/${stallId}_${id}.jpg`;
-    setImgWithFallback(img, urlFromDb || guessImg, "../../images/dishes/placeholder.jpg", dishName);
+    const guessImg = `/images/dishes/${stallId}_${id}.jpg`;
+    setImgWithFallback(img, urlFromDb || guessImg, "/images/dishes/placeholder.jpg", dishName);
 
     el.list.appendChild(frag);
   }
@@ -213,8 +213,8 @@ async function loadAll() {
   if (el.stallHc) el.stallHc.textContent = hcId ? `Hawker Centre: ${hcId}` : "Hawker Centre";
 
   // banner (best-effort)
-  const stallBannerGuess = `../../images/stalls/${stallId}.jpg`;
-  setImgWithFallback(el.stallBanner, stall?.coverImage || stall?.bannerImage || stallBannerGuess, "../../images/stalls/stall-banner-placeholder.jpg", stallNameOf(stall));
+  const stallBannerGuess = `/images/stalls/${stallId}.jpg`;
+  setImgWithFallback(el.stallBanner, stall?.coverImage || stall?.bannerImage || stallBannerGuess, "/images/stalls/stall-banner-placeholder.jpg", stallNameOf(stall));
 
   const obj = wrapper?.listMenuItemsByStall ? await wrapper.listMenuItemsByStall(stallId) : null;
 
