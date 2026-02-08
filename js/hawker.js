@@ -1,4 +1,4 @@
-// /js/hawker.js
+// /js/hawker.js 
 import { listHawkerCentres, listStalls } from "/js/firebase/wrapper.js";
 // ---------- NAV RESET (prevents "back" loops between pages) ----------
 (function resetNavForHome() {
