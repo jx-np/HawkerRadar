@@ -1,11 +1,19 @@
 import { listStallComplaints, getUser, getStall, updateComplaint } from "/js/firebase/wrapper.js";
 // [!] Import auth function. Ensure this path points to where you saved your auth.js file
-import { getCurrentUser } from "/js/auth/auth.js"; 
+import { getCurrentUser } from "/js/modules/auth.js"; 
 
-// --- Get Stall ID from URL (Dynamic) ---
-const urlParams = new URLSearchParams(window.location.search);
-// const STALL_ID = urlParams.get('id'); // Gets ?id=301 from URL
-const STALL_ID = 303;
+// --- 1. Helper: Get Stall ID from URL or Session ---
+function getStallId() {
+    const url = new URL(window.location.href);
+    return (
+        url.searchParams.get("stall") || // Priority 1
+        url.searchParams.get("id") ||    // Priority 2
+        sessionStorage.getItem("selectedStallId") || // Priority 3
+        ""
+    );
+}
+
+const STALL_ID = getStallId();
 
 // --- DOM Elements ---
 const complaintsList = document.getElementById('complaints-list');
@@ -14,9 +22,18 @@ const stallHeader = document.querySelector('.stall-header');
 const filterBtn = document.getElementById('filter-btn');
 const issueFilter = document.getElementById('issue-filter');
 const dateFilter = document.getElementById('date-filter');
+const backBtn = document.querySelector('.back-arrow'); // <--- Added Back Button
 
 // --- Initialization ---
 async function initPage() {
+
+    // --- SETUP BACK BUTTON ---
+    if (backBtn) {
+        backBtn.addEventListener('click', () => {
+            window.history.back();
+        });
+    }
+
     // --- SECURITY CHECK START ---
     const user = getCurrentUser();
 
@@ -27,18 +44,17 @@ async function initPage() {
         return;
     }
 
-    // Check if user has the 'stallOwner' (Vendor) role
-    // Based on your auth.js: USER_ROLES.STALL_OWNER = 'stallOwner'
-    if (user.role !== 'stallOwner') {
+    // Check if user has the 'vendor' role
+    if (!user.roles || !user.roles.vendor) {
         document.body.innerHTML = `
             <div style="text-align: center; margin-top: 50px; font-family: sans-serif;">
                 <h1>Access Denied</h1>
                 <p>You do not have permission to view this page.</p>
-                <p>Current Role: <strong>${user.role || 'None'}</strong> (Required: <strong>Vendor</strong>)</p>
+                <p>Current Role: <strong>${user.roles?.vendor ? 'Vendor' : 'Customer'}</strong> (Required: <strong>Vendor</strong>)</p>
                 <a href="/">Return Home</a>
             </div>
         `;
-        return; // Stop execution, do not fetch data
+        return; // Stop execution
     }
     // --- SECURITY CHECK END ---
 
@@ -47,6 +63,9 @@ async function initPage() {
         complaintsList.innerHTML = '<p style="text-align:center;">No stall selected in URL.</p>';
         return;
     }
+
+    // Persist ID
+    sessionStorage.setItem("selectedStallId", STALL_ID);
 
     console.log("Loading for Stall ID:", STALL_ID);
 
@@ -58,20 +77,16 @@ async function initPage() {
 
         // --- UPDATE HEADER INFO ---
         if (stall) {
-            console.log("Stall found:", stall.name);
-            stallTitle.textContent = stall.name;
+            if (stallTitle) stallTitle.textContent = stall.name;
 
             // <--- IMAGE FIX: Use 'storeImage' property --->
-            // Checks storeImage first (e.g., "/img/301.jpg")
             const imageUrl = stall.storeImage || stall.image || stall.coverImage; 
             
             if (imageUrl) {
                 stallHeader.style.backgroundImage = `url('${imageUrl}')`;
-            } else {
-                console.log("No image found for stall.");
             }
         } else {
-            stallTitle.textContent = "Stall Not Found";
+            if (stallTitle) stallTitle.textContent = "Stall Not Found";
         }
 
         // --- PROCESS COMPLAINTS ---
@@ -123,6 +138,7 @@ function renderComplaints(data) {
         return;
     }
 
+    // Sort by Date (Newest first)
     const sortedData = [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
 
     sortedData.forEach(complaint => {

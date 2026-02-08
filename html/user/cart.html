@@ -2,36 +2,37 @@
     <head>
         <meta name="author" content="Javier Lum Dong Yee">
         <title>Cart</title>
-        <link rel="icon" href="">
-        <link rel="stylesheet" href="../../css/Essential/navbar.css">
-        <link rel="stylesheet" href="../../css/Essential/footer.css">
-        <link rel="stylesheet" href="../../css/Stall/cart.css">
+        <link rel="icon" href="/img/TabLogo.png">
+        <link rel="stylesheet" href="/css/Essential/navbar.css">
+        <link rel="stylesheet" href="/css/Essential/footer.css">
+        <link rel="stylesheet" href="/css/stall/cart.css">
+        <link rel="stylesheet" href="/css/home/main_home.css">
         <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" 
         />
     </head>
     <body>
-        <!-- Header = MAKE SURE TO COPY -->
-        <header class="site-header">
-        <div class="logo">
-            <a href="../../html/home/home.html" class="link-wrapper">
-            <div class="logo-box"></div>
-            </a>
-        </div>
+        <div class="container">
+            <header class="site-header">
+                <div class="logo">
+                    <a href="/html/home/home.html" class="link-wrapper">
+                    <div class="logo-box"></div>
+                    </a>
+                </div>
 
-        <nav class="nav-center">
-            <a href="../../html/home/home.html">Home</a>
-            <a href="#">Hawker Centres</a>
-            <a href="#">Order History</a>
-        </nav>
+                <nav class="nav-center">
+                    <a href="/html/home/home.html">Home</a>
+                    <a href="/html/user/orderhistory.html">Order History</a>
+                    <a href="/html/about/about.html" class="active">About</a>
+                </nav>
 
-        <div class="nav-right">
-            <a href="../../html/auth/login.html">Login / Register</a>
-        </div>
-        </header>
-        <!--End of Header-->
-        <main class="cart-main">
-            <div class="cart-wrap">
+                <div class="nav-right">
+                    <a href="/html/auth/login.html">Login / Register</a>
+                </div>
+            </header>
+            <!--End of Header-->
+            <main class="cart-main">
+                <div class="cart-wrap">
                 <div class="cart-topbar">
                     <button class="cart-back-btn" id="pageBackBtn" type="button" aria-label="Back">
                         <span class="material-symbols-outlined" aria-hidden="true">arrow_back_2</span>
@@ -89,44 +90,47 @@
                 <button id="checkoutBtn" class="checkout-btn" type="button" disabled>Checkout</button>
             </div>
 
-            <!-- Popup #1 -->
-            <dialog id="confirmDialog" class="cart-dialog">
-                <h3 class="dialog-title">Confirm your order</h3>
-                <p class="dialog-text">Please confirm everything is correct.</p>
+                <!-- Popup #1 -->
+                <dialog id="confirmDialog" class="cart-dialog">
+                    <h3 class="dialog-title">Confirm your order</h3>
+                    <p class="dialog-text">Please confirm everything is correct.</p>
 
-                <label class="confirm-check">
-                <input id="confirmCheck" type="checkbox" />
-                I confirm my order is correct.
-                </label>
+                    <label class="confirm-check">
+                    <input id="confirmCheck" type="checkbox" />
+                    I confirm my order is correct.
+                    </label>
 
-                <div class="dialog-actions">
-                <button id="cancelConfirm" type="button" class="btn-secondary">Cancel</button>
-                <button id="placeOrderBtn" type="button" class="btn-primary" disabled>Place Order</button>
-                </div>
-            </dialog>
+                    <div class="dialog-actions">
+                    <button id="cancelConfirm" type="button" class="btn-secondary">Cancel</button>
+                    <button id="placeOrderBtn" type="button" class="btn-primary" disabled>Place Order</button>
+                    </div>
+                </dialog>
 
-            <!-- Popup #2 -->
-            <dialog id="successDialog" class="cart-dialog">
-                <h3 class="dialog-title">Order placed ✅</h3>
-                <p class="dialog-text">Order has been successfully placed.</p>
-                <div class="dialog-actions">
-                <button id="successOk" type="button" class="btn-primary">OK</button>
-                </div>
-            </dialog>
+                <!-- Popup #2 -->
+                <dialog id="successDialog" class="cart-dialog">
+                    <h3 class="dialog-title">Order placed ✅</h3>
+                    <p class="dialog-text">Order has been successfully placed.</p>
+                    <div class="dialog-actions">
+                    <button id="successOk" type="button" class="btn-primary">OK</button>
+                    </div>
+                </dialog>
             </main>
-        <!-- Footer - MAKE SURE TO COPY!-->
-        <footer class="site-footer">
-            <a href="../../html/Footer Stuff/ContactUs.html">Contact Us</a>
-            <span>|</span>
-            <a href="../../html/Footer Stuff/FAQ.html">FAQs</a>
-            <span>|</span>
-            <a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">
-                NEA Info
-            </a>
-        </footer>
+        
+            <footer class="site-footer">
+                <a href="/html/Footer Stuff/ContactUs.html">Contact Us</a>
+                <span>|</span>
+                <a href="/html/Footer Stuff/FAQ.html">FAQs</a>
+                <span>|</span>
+                <a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">
+                    NEA Info
+                </a>
+            </footer>
+        </div>
+        
         <script>
             window.CART_PAGE = { wrapperPath: "/js/firebase/wrapper.js" };
         </script>
-        <script type="module" src="../../js/cart.js"></script>
+        <script type="module" src="/js/utils/navbar.js"></script>
+        <script type="module" src="/js/user/cart.js"></script>
     </body>
 </html>
