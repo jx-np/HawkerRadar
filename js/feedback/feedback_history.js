@@ -78,11 +78,15 @@ async function loadFeedbackHistory() {
 
             const item = document.createElement('div');
             item.className = 'history-item';
+            // build a details link that navigates to the stall's reviews page
+            const detailsHref = stallId ? `/html/Feedback/reviews.html?stall=${encodeURIComponent(stallId)}` : '/html/Feedback/reviews.html';
+
             item.innerHTML = `
                 <div class="col date">${date}</div>
                 <div class="col stall">${stall}</div>
                 <div class="col rating">☆ <span class="rating-value">${rating}</span></div>
                 <div class="col comment">${comment}</div>
+                <div class="col action"><a class="details-btn" href="${detailsHref}">Details</a></div>
             `;
 
             historyList.appendChild(item);

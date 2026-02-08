@@ -30,8 +30,18 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Get the order ID from sessionStorage
         currentOrderId = sessionStorage.getItem('selectedOrderId');
-        
+        // fallback: try reading from URL params if not set in sessionStorage
         if (!currentOrderId) {
+            const url = new URL(window.location.href);
+            currentOrderId = url.searchParams.get('order') || url.searchParams.get('id') || null;
+            if (currentOrderId) {
+                console.log('Order ID loaded from URL:', currentOrderId);
+                sessionStorage.setItem('selectedOrderId', currentOrderId);
+            }
+        }
+
+        if (!currentOrderId) {
+            console.warn('No selectedOrderId found in sessionStorage or URL');
             showEmptyState();
             return;
         }
@@ -53,8 +63,10 @@ async function loadOrderDetails() {
 
         // Load the specific order
         const order = await getOrder(currentOrderId);
+        console.log('Loaded order:', order);
 
         if (!order) {
+            console.warn('Order not found for id', currentOrderId);
             showEmptyState();
             return;
         }
@@ -69,7 +81,14 @@ async function loadOrderDetails() {
             }
         }
 
-        renderOrderDetails(order, stall);
+        try {
+            renderOrderDetails(order, stall);
+        } catch (err) {
+            console.error('Error rendering order details:', err);
+            const container = document.getElementById('orderDetailsContainer');
+            if (container) container.innerHTML = '<p style="padding:16px;">Error displaying order details.</p>';
+            hideLoadingState();
+        }
     } catch (err) {
         console.error('Error loading order details:', err);
         showEmptyState();
@@ -86,25 +105,49 @@ function renderOrderDetails(order, stall) {
     const status = (order.status || 'pending').toLowerCase();
     const formattedDate = formatDate(order.dateCreated);
 
+    // Normalize items: support array or object map shapes
+    const rawItems = order.items || [];
+    const itemsArray = Array.isArray(rawItems)
+        ? rawItems
+        : (typeof rawItems === 'object' ? Object.values(rawItems) : []);
+
+    function resolveUnitPrice(it) {
+        return Number(it?.unitPrice ?? it?.price ?? it?.ItemPrice ?? it?.cost ?? 0) || 0;
+    }
+
+    function resolveQty(it) {
+        return Number(it?.qty ?? it?.quantity ?? it?.Qty ?? 0) || 0;
+    }
+
     let itemsHTML = '';
-    if (Array.isArray(order.items) && order.items.length > 0) {
-        itemsHTML = order.items
-            .map(item => `
+    if (itemsArray.length > 0) {
+        itemsHTML = itemsArray
+            .map(item => {
+                const name = item?.name || item?.itemCode || 'Unknown Item';
+                const qty = resolveQty(item) || 1;
+                const unit = resolveUnitPrice(item);
+                const line = unit * qty;
+                const notes = item.specialRequests ? `<p class="item-notes">Notes: ${item.specialRequests}</p>` : '';
+                return `
                 <div class="order-item">
                     <div class="item-info">
-                        <h4 class="item-name">${item.name || 'Unknown Item'}</h4>
-                        <p class="item-qty">Quantity: ${item.qty || 1}</p>
-                        ${item.specialRequests ? `<p class="item-notes">Notes: ${item.specialRequests}</p>` : ''}
+                        <h4 class="item-name">${name}</h4>
+                        <p class="item-qty">Quantity: ${qty}</p>
+                        ${notes}
                     </div>
                     <div class="item-price">
-                        $${((item.price || 0) * (item.qty || 1)).toFixed(2)}
+                        <div class="unit-price">${`$${unit.toFixed(2)}`}</div>
+                        <div class="line-total">${`$${line.toFixed(2)}`}</div>
                     </div>
                 </div>
-            `)
+            `
+            })
             .join('');
     }
 
-    const subtotal = order.totals?.subtotal ?? 0;
+    // Prefer stored totals, but fallback to computed subtotal from items
+    const computedSubtotal = itemsArray.reduce((s, it) => s + (Number(it?.unitPrice ?? it?.price ?? it?.ItemPrice ?? it?.cost ?? 0) || 0) * (Number(it?.qty ?? it?.quantity ?? 0) || 0), 0);
+    const subtotal = order.totals?.subtotal ?? computedSubtotal;
     const delivery = order.totals?.delivery ?? 0;
     const discount = order.totals?.discount ?? 0;
     const grandTotal = order.totals?.grandTotal ?? 0;
@@ -195,6 +238,11 @@ function showLoadingState() {
 
 function hideLoadingState() {
     document.getElementById('loadingState').style.display = 'none';
+    // show the details container and ensure empty state is hidden
+    const container = document.getElementById('orderDetailsContainer');
+    if (container) container.style.display = 'block';
+    const empty = document.getElementById('emptyState');
+    if (empty) empty.style.display = 'none';
 }
 
 function showEmptyState() {
