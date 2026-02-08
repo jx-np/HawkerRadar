@@ -74,7 +74,7 @@ async function loadFeedbackHistory() {
             const stall = stallData ? (stallData.name || stallData.StallName || stallId) : (stallId || 'Unknown Stall');
 
             const rating = sanitizeHTML(String(fb.rating || fb.FbkRating || ''));
-            const comment = sanitizeHTML(truncate(fb.comment || fb.FbkComment || ''));
+            const comment = sanitizeHTML(truncate(fb.comments || fb.comment || fb.FbkComment || ''));
 
             const item = document.createElement('div');
             item.className = 'history-item';
