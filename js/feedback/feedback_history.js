@@ -1,5 +1,5 @@
 import { getCurrentUser } from '/js/modules/auth.js';
-import { listUserFeedback, getAllFoodStalls } from '/js/firebase/wrapper.js';
+import { listUserFeedback, listStalls } from '/js/firebase/wrapper.js';
 import { formatDate } from '/js/utils/helpers.js';
 
 /*
@@ -41,7 +41,7 @@ async function loadFeedbackHistory() {
         const userFeedback = await listUserFeedback(currentUser.id);
 
         if (!userFeedback) {
-            historyList.innerHTML = `<div class="no-feedback">No feedback found.</div>`;
+            historyList.innerHTML = `<div class="no-feedback">no reviews yet...</div>`;
             return;
         }
 
@@ -49,23 +49,27 @@ async function loadFeedbackHistory() {
         const feedbackArray = Object.values(userFeedback);
 
         if (feedbackArray.length === 0) {
-            historyList.innerHTML = `<div class="no-feedback">You have not submitted any feedback yet.</div>`;
+            historyList.innerHTML = `<div class="no-feedback">no reviews yet...</div>`;
             return;
         }
 
-        // load stalls once to map StallID -> StallName
-        const allStalls = await getAllFoodStalls();
-
+        // load stalls once to map stallId -> stall data
+        const allStalls = await listStalls();
         const stallMap = allStalls || {};
 
         // sort by datetime descending
         feedbackArray.sort((a, b) => new Date(b.FbkDateTime) - new Date(a.FbkDateTime));
 
         for (const fb of feedbackArray) {
-            const date = fb.FbkDateTime ? formatDate(new Date(fb.FbkDateTime).getTime()) : '';
-            const stall = stallMap[fb.StallID] ? stallMap[fb.StallID].StallName : (fb.StallID || 'Unknown Stall');
-            const rating = sanitizeHTML(String(fb.FbkRating || ''));
-            const comment = sanitizeHTML(truncate(fb.FbkComment || ''));
+            const rawDate = fb.dateCreated || fb.FbkDateTime || fb.date || fb.createdAt || '';
+            const date = rawDate ? formatDate(new Date(rawDate).getTime()) : '';
+
+            const stallId = fb.stallId || fb.StallID || fb.stall || '';
+            const stallData = stallMap[stallId];
+            const stall = stallData ? (stallData.name || stallData.StallName || stallId) : (stallId || 'Unknown Stall');
+
+            const rating = sanitizeHTML(String(fb.rating || fb.FbkRating || ''));
+            const comment = sanitizeHTML(truncate(fb.comment || fb.FbkComment || ''));
 
             const item = document.createElement('div');
             item.className = 'history-item';
