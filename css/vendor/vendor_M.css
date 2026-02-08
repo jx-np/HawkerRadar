@@ -1,349 +1,243 @@
 :root {
-  --page-max: 820px;
-  --pad: 22px;
-
-  --site-header-h: 0px;
-
-  --hero-h: 260px;
-  --radius: 10px;
-
-  --panel: #ededed;
-  --img: #d7d7d7;
-  --text: #111;
-  --muted: rgba(0, 0, 0, 0.65);
-  --divider: 1px solid rgba(0, 0, 0, 0.18);
-
-  --shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --border-color: #dee2e6;
+    --bg-light: #f8f9fa;
+    --text-dark: #343a40;
+    --shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 body {
-  padding-top: var(--site-header-h, 0px);
+    font-family: sans-serif;
+    margin: 0;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
 }
 
-.vendor-page {
-  max-width: var(--page-max);
-  margin: 0 auto;
-  padding: var(--pad);
-  padding-bottom: 70px;
+.manage-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    min-height: 80vh;
+    margin-bottom: 100px;
+    margin-top: 100px;
 }
 
-.material-symbols-outlined {
-  font-family: "Material Symbols Outlined";
-  font-weight: normal;
-  font-style: normal;
-  display: inline-block;
-  line-height: 1;
-  white-space: nowrap;
-  font-feature-settings: "liga";
-  -webkit-font-smoothing: antialiased;
-  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 28;
-  font-size: 26px;
-}
-
-/* Hero */
-.vendor-hero {
-  display: grid;
-  gap: 12px;
-}
-
-.vendor-hero__banner-shell {
-  position: relative;
-}
-
-.vendor-hero__banner-wrap {
-  position: relative;
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: var(--img);
-  box-shadow: var(--shadow);
-}
-
-.vendor-hero__banner {
-  width: 100%;
-  height: var(--hero-h);
-  object-fit: cover;
-  display: block;
-}
-
-.vendor-hero__edit {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  width: 46px;
-  height: 46px;
-  border: none;
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-}
-
-.vendor-hero__edit:hover {
-  opacity: 0.85;
-}
-
-.vendor-hero__meta {
-  display: grid;
-  gap: 4px;
-}
-
-.vendor-hero__name {
-  margin: 0;
-  font-size: 32px;
-  font-weight: 800;
-  line-height: 1.1;
-}
-
-.vendor-hero__sub {
-  margin: 0;
-  color: var(--muted);
-  font-size: 14px;
-}
-
-/* Section */
-.vendor-section {
-  margin-top: 18px;
-  border-top: var(--divider);
-  padding-top: 12px;
-}
-
-.vendor-section__head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.vendor-section__title {
-  margin: 0 0 10px;
-  font-size: 18px;
-  font-weight: 800;
-}
-
-.vendor-status {
-  margin: 0;
-  font-size: 13px;
-  color: var(--muted);
-  min-height: 18px;
-}
-
-/* Dish list */
-.vendor-dish-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.vendor-dish {
-  display: grid;
-  grid-template-columns: 150px 1fr 140px;
-  gap: 14px;
-  padding: 14px 0;
-  border-bottom: var(--divider);
-}
-
-.vendor-dish__img-wrap {
-  width: 150px;
-  height: 110px;
-  border-radius: 6px;
-  overflow: hidden;
-  background: var(--img);
-  box-shadow: var(--shadow);
-}
-
-.vendor-dish__img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.vendor-dish__info {
-  min-width: 0;
-}
-
-.vendor-dish__name {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 800;
-}
-
-.vendor-dish__desc {
-  margin: 4px 0 10px;
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.vendor-dish__meta {
-  margin: 0;
-  font-size: 13px;
-  color: var(--text);
-}
-
-.vendor-dish__label {
-  color: var(--muted);
-  font-weight: 700;
-}
-
-.vendor-dish__right {
-  display: grid;
-  justify-items: end;
-  align-content: start;
-  gap: 16px;
-}
-
-.vendor-dish__price-row {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.vendor-dish__price {
-  font-size: 16px;
-  font-weight: 900;
-}
-
-/* Icon buttons */
-.icon-btn {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 8px;
-}
-
-.icon-btn:hover {
-  background: rgba(0, 0, 0, 0.06);
-}
-
-.icon-btn.danger .material-symbols-outlined {
-  font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 28;
-}
-
-/* Add button (wide pill) */
-.vendor-add-btn {
-  margin-top: 18px;
-  width: 100%;
-  height: 44px;
-  border: none;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.12);
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-}
-
-.vendor-add-btn:hover {
-  background: rgba(0, 0, 0, 0.16);
-}
-
-.vendor-add-btn__plus {
-  font-size: 28px;
-  font-weight: 900;
-  line-height: 1;
-}
-
-/* Dialogs */
-.dlg::backdrop {
-  background: rgba(0, 0, 0, 0.35);
-}
-
-.dlg {
-  border: none;
-  padding: 0;
-  border-radius: 12px;
-  max-width: 520px;
-  width: calc(100% - 40px);
-}
-
-.dlg__panel {
-  padding: 16px;
-  display: grid;
-  gap: 12px;
-}
-
-.dlg__title {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 900;
-}
-
-.dlg__subtitle {
-  margin: -6px 0 0;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.dlg__label {
-  display: grid;
-  gap: 6px;
-  font-size: 13px;
-  color: var(--text);
-  font-weight: 700;
-}
-
-.dlg__input,
-.dlg__textarea {
-  width: 100%;
-  border: 1px solid rgba(0, 0, 0, 0.18);
-  border-radius: 10px;
-  padding: 10px 10px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.dlg__textarea {
-  resize: vertical;
-}
-
-.dlg__grid2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.dlg__actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 6px;
-}
-
-.btn {
-  border: none;
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-weight: 800;
-  cursor: pointer;
-  background: rgba(0, 0, 0, 0.12);
-}
-
-.btn:hover {
-  background: rgba(0, 0, 0, 0.16);
-}
-
-.btn.ghost {
-  background: transparent;
-}
-
-.btn.ghost:hover {
-  background: rgba(0, 0, 0, 0.06);
-}
-
-/* Mobile */
-@media (max-width: 720px) {
-  .vendor-dish {
-    grid-template-columns: 120px 1fr;
-  }
-  .vendor-dish__img-wrap {
-    width: 120px;
-    height: 90px;
-  }
-  .vendor-dish__right {
-    grid-column: 2 / 3;
-    justify-items: start;
-    grid-template-columns: 1fr auto;
+/* Loading Overlay */
+.loading-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255,255,255,0.9);
+    display: flex;
+    justify-content: center;
     align-items: center;
-  }
+    font-size: 1.5rem;
+    z-index: 100;
+}
+.loading-overlay.hidden { display: none; }
+
+/* Hero Section */
+.hero-section {
+    margin-bottom: 2rem;
+}
+
+.banner-wrapper {
+    position: relative;
+    height: 250px;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ddd;
+}
+
+#stallBanner {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+}
+
+#stallNameTitle {
+    margin-top: 1rem;
+    font-size: 2rem;
+    color: var(--text-dark);
+}
+
+/* General UI Components */
+.divider { 
+  margin: 2rem 0; border: none; border-top: 1px solid var(--border-color); 
+}
+
+.btn { 
+  padding: 0.6rem 1.2rem; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: background 0.2s; 
+}
+.btn-primary { 
+  background: var(--primary-color); color: white; 
+}
+
+.btn-primary:hover { 
+  background: #0056b3; 
+}
+
+.btn-overlay { 
+  position: absolute; bottom: 15px; right: 15px; background: rgba(0,0,0,0.7); color: white; 
+}
+
+.btn-overlay:hover { 
+  background: rgba(0,0,0,0.9); 
+}
+
+.btn-save { 
+  background: var(--success-color); color: white; padding: 0.4rem 0.8rem; font-size: 0.9rem;
+}
+
+.btn-save:hover {
+  background: #218838; 
+}
+
+.btn:disabled { 
+  opacity: 0.6; cursor: not-allowed; 
+}
+
+.form-group {
+  margin-bottom: 1rem; 
+}
+
+.form-group label { 
+  display: block; margin-bottom: 0.4rem; font-weight: 600;
+}
+
+.form-group input, .form-group textarea { 
+  width: 100%; padding: 0.6rem; border: 1px solid var(--border-color); border-radius: 4px; box-sizing: border-box; /* Important for padding */ 
+}
+
+.two-col { 
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; 
+}
+
+/* Layout Grid */
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+/* Sections */
+.add-dish-section, .manage-dishes-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+/* Dish List */
+.dish-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.dish-card {
+    display: flex;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+    align-items: center;
+}
+
+.dish-card__img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+.dish-card__details {
+    padding: 1rem;
+    flex-grow: 1;
+}
+
+.dish-card__title { margin: 0 0 0.5rem 0; font-size: 1.1rem; }
+.dish-card__desc { margin: 0; color: var(--secondary-color); font-size: 0.9rem;}
+
+.dish-card__actions {
+    padding: 1rem;
+    background: var(--bg-light);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-end;
+    border-left: 1px solid var(--border-color);
+}
+
+.price-input-group {
+    display: flex;
+    align-items: center;
+}
+
+.price-input-label { 
+  margin-right: 4px; font-weight: bold;
+}
+
+.price-input { 
+  width: 80px !important; text-align: right; font-weight: bold; 
+}
+
+@media (max-width: 768px) {
+    .manage-container {
+        padding: 15px;
+        margin-bottom: 80px; /* Slightly less margin on mobile */
+    }
+
+    /* Force single column layout */
+    .content-grid {
+        grid-template-columns: 1fr; 
+        gap: 1.5rem;
+    }
+
+    /* Make banner shorter */
+    .banner-wrapper {
+        height: 180px;
+    }
+    
+    #stallNameTitle {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    /* Stack form inputs */
+    .two-col {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    /* Adjust dish card layout for small screens */
+    .dish-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .dish-card__img {
+        width: 100%;
+        height: 150px; /* Banner style for dish on mobile */
+    }
+
+    .dish-card__details {
+        width: 100%;
+        padding: 1rem;
+    }
+
+    .dish-card__actions {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+        padding: 1rem;
+    }
+    
+    .price-input {
+        width: 100px !important;
+    }
 }

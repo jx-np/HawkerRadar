@@ -53,17 +53,22 @@ if (form) {
             return;
         }
 
-        const res = await loginUser(email, password);
-        console.log('loginUser result', res);
-
-        if (res && res.reason) {
-            showMessage(res.reason || 'Login failed');
-            return;
+        try {
+            const res = await loginUser(email, password);
+            
+            if (res && res.reason) {
+                showMessage(res.reason || 'Login failed');
+                return;
+            }
+            
+            console.log('Login successful:', res);
+            showMessage('Login successful — redirecting...', false);
+            setTimeout(() => {
+                window.location.href = '/html/home/home.html';
+            }, 700);
+        } catch (error) {
+            console.error('Login error:', error);
+            showMessage(error.message || 'Login failed');
         }
-
-        showMessage('Login successful — redirecting...', false);
-        setTimeout(() => {
-            window.location.href = '/html/home/home.html';
-        }, 700);
     });
 }

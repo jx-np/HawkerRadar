@@ -1,0 +1,85 @@
+
+
+/* Advertisement Banner */
+.ad-banner {
+    height: 150px;
+    background-image: url("../../img/CNYHorse_Ad_Banner.png"); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 24px 40px;
+    border-radius: 8px;
+}
+
+.ad-banner h2 {
+    font-size: 26px;
+    font-weight: 600;
+    color: #fff;
+    padding: 16px 24px;
+    text-shadow: 0 1px 5px rgba(0,0,0,0.6);
+}
+
+.selection h2 {
+    margin-bottom: 24px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 8px;
+    font-size: 28px;           /* match featured h2 */
+    color: #FF3838;            /* match featured h2 color */
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/*Filter*/
+.filter-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    margin: 24px 40px;
+}
+
+.filter-bar label {
+    font-weight: 600;
+    font-size: 17px;
+}
+
+.filter-bar select {
+    padding: 6px 10px;
+    font-size: 17px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.filter-bar button {
+    padding: 6px 16px;
+    font-size: 17px;
+    border: none;
+    background: #E0E0E0;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.filter-bar button:hover {
+    background: #CFCFCF;
+}
+
+#backToTop {
+    background: none;       
+    border: none;           
+    color: #ccc;            
+    font-size: 18px;        
+    cursor: pointer;
+    padding: 10px 0 40px 0;             
+    transition: color 0.3s; 
+
+}
+
+#backToTop:hover {
+    color: #C00000;         
+}
+

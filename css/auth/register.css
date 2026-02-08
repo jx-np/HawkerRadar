@@ -123,7 +123,7 @@ html, body {
 }
 
 /* STALL OWNER – Gold */
-#role:has(option[value="stallOwner"]:checked) {
+#role:has(option[value="vendor"]:checked) {
   border-color: #ffa928;
   background-color: #fff9e6;
   color: #ffa928;
