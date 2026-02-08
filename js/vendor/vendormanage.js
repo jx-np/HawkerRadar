@@ -135,7 +135,7 @@ function attachEventListeners() {
 }
 
 
-// --- Action A: Edit Banner ---
+// Edit Banner
 async function handleEditBanner() {
     const currentUrl = el.stallBanner.src === window.location.origin + PLACEHOLDER_IMG ? '' : el.stallBanner.src;
     const newUrl = prompt("Enter new Banner Image URL:", currentUrl);
@@ -165,7 +165,7 @@ async function handleEditBanner() {
 }
 
 
-// --- Action B: Add New Dish ---
+// Add New Dish
 async function handleAddDish(e) {
     e.preventDefault();
 
@@ -173,7 +173,7 @@ async function handleAddDish(e) {
     submitBtn.textContent = "Adding...";
     submitBtn.disabled = true;
 
-    // 1. Gather data from form inputs
+    // Gather data from form inputs
     const dishData = {
         stallId: STALL_ID, // Required by wrapper
         name: document.getElementById('newDishName').value.trim(),
@@ -185,10 +185,10 @@ async function handleAddDish(e) {
     };
 
     try {
-        // 2. Call wrapper create function
+        // Call wrapper create function
         await createMenuItem(dishData);
         
-        // 3. Reset form and reload list
+        // Reset form and reload list
         el.addDishForm.reset();
         await loadDishList();
         alert("Dish added successfully!");
@@ -203,7 +203,7 @@ async function handleAddDish(e) {
 }
 
 
-// --- Action C: Update Price (and input monitoring) ---
+// Update Price (and input monitoring)
 function setupPriceInputListeners() {
     const inputs = el.dishListContainer.querySelectorAll('.price-input');
     inputs.forEach(input => {
