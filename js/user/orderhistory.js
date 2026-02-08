@@ -136,10 +136,6 @@ function createOrderCard(order) {
                 <span class="material-symbols-outlined">visibility</span>
                 View Details
             </button>
-            <button class="order-btn order-btn--reorder" data-order-id="${order.id}">
-                <span class="material-symbols-outlined">refresh</span>
-                Reorder
-            </button>
         </div>
     `;
 
@@ -201,10 +197,8 @@ function setupEventListeners() {
 
     document.addEventListener('click', e => {
         const viewBtn = e.target.closest('.order-btn--view');
-        const reorderBtn = e.target.closest('.order-btn--reorder');
 
         if (viewBtn) viewOrderDetails(viewBtn.dataset.orderId);
-        if (reorderBtn) reorderItems(reorderBtn.dataset.orderId);
     });
 }
 
@@ -244,4 +238,17 @@ function showEmptyState() {
     document.querySelector('.orders-container').innerHTML = '';
     document.querySelector('.empty-state')
         ?.style.setProperty('display', 'flex');
+}
+
+function viewOrderDetails(orderId) {
+    if (!orderId) {
+        console.error('No order ID provided');
+        return;
+    }
+    
+    // Store the order ID in sessionStorage so the details page can retrieve it
+    sessionStorage.setItem('selectedOrderId', orderId);
+    
+    // Navigate to order details page
+    window.location.href = '/html/user/orderdetails.html';
 }

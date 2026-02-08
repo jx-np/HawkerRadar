@@ -1,5 +1,5 @@
 import { getCurrentUser } from '/js/modules/auth.js';
-import { getAllFeedback, getAllFoodStalls } from '/js/firebase/wrapper.js';
+import { listUserFeedback, getAllFoodStalls } from '/js/firebase/wrapper.js';
 import { formatDate } from '/js/utils/helpers.js';
 
 /*
