@@ -241,6 +241,7 @@ export async function deleteStall(id) {
 /**
  * Create or overwrite a Menu Item.
  * Also maintains `stallMenuItems/{stallId}/{menuItemId}` index.
+ * If `menuItem.id` is not provided, a push key is generated.
  * @example
  * // Create a new menu item
  * const item = await createMenuItem({
@@ -253,13 +254,19 @@ export async function deleteStall(id) {
  * });
  */
 export async function createMenuItem(menuItem) {
-    const { id, stallId, ...rest } = menuItem;
+    const { id: providedId, stallId, ...rest } = menuItem;
     if (!stallId) throw new Error('stallId is required for menuItem');
 
-    const data = await setEntity('menuItems', id, { stallId, ...rest });
+    let menuItemId = providedId;
+    if (!menuItemId) {
+        const newRef = firebasePush(dbRef('menuItems'));
+        menuItemId = newRef.key;
+    }
+
+    const data = await setEntity('menuItems', menuItemId, { stallId, ...rest });
 
     // index: Stall → MenuItems
-    await set(dbRef(`stallMenuItems/${stallId}/${id}`), true);
+    await set(dbRef(`stallMenuItems/${stallId}/${menuItemId}`), true);
 
     return data;
 }

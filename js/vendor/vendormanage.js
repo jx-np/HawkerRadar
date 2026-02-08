@@ -26,7 +26,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const STALL_ID = urlParams.get('stallId');
 
 // Default placeholder image if none exists
-const PLACEHOLDER_IMG = "/images/stalls/stall-banner-placeholder.jpg";
+const PLACEHOLDER_IMG = "";
 const DISH_PLACEHOLDER = "https://placehold.co/100x100?text=No+Image";
 
 
