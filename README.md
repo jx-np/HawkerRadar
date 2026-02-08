@@ -174,5 +174,15 @@ TripAdvisor. (n.d.). Chinatown Complex. https://www.tripadvisor.com.sg/LocationP
 
 Chow With Chau. (2022, July 9). Going Head-To-Head in Hainanese Chicken Rice: Tian Tian vs Ah Tai, Singapore, Singapore. https://chowwithchau.com/2022/07/09/going-head-to-head-in-hainanese-chicken-rice-tian-tian-vs-ah-tai-singapore-singapore/
 
+Freepik. (n.d.). Side view smiley people with food. https://www.freepik.com/free-photo/side-view-smiley-people-with-food_34542249.htm#fromView=search&page=1&position=10&uuid=053d1d1f-851f-4553-8465-4963289bd5a9&query=hawker+centre
+
+Freepik. (n.d.). Millennial group of young businesspeople celebrating in a small modern office.
+https://www.freepik.com/free-photo/millennial-group-young-businesspeople-asia-businessman-businesswoman-celebrate-giving-five-after-dealing-feeling-happy-signing-contract-agreement-meeting-room-small-modern-office_7696858.htm
+
+Lean Jinghui. (2023). S'pore food outlets to be graded 'Bronze', 'Silver', 'Gold' under new licensing framework from 2023 instead of 'A', 'B', 'C', & 'D', Singapore. https://mothership.sg/2021/10/new-food-safety-framework-2023/
+
+Siew, A. (2020, August 13). Take a virtual walk through Singapore’s hawker centres with Google Street View, Singapore.https://www.techgoondu.com/2019/07/30/browse-through-singapores-hawker-centres-with-google-street-view/
+
+
 ## License
 This project is for educational purposes only and is not intended for commercial use.
