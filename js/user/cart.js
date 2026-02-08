@@ -40,8 +40,7 @@ document.getElementById("pageBackBtn")?.addEventListener("click", smartBack);
 
 // ---------- cart storage ----------
 function getCustomerId() {
-  const id = localStorage.getItem("CustomerID");
-  return id && id.trim() ? id.trim() : "guest";
+  return getCurrentUser().id
 }
 
 function cartStorageKey() {
@@ -270,11 +269,6 @@ placeOrderBtn?.addEventListener("click", async () => {
     }
 
     const wrapper = await loadWrapper();
-
-    // NEW wrapper path: createOrder()
-    if (typeof wrapper.createOrder !== "function") {
-      throw new Error("wrapper.createOrder is missing (wrapper.js is not the updated version).");
-    }
 
     const userId = getCustomerId();
     

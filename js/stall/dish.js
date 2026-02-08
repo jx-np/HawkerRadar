@@ -1,5 +1,6 @@
 // Dish detail page
 // URL: dish.html?stall=<stallId>&item=<menuItemId>
+import { getCurrentUser } from "/js/modules/auth.js"; 
 
 const CART_VERSION = 1;
 
@@ -16,8 +17,7 @@ window.addEventListener("load", applyHeaderOffset);
 
 /* ---------- helpers ---------- */
 function getCustomerId() {
-  const id = localStorage.getItem("CustomerID");
-  return id && id.trim() ? id.trim() : "guest";
+  return getCurrentUser().id
 }
 
 function cartStorageKey() {
