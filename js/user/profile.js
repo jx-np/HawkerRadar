@@ -37,9 +37,9 @@ async function loadUserProfile() {
             return;
         }
 
-        document.getElementById('displayName').textContent = currentUser.name || 'Your Name';
-        document.getElementById('displayEmail').textContent = currentUser.email || 'email@example.com';
-        document.getElementById('displayUsername').textContent = currentUser.username || currentUser.name || 'Username';
+        document.getElementById('displayName').textContent = currentUser.name || 'Loading...';
+        document.getElementById('displayEmail').textContent = currentUser.email || 'Loading...';
+        document.getElementById('displayUsername').textContent = currentUser.username || currentUser.name || 'Loading...';
 
         document.getElementById('profileNameInput').value = currentUser.name || '';
         document.getElementById('profileEmailInput').value = currentUser.email || '';
