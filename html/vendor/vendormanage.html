@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Vendor Management</title>
     <link rel="icon" href="/img/TabLogo.png">
-    <link rel="stylesheet" href="/css/Essential/navbar.css" />
-    <link rel="stylesheet" href="/css/Essential/footer.css" />
-    <link rel="stylesheet" href="/css/Vendor/vendor_M.css" />
+    <link rel="stylesheet" href="/css/global/navbar.css" />
+    <link rel="stylesheet" href="/css/global/footer.css" />
+    <link rel="stylesheet" href="/css/vendor/vendormanage.css" />
   </head>
 
   <body>
@@ -64,7 +64,7 @@
                         </div>
                         <div>
                             <label for="newDishCategory">Category:</label>
-                             <input type="text" id="newDishCategory" placeholder="e.g., Mains">
+                              <input type="text" id="newDishCategory" placeholder="e.g., Mains">
                         </div>
                     </div>
 
@@ -90,9 +90,9 @@
 
     <!-- Footer -->
     <footer class="site-footer">
-      <a href="/html/Footer Stuff/ContactUs.html">Contact Us</a>
+      <a href="/html/misc/contact.html">Contact Us</a>
       <span>|</span>
-      <a href="/html/Footer Stuff/FAQ.html">FAQs</a>
+      <a href="/html/misc/faq.html">FAQs</a>
       <span>|</span>
       <a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">
         NEA Info
@@ -103,6 +103,7 @@
       // wrapper path (same pattern as your other pages)
       window.VENDOR_PAGE = { wrapperPath: "/js/firebase/wrapper.js" };
     </script>
-    <script type="module" src="/js/vendor/vendor_M.js"></script>
+    <script type="module" src="/js/utils/navbar.js"></script>
+    <script type="module" src="/js/vendor/vendormanage.js"></script>
   </body>
 </html>

@@ -1,4 +1,75 @@
-## Image reference
+# Hawker Centre Management System
+
+## Project Overview
+The Hawker Centre Management System is a web-based application designed to streamline the management and user experience of hawker centres. The platform provides a user-friendly interface for customers, vendors, and administrators to interact with various features such as stall management, feedback submission, and browsing hawker centre information. The project is built using HTML, CSS, and JavaScript, with Firebase integration for real-time database management.
+
+## Features
+
+### For Customers:
+- **Home Page**: A welcoming homepage that redirects users to the main home page.
+- **User Profile**: Manage personal information and view order history.
+- **Stall Browsing**: Explore hawker stalls and their dishes.
+- **Cart Management**: Add dishes to the cart and proceed to checkout.
+- **Feedback System**: Submit feedback and view feedback history.
+
+### For Vendors:
+- **Vendor Management**: Manage stalls, dishes, and orders.
+- **Complaint Handling**: View and respond to customer complaints.
+
+### General Features:
+- **Navigation Bar**: Easy navigation across the platform.
+- **Footer**: Informative footer with links to additional resources.
+- **Responsive Design**: Optimized for various screen sizes.
+
+## Technologies Used
+- **Frontend**: HTML, CSS, JavaScript
+- **Backend**: Firebase (Real-time Database)
+- **Modules**: Modular JavaScript for better code organization
+
+## Project Structure
+```
+index.html
+css/
+  auth/
+  feedback/
+  global/
+  home/
+  misc/
+  stall/
+  vendor/
+fonts/
+html/
+  auth/
+  feedback/
+  home/
+  misc/
+  stall/
+  user/
+  vendor/
+img/
+js/
+  auth/
+  feedback/
+  firebase/
+  misc/
+  modules/
+  stall/
+  user/
+  utils/
+  vendor/
+```
+
+### Key Files and Directories
+- **index.html**: Entry point of the application.
+- **css/**: Contains all the CSS files organized by feature or page.
+- **html/**: HTML files for different pages of the application.
+- **js/**: JavaScript files for functionality, including authentication, feedback, and stall management.
+- **img/**: Images used across the application.
+- **fonts/**: Custom fonts used in the application.
+
+## References
+This project was inspired by various resources and references. Below are some of the sources used for content and design inspiration:
+
 Eatbook.sg. (2022, March 21). 335 Hong Kong Roasted Meat Review: Hong Kong-style Char Siew By Elderly Hawkers In Chinatown. https://eatbook.sg/335-hong-kong-roasted-meat/
 
 Eatbook.sg. (2017, September 20). 10 Famous Sio Bak Stalls With Roast Pork Rice At $5 Or Less. https://eatbook.sg/famous-sio-bak/
@@ -102,3 +173,6 @@ DanielFoodDiary.com. (2020, June 6). Allauddin’s Briyani – Famous Nasi Briya
 TripAdvisor. (n.d.). Chinatown Complex. https://www.tripadvisor.com.sg/LocationPhotoDirectLink-g294265-d1145020-i343525428-Chinatown_Complex-Singapore.html
 
 Chow With Chau. (2022, July 9). Going Head-To-Head in Hainanese Chicken Rice: Tian Tian vs Ah Tai, Singapore, Singapore. https://chowwithchau.com/2022/07/09/going-head-to-head-in-hainanese-chicken-rice-tian-tian-vs-ah-tai-singapore-singapore/
+
+## License
+This project is for educational purposes only and is not intended for commercial use.

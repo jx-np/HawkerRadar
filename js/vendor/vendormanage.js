@@ -103,9 +103,9 @@ async function loadDishList() {
                 <label class="price-input-group">
                     <span class="price-input-label">$</span>
                     <input type="number" class="price-input" 
-                           data-dish-id="${dishId}" 
-                           data-original-price="${unitPrice.toFixed(2)}"
-                           value="${unitPrice.toFixed(2)}" step="0.01" min="0">
+                            data-dish-id="${dishId}" 
+                            data-original-price="${unitPrice.toFixed(2)}"
+                            value="${unitPrice.toFixed(2)}" step="0.01" min="0">
                 </label>
                 <button class="btn btn-save" data-action="save-price" data-dish-id="${dishId}" disabled>Save Price</button>
             </div>

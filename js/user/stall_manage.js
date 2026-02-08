@@ -95,7 +95,7 @@ async function loadUserStalls() {
 function createStallCard(stall) {
     const card = document.createElement('a');
     // Link to your management page created earlier
-    card.href = `/html/vendor/vendor_M.html?stallId=${stall.id}`;
+    card.href = `/html/vendor/vendormanage.html?stallId=${stall.id}`;
     card.className = 'stall-card';
 
     const imgUrl = stall.storeImage || "https://placehold.co/400x300?text=No+Image";
