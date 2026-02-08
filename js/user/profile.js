@@ -7,6 +7,7 @@ import {
     removePaymentMethod,
     getPaymentMethods
 } from '/js/firebase/wrapper.js';
+import { hasRole } from '/js/modules/auth.js';
 
 let currentUser = null;
 let currentUserId = null;
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             await loadUserProfile();
             loadProfilePhoto();
             updateNavbarProfileButton();
+            updateStallManagementButton();
         } else {
             window.location.href = '/html/auth/login.html';
         }
@@ -378,6 +380,17 @@ async function deleteCard(cardId) {
     } catch (error) {
         console.error('Error deleting card:', error);
         alert('Failed to remove payment method. Please try again.');
+    }
+}
+
+function updateStallManagementButton() {
+    const stallManageBtn = document.querySelector('.stall-manage-btn');
+    if (stallManageBtn) {
+        if (hasRole('vendor')) {
+            stallManageBtn.style.display = 'inline-block';
+        } else {
+            stallManageBtn.style.display = 'none';
+        }
     }
 }
 
