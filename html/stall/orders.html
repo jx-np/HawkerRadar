@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="author" content="Pan Zhenkai">
+    <meta name="author" content="Stall Orders" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stall Orders</title>
+
+    <link rel="stylesheet" href="../../css/Essential/navbar.css" />
+    <link rel="stylesheet" href="../../css/Essential/footer.css" />
+    <link rel="stylesheet" href="../../css/Stall/stall_dish.css" />
+    <link rel="stylesheet" href="../../css/Stall/orders.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+  </head>
+
+  <body>
+    <header class="site-header">
+      <div class="logo">
+        <a href="../../html/home/home.html" class="link-wrapper">
+          <div class="logo-box"></div>
+        </a>
+      </div>
+
+      <nav class="nav-links">
+        <div class="nav-center">
+          <a href="../../html/home/home.html">Home</a>
+          <a href="#">Hawker Centres</a>
+          <a href="#">Orders</a>
+        </div>
+
+        <div class="nav-right">
+          <a href="../../html/auth/login.html">Login / Register</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="stall-page orders-page" data-stall-id="">
+      <section class="stall-section">
+        <h1 class="stall-section__title">Incoming Orders</h1>
+
+        <div class="orders-filter">
+          <label class="stall-filter__label">Filter:</label>
+          <select id="statusView" class="stall-filter__select">
+            <option value="">All statuses</option>
+            <option value="received">Received</option>
+            <option value="preparing">Preparing</option>
+            <option value="ready">Ready</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div id="ordersList" class="orders-list">
+          <!-- order cards injected here -->
+        </div>
+
+        <div id="ordersEmpty" class="stall-empty" style="display:none">No orders to show.</div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <a href="../../html/Footer Stuff/ContactUs.html">Contact Us</a>
+      <span>|</span>
+      <a href="../../html/Footer Stuff/FAQ.html">FAQs</a>
+      <span>|</span>
+      <a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">NEA Info</a>
+    </footer>
+
+    <template id="tpl-order-row">
+      <article class="order-row" data-order-id="">
+        <div class="order-row__head">
+          <div>
+            <h3 class="order-row__id">Order <span class="order-id">#</span></h3>
+            <p class="order-row__meta"><span class="order-date">Date</span> • <span class="order-time">Time</span></p>
+          </div>
+
+          <div class="order-row__actions">
+            <select class="order-status-select">
+              <option value="received">Received</option>
+              <option value="preparing">Preparing</option>
+              <option value="ready">Ready</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+            <button class="order-btn-update">Update</button>
+          </div>
+        </div>
+
+        <div class="order-row__body">
+          <ul class="order-items"></ul>
+
+          <div class="order-summary">
+            <div><span class="summary-label">Subtotal</span><span class="summary-value">$0.00</span></div>
+            <div><span class="summary-label">Total</span><span class="summary-value">$0.00</span></div>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <script type="module" src="/js/stall/orders.js"></script>
+  </body>
+</html>

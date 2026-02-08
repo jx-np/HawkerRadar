@@ -1,179 +1,98 @@
 <!doctype html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="utf-8" />
-    <meta name="author" content="Javier Lum Dong Yee" />
+    <meta name="author" content="Neo You Sheng Xavier"/>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
     <title>Vendor Management</title>
-
-    <link rel="stylesheet" href="../../css/Essential/navbar.css" />
-    <link rel="stylesheet" href="../../css/Essential/footer.css" />
-    />
+    <link rel="icon" href="/img/TabLogo.png">
+    <link rel="stylesheet" href="/css/Essential/navbar.css" />
+    <link rel="stylesheet" href="/css/Essential/footer.css" />
+    <link rel="stylesheet" href="/css/Vendor/vendor_M.css" />
   </head>
 
   <body>
     <!-- Header -->
     <header class="site-header">
       <div class="logo">
-        <a href="../../html/home/home.html" class="link-wrapper">
+        <a href="/html/home/home.html" class="link-wrapper">
           <div class="logo-box"></div>
         </a>
       </div>
 
       <nav class="nav-center">
-        <a href="../../html/home/home.html">Home</a>
-        <a href="#">Hawker Centres</a>
-        <a href="#">Order History</a>
+        <a href="/html/home/home.html">Home</a>
+        <a href="/html/user/orderhistory.html">Order History</a>
+        <a href="/html/about/about.html" class="active">About</a>
       </nav>
 
       <div class="nav-right">
-        <a href="../../html/auth/login.html">Login / Register</a>
+        <a href="/html/auth/login.html">Login / Register</a>
       </div>
     </header>
 
-    <main class="vendor-page" id="vendor-page">
-      <!-- Stall hero -->
-      <section class="vendor-hero" aria-label="Stall header">
-        <div class="vendor-hero__banner-shell">
-          <div class="vendor-hero__banner-wrap">
-            <img
-              class="vendor-hero__banner"
-              id="stall-banner"
-              src="../../images/stalls/stall-banner-placeholder.jpg"
-              alt="Stall banner"
-            />
+    <main class="manage-container">
+        <div id="loadingOverlay" class="loading-overlay">Loading Stall Data...</div>
 
-            <!-- (optional) stall edit icon to match wireframe -->
-            <button class="vendor-hero__edit" id="edit-stall-btn" type="button" aria-label="Edit stall (not implemented)">
-              <span class="material-symbols-outlined" aria-hidden="true">edit</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="vendor-hero__meta">
-          <h1 class="vendor-hero__name" id="stall-name">Loading…</h1>
-          <p class="vendor-hero__sub" id="stall-hc">Hawker Centre</p>
-          <p class="vendor-hero__sub" id="stall-unit">Store Number</p>
-        </div>
-      </section>
-
-      <!-- Dishes -->
-      <section class="vendor-section" aria-label="Dishes">
-        <div class="vendor-section__head">
-          <h2 class="vendor-section__title">Dishes</h2>
-          <p class="vendor-status" id="statusText" aria-live="polite"></p>
-        </div>
-
-        <ul class="vendor-dish-list" id="dish-list"></ul>
-
-        <!-- Add button (wide pill) -->
-        <button class="vendor-add-btn" id="addDishBtn" type="button" aria-label="Add dish">
-          <span class="vendor-add-btn__plus" aria-hidden="true">+</span>
-        </button>
-      </section>
-
-      <!-- Dish row template -->
-      <template id="tpl-vendor-dish">
-        <li class="vendor-dish" data-item-id="">
-          <div class="vendor-dish__img-wrap">
-            <img class="vendor-dish__img" src="" alt="" />
-          </div>
-
-          <div class="vendor-dish__info">
-            <h3 class="vendor-dish__name"></h3>
-            <p class="vendor-dish__desc"></p>
-            <p class="vendor-dish__meta">
-              <span class="vendor-dish__label">Cuisine:</span> <span class="vendor-dish__cuisine"></span><br />
-              <span class="vendor-dish__label">Category:</span> <span class="vendor-dish__category"></span>
-            </p>
-          </div>
-
-          <div class="vendor-dish__right">
-            <div class="vendor-dish__price-row">
-              <strong class="vendor-dish__price">$0.00</strong>
-              <button class="icon-btn" type="button" data-action="edit-price" aria-label="Edit price">
-                <span class="material-symbols-outlined" aria-hidden="true">edit</span>
-              </button>
+        <section class="hero-section">
+            <div class="banner-wrapper">
+                <img id="stallBanner" src="/images/stalls/stall-banner-placeholder.jpg" alt="Stall Banner">
+                <button id="editBannerBtn" class="btn btn-overlay">Change Banner Image</button>
             </div>
+            <h1 id="stallNameTitle">Loading Stall Name...</h1>
+        </section>
 
-            <button class="icon-btn danger" type="button" data-action="delete" aria-label="Delete dish">
-              <span class="material-symbols-outlined" aria-hidden="true">remove_circle</span>
-            </button>
-          </div>
-        </li>
-      </template>
+        <hr class="divider">
 
-      <!-- Edit price dialog -->
-      <dialog class="dlg" id="dlgPrice">
-        <form class="dlg__panel" method="dialog" id="priceForm">
-          <h3 class="dlg__title">Edit Price</h3>
-          <p class="dlg__subtitle" id="priceDishName">Dish</p>
+        <div class="content-grid">
+            <section class="add-dish-section">
+                <h2>Add New Dish</h2>
+                <form id="addDishForm" class="manage-form">
+                    <div class="form-group">
+                        <label for="newDishName">Dish Name:</label>
+                        <input type="text" id="newDishName" required placeholder="e.g., Chicken Rice">
+                    </div>
 
-          <label class="dlg__label">
-            New price
-            <input class="dlg__input" id="priceInput" type="number" min="0" step="0.01" placeholder="0.00" required />
-          </label>
+                    <div class="form-group">
+                        <label for="newDishDesc">Description:</label>
+                        <textarea id="newDishDesc" rows="3" placeholder="Short description of the dish"></textarea>
+                    </div>
 
-          <div class="dlg__actions">
-            <button class="btn ghost" value="cancel" type="button" id="priceCancelBtn">Cancel</button>
-            <button class="btn" value="ok" type="submit">Save</button>
-          </div>
-        </form>
-      </dialog>
+                    <div class="form-group two-col">
+                        <div>
+                            <label for="newDishPrice">Price ($):</label>
+                            <input type="number" id="newDishPrice" step="0.01" min="0" required placeholder="0.00">
+                        </div>
+                        <div>
+                            <label for="newDishCategory">Category:</label>
+                             <input type="text" id="newDishCategory" placeholder="e.g., Mains">
+                        </div>
+                    </div>
 
-      <!-- Add dish dialog -->
-      <dialog class="dlg" id="dlgAdd">
-        <form class="dlg__panel" method="dialog" id="addForm">
-          <h3 class="dlg__title">Add Dish</h3>
+                    <div class="form-group">
+                        <label for="newDishImage">Image URL:</label>
+                        <input type="url" id="newDishImage" placeholder="https://example.com/image.jpg">
+                    </div>
 
-          <label class="dlg__label">
-            Dish name
-            <input class="dlg__input" id="addName" type="text" placeholder="Dish Name" required />
-          </label>
+                    <button type="submit" class="btn btn-primary">Add Dish to Menu</button>
+                </form>
+            </section>
 
-          <label class="dlg__label">
-            Description
-            <textarea class="dlg__textarea" id="addDesc" rows="3" placeholder="Description (optional)"></textarea>
-          </label>
+            <section class="manage-dishes-section">
+                <h2>Manage Menu Items</h2>
+                <p class="helper-text">Update prices directly below.</p>
+                
+                <div id="dishListContainer" class="dish-list">
+                    </div>
+            </section>
+        </div>
 
-          <div class="dlg__grid2">
-            <label class="dlg__label">
-              Cuisine
-              <input class="dlg__input" id="addCuisine" type="text" placeholder="e.g. Chinese" />
-            </label>
-
-            <label class="dlg__label">
-              Category
-              <input class="dlg__input" id="addCategory" type="text" placeholder="e.g. Noodles" />
-            </label>
-          </div>
-
-          <div class="dlg__grid2">
-            <label class="dlg__label">
-              Price
-              <input class="dlg__input" id="addPrice" type="number" min="0" step="0.01" placeholder="0.00" required />
-            </label>
-
-            <label class="dlg__label">
-              Image URL (optional)
-              <input class="dlg__input" id="addImageUrl" type="url" placeholder="https://..." />
-            </label>
-          </div>
-
-          <div class="dlg__actions">
-            <button class="btn ghost" value="cancel" type="button" id="addCancelBtn">Cancel</button>
-            <button class="btn" value="ok" type="submit">Create</button>
-          </div>
-        </form>
-      </dialog>
     </main>
 
     <!-- Footer -->
     <footer class="site-footer">
-      <a href="../../html/Footer Stuff/ContactUs.html">Contact Us</a>
+      <a href="/html/Footer Stuff/ContactUs.html">Contact Us</a>
       <span>|</span>
-      <a href="../../html/Footer Stuff/FAQ.html">FAQs</a>
+      <a href="/html/Footer Stuff/FAQ.html">FAQs</a>
       <span>|</span>
       <a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">
         NEA Info

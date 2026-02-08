@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="author" content="Marc Edward Domingo Rasco">
+    <meta name="author" content="Liang Jia Xuan">
     <title>Register - Hawker Centre Management System</title>
-
+    <link rel="icon" href="/img/TabLogo.png">
     <!-- CSS -->
     <link rel="stylesheet" href="/css/Essential/navbar.css">
     <link rel="stylesheet" href="/css/auth/register.css">
@@ -50,13 +50,13 @@
             <label for="email">Email address</label>
             <input type="email" id="email" placeholder="E.g. 'you@example.com'" required>
 
-            <label for="phone">Phone (Optional)</label>
+            <label for="phone">Phone (NOT Optional)</label>
             <input type="tel" id="phone" placeholder="E.g. '0123456789'">
 
             <label for="role">Role</label>
             <select id="role" required>
                 <option value="customer">Customer</option>
-                <option value="stallOwner">Stall Owner</option>
+                <option value="vendor">Stall Owner</option>
                 <option value="operator">Operator</option>
             </select>
 
@@ -82,5 +82,6 @@
     </section>
 
 </main>
+<script type="module" src="/js/auth/register.js"></script>
 </body>
 </html>

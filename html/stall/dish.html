@@ -7,10 +7,11 @@
 
     <title>Dish</title>
 
-    <link rel="icon" href="" />
+    <link rel="icon" href="/img/TabLogo.png">
     <link rel="stylesheet" href="/css/Essential/navbar.css" />
     <link rel="stylesheet" href="/css/Essential/footer.css" />
-    <link rel="stylesheet" href="/css/Stall/dish.css" />
+    <link rel="stylesheet" href="/css/stall/dish.css" />
+    <link rel="stylesheet" href="/css/home/main_home.css">
 
     <link
       rel="stylesheet"
@@ -20,7 +21,7 @@
 
   <!-- expects URL like: dish.html?stall=301&item=CR01 -->
   <body>
-      <!-- Header = MAKE SURE TO COPY -->
+    <div class="container">
       <header class="site-header">
         <div class="logo">
           <a href="/html/home/home.html" class="link-wrapper">
@@ -30,8 +31,8 @@
 
         <nav class="nav-center">
           <a href="/html/home/home.html">Home</a>
-          <a href="#">Hawker Centres</a>
-          <a href="#">Order History</a>
+          <a href="/html/user/orderhistory.html">Order History</a>
+          <a href="/html/about/about.html" class="active">About</a>
         </nav>
 
         <div class="nav-right">
@@ -40,65 +41,63 @@
       </header>
       <!--End of Header-->
 
-    <main class="dish-page" id="dish-page">
-      <section class="dish-hero" aria-label="Dish header">
-        <div class="dish-hero__banner-shell">
-          <button class="page-back-btn" id="pageBackBtn" type="button" aria-label="Back">
-            <span class="material-symbols-outlined" aria-hidden="true">arrow_back_2</span>
-          </button>
-
-          <div class="dish-hero__banner-wrap">
-            <img
-              class="dish-hero__banner"
-              id="dish-banner"
-              src="/images/dishes/placeholder.jpg"
-              alt="Dish banner"
-            />
-
-            <button
-              class="dish-hero__fav-btn"
-              id="dish-fav-btn"
-              type="button"
-              aria-pressed="false"
-              aria-label="Favorite this dish"
-            >
-              <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
+      <main class="dish-page" id="dish-page">
+        <section class="dish-hero" aria-label="Dish header">
+          <div class="dish-hero__banner-shell">
+            <button class="page-back-btn" id="pageBackBtn" type="button" aria-label="Back">
+              <span class="material-symbols-outlined" aria-hidden="true">arrow_back_2</span>
             </button>
 
-            <h1 class="dish-hero__name" id="dish-name">Loading…</h1>
+            <div class="dish-hero__banner-wrap">
+              <img
+                class="dish-hero__banner"
+                id="dish-banner"
+                src=""
+                alt="Dish banner"
+              />
+
+              <button
+                class="dish-hero__fav-btn"
+                id="dish-fav-btn"
+                type="button"
+                aria-pressed="false"
+                aria-label="Favorite this dish"
+              >
+                <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
+              </button>
+
+              <h1 class="dish-hero__name" id="dish-name">Loading…</h1>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="dish-section" aria-label="Dish description">
-        <h2 class="dish-section__title">Description</h2>
-        <p class="dish-desc" id="dish-desc"></p>
+        <section class="dish-section" aria-label="Dish description">
+          <h2 class="dish-section__title">Description</h2>
+          <p class="dish-desc" id="dish-desc"></p>
 
-        <div class="dish-price-row">
-          <span class="dish-price-label">Price</span>
-          <strong class="dish-price" id="dish-price">$0.00</strong>
-        </div>
-
-        <div class="dish-qty-row" aria-label="Quantity">
-          <span class="dish-qty-label">Quantity</span>
-
-          <div class="dish-qty-controls">
-            <button class="dish-qty-btn" id="qtyMinus" type="button" aria-label="Decrease quantity">−</button>
-            <span class="dish-qty-num" id="qtyNum" aria-label="Quantity">1</span>
-            <button class="dish-qty-btn" id="qtyPlus" type="button" aria-label="Increase quantity">+</button>
+          <div class="dish-price-row">
+            <span class="dish-price-label">Price</span>
+            <strong class="dish-price" id="dish-price">$0.00</strong>
           </div>
 
-          <span class="dish-in-cart" id="inCart">In cart: 0</span>
-        </div>
+          <div class="dish-qty-row" aria-label="Quantity">
+            <span class="dish-qty-label">Quantity</span>
 
+<<<<<<< HEAD
         <a class="dish-view-cart" id="viewCart" href="/user/cart.html">View Cart</a>
       </section>
+=======
+            <div class="dish-qty-controls">
+              <button class="dish-qty-btn" id="qtyMinus" type="button" aria-label="Decrease quantity">−</button>
+              <span class="dish-qty-num" id="qtyNum" aria-label="Quantity">1</span>
+              <button class="dish-qty-btn" id="qtyPlus" type="button" aria-label="Increase quantity">+</button>
+            </div>
+>>>>>>> 6d394557df39708c047bdb5c649685cad8aed308
 
-      <aside class="dish-bottom" aria-label="Add to cart">
-        <button class="dish-add-btn" id="addBtn" type="button" disabled>Add for $0.00</button>
-      </aside>
-    </main>
+            <span class="dish-in-cart" id="inCart">In cart: 0</span>
+          </div>
 
+<<<<<<< HEAD
     <!-- Footer -->
     <footer class="site-footer">
       <a href="/html/Footer Stuff/ContactUs.html">Contact Us</a>
@@ -109,11 +108,34 @@
         NEA Info
       </a>
     </footer>
+=======
+          <a class="dish-view-cart" id="viewCart" href="/html/user/cart.html">View Cart</a>
+        </section>
+
+        <aside class="dish-bottom" aria-label="Add to cart">
+          <button class="dish-add-btn" id="addBtn" type="button" disabled>Add for $0.00</button>
+        </aside>
+      </main>
+
+      <!-- Footer -->
+      <footer class="site-footer">
+        <a href="/html/Footer Stuff/ContactUs.html">Contact Us</a>
+        <span>|</span>
+        <a href="/html/Footer Stuff/FAQ.html">FAQs</a>
+        <span>|</span>
+        <a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">
+          NEA Info
+        </a>
+      </footer>
+    </div>
+      
+>>>>>>> 6d394557df39708c047bdb5c649685cad8aed308
 
     <script>
       // who the hell wrote this
       window.DISH_PAGE = { wrapperPath: "/js/firebase/wrapper.js" };
     </script>
-    <script type="module" src="/js/dish.js"></script>
+    <script type="module" src="/js/utils/navbar.js"></script>
+    <script type="module" src="/js/stall/dish.js"></script>
   </body>
 </html>

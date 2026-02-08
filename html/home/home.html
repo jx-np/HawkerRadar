@@ -4,7 +4,7 @@
       <meta charset="UTF-8">
       <meta name="author" content="Marc Edward Domingo Rasco">
       <title>Hawker Centre Management System</title>
-
+      <link rel="icon" href="/img/TabLogo.png">
       <!-- CSS -->
       <link rel="stylesheet" href="/css/Essential/navbar.css">
       <link rel="stylesheet" href="/css/home/main_home.css">
@@ -26,8 +26,8 @@
 
         <nav class="nav-center">
           <a href="/html/home/home.html">Home</a>
-          <a href="#">Hawker Centres</a>
-          <a href="#">Order History</a>
+          <a href="/html/user/orderhistory.html">Order History</a>
+          <a href="/html/about/about.html" class="active">About</a>
         </nav>
 
         <div class="nav-right">
@@ -51,34 +51,7 @@
       <section class="featured">
         <h2>Featured Stalls</h2>
 
-        <div class="feature-stall-grid">
-          <div class="feature-stall-card">
-            <div class="feature-stall-image" data-stall="Maxwell""></div>
-            <div class="feature-stall-info">
-              <strong>Tian Tian Hainanese Chicken Rice</strong>
-              <em>Chinese (Hainanese)</em>
-              <button>View Menu</button>
-            </div>
-          </div>
-
-          <div class="feature-stall-card">
-            <div class="feature-stall-image" data-stall="Satay"></div>
-            <div class="feature-stall-info">
-              <strong>City Satay</strong>
-              <em>Malay</em>
-              <button>View Menu</button>
-            </div>
-          </div>
-
-          <div class="feature-stall-card">
-            <div class="feature-stall-image" data-stall="Crawford"></div>
-            <div class="feature-stall-info">
-              <strong>Hill Street Tai Hwa Pork Noodle</strong>
-              <em>Chinese</em>
-              <button>View Menu</button>
-            </div>
-          </div>
-        </div>
+        <div class="feature-stall-grid" id="featureStallGrid"></div>
       </section>
       <!--main_featured.css ↑↑-->
 
@@ -130,6 +103,7 @@
       </footer>
 
     </div>
+    <script type="module" src="/js/featured.js"></script>
     <script type="module" src="/js/hawker.js"></script>
     <script type="module" src="/js/utils/navbar.js"></script>
   </body>
