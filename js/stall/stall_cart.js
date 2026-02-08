@@ -9,11 +9,12 @@
 //   }
 // }
 
+import { getCurrentUser } from "/js/modules/auth.js"; 
+
 const CART_VERSION = 1;
 
 function getCustomerId() {
-  const id = localStorage.getItem("CustomerID");
-  return id && id.trim() ? id.trim() : "guest";
+  return getCurrentUser().id
 }
 
 function cartStorageKey() {

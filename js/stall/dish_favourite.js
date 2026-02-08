@@ -1,5 +1,6 @@
 // ../../js/dish_favourite.js
 // Stall Dish Page: loads stall + dishes + feedback + favorites + cart (persistent)
+import { getCurrentUser } from "/js/modules/auth.js"; 
 
 const cfg = {
   stallBodyAttr: "data-stall-id",
@@ -91,8 +92,7 @@ function getStallId() {
 }
 
 function getCustomerId() {
-  const id = localStorage.getItem(cfg.customerStorageKey);
-  return id?.trim() ? id.trim() : null;
+  return getCurrentUser().id
 }
 
 function safeSetText(id, text) {
