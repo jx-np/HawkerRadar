@@ -446,3 +446,49 @@ body {
     margin-top: 4px;
   }
 }
+
+/* Order details modal */
+.order-details-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+}
+
+.order-details-modal {
+  background: #fff;
+  padding: 20px;
+  width: min(720px, 95%);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+.order-details-close {
+  position: absolute;
+  right: 18px;
+  top: 14px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.order-details-items {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 12px;
+}
+
+.order-details-items li {
+  padding: 6px 0;
+  border-bottom: 1px dashed rgba(0,0,0,0.06);
+}
+
+.order-details-total {
+  margin-top: 12px;
+  font-size: 16px;
+  font-weight: 900;
+}

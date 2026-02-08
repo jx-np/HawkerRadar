@@ -38,7 +38,11 @@ async function loadOrders() {
             return;
         }
 
-        allOrders = ordersData;
+        // Ensure each order object includes its id (ordersData may be an object keyed by id)
+        allOrders = Object.entries(ordersData || {}).reduce((acc, [id, ord]) => {
+            acc[id] = Object.assign({}, ord, { id });
+            return acc;
+        }, {});
 
         await preloadMetadata();
         populateHawkerFilter();
@@ -131,16 +135,12 @@ function createOrderCard(order) {
             </div>
         </div>
 
-        <div class="order-card__footer">
-            <button class="order-btn order-btn--view" data-order-id="${order.id}">
-                <span class="material-symbols-outlined">visibility</span>
-                View Details
-            </button>
-            <button class="order-btn order-btn--reorder" data-order-id="${order.id}">
-                <span class="material-symbols-outlined">refresh</span>
-                Reorder
-            </button>
-        </div>
+            <div class="order-card__footer">
+                <button class="order-btn order-btn--view" data-order-id="${order.id}">
+                    <span class="material-symbols-outlined">visibility</span>
+                    View Details
+                </button>
+            </div>
     `;
 
     return card;
@@ -201,10 +201,50 @@ function setupEventListeners() {
 
     document.addEventListener('click', e => {
         const viewBtn = e.target.closest('.order-btn--view');
-        const reorderBtn = e.target.closest('.order-btn--reorder');
-
         if (viewBtn) viewOrderDetails(viewBtn.dataset.orderId);
-        if (reorderBtn) reorderItems(reorderBtn.dataset.orderId);
+    });
+}
+
+/* =========================================================
+   DETAILS
+========================================================= */
+function viewOrderDetails(orderId) {
+    const order = allOrders[orderId];
+    if (!order) {
+        console.warn('Order not found:', orderId);
+        return;
+    }
+
+    const stall = stalls[order.stallId] || {};
+    const hawkerCentre = hawkerCentres[stall.hawkerCentreId] || {};
+
+    // Create modal overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'order-details-overlay';
+    overlay.innerHTML = `
+        <div class="order-details-modal">
+            <button class="order-details-close">×</button>
+            <h2>Order Details</h2>
+            <p><strong>Hawker Centre:</strong> ${hawkerCentre.name || 'Unknown'}</p>
+            <p><strong>Stall:</strong> ${stall.name || 'Unknown'}</p>
+            <p><strong>Date:</strong> ${formatDate(order.dateCreated)}</p>
+            <p><strong>Status:</strong> ${capitalizeStatus((order.status||'').toLowerCase())}</p>
+            <h3>Items</h3>
+            <ul class="order-details-items">
+                ${Array.isArray(order.items) ? order.items.map(i => `<li>${i.qty||1}x ${i.name} — $${(i.price||0).toFixed(2)}</li>`).join('') : '<li>No items</li>'}
+            </ul>
+            <div class="order-details-total">
+                <strong>Total:</strong> $${(order.totals?.grandTotal ?? 0).toFixed(2)}
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // Close handlers
+    overlay.querySelector('.order-details-close')?.addEventListener('click', () => overlay.remove());
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.remove();
     });
 }
 
