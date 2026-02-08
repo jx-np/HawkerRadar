@@ -14,24 +14,26 @@ body {
     max-width: 800px;
     margin: 0 auto;
     width: 95%;
-    margin-bottom: 70px;
+    margin-bottom: 15px;
+}
+
+.stall-header {
+    margin-bottom: 40px;
 }
 
 /* Header Section */
 .stall-header {
+    height: 300px;
     background-color: #d9d9d9;
-    height: 320px;
-    position: relative;
     background-size: cover;
     background-image: url();
     background-position: top;
-    border-radius: 12px;
-    margin-bottom: 40px;
-    overflow: hidden;
+    position: relative;
+    border-radius: 8px; 
     margin-top: 120px;
+    overflow: hidden;
 }
 
-/* Dark Gradient Overlay for Text Readability */
 .stall-header::after {
     content: "";
     position: absolute;
@@ -39,38 +41,38 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    /* Gradient from transparent at top to 80% black at bottom */
     background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.8));
-    border-radius: 12px; 
-    z-index: 1; /* Sits above image, below text */
+}
+
+.stall-header-overlay {
+    width: 100%;
+    height: 100%;
+    padding: 20px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+}
+
+.stall-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
 }
 
 .stall-title {
-    position: absolute;
-    bottom: 25px;
-    left: 30px;
-    font-size: 36px;
+    font-size: 2.5rem;
     font-weight: 600;
     color: white;
-    z-index: 2; /* Sits on top of overlay */
-}
-
-.header-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    margin: 0;
 }
 
 .back-arrow {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    font-size: 24px;
+    font-size: 2rem;
     color: white;
-    z-index: 2; /* Sits on top of overlay */
+    text-decoration: none;
+    width: fit-content;
     cursor: pointer;
 }
 
@@ -81,23 +83,27 @@ body {
     margin-right: 15px;
 }
 
-/* Complaints Section */
+.complaints-section {
+    padding: 30px 0;
+}
+
 .section-title {
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .section-title h2 {
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0;
     margin-right: 15px;
     white-space: nowrap;
 }
 
 .line-separator {
     height: 1px;
-    background-color: #999;
+    background-color: #ccc;
     width: 100%;
 }
 
@@ -105,42 +111,39 @@ body {
 .filter-controls {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
     margin-bottom: 25px;
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
 }
 
 .filter-controls label {
-    font-size: 16px;
+    font-size: 1rem;
     color: #555;
+    font-weight: 500;
 }
 
-.filter-controls select {
-    padding: 8px;
+.filter-controls select,
+.filter-controls input[type="date"] {
+    padding: 8px 12px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    min-width: 200px;
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.95rem;
 }
 
 .filter-controls button {
     padding: 8px 20px;
-    background-color: #d3d3d3;
-    border: 1px solid #aaa;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
     border-radius: 4px;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: background-color 0.2s;
 }
 
 .filter-controls button:hover {
-    background-color: #c0c0c0;
-}
-
-.filter-controls input[type="date"] {
-    padding: 7px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-family: 'Satoshi', sans-serif;
-    color: #333;
+    background-color: #e0e0e0;
 }
 
 .filter-label-spacing {
@@ -149,44 +152,67 @@ body {
 
 /* Complaint Card */
 .complaint-card {
-    border: 2px solid #aaa;
-    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
     padding: 20px;
     margin-bottom: 20px;
+    background-color: #fafafa;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s;
+}
+
+.complaint-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    gap: 15px;
+    margin-bottom: 15px;
     flex-wrap: wrap;
 }
 
 .avatar {
-    width: 30px;
-    height: 30px;
-    background-color: #d3d3d3;
-    border: 1px solid #000;
+    flex-shrink: 0;
+}
+
+.avatar img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
     border-radius: 50%;
-    margin-right: 10px;
+    display: block;
+}
+
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    border: 1px solid #ccc;
 }
 
 .user-name {
-    font-weight: bold;
-    margin-right: 20px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    flex: 1;
+    min-width: 150px;
 }
 
 .issue-type {
-    margin-right: auto;
-    color: #333;
+    font-weight: 600;
+    font-size: 1rem;
 }
 
 .issue-label {
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .date {
-    font-weight: bold;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-left: auto;
 }
 
 .card-body h3 {
@@ -198,11 +224,14 @@ body {
 .card-body ul {
     list-style-type: disc;
     margin-left: 20px;
+    margin-top: 15px;
 }
 
 .card-body li {
-    font-size: 14px;
-    line-height: 1.4;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #444;
+    letter-spacing: 0.3px;
 }
 
 /* Action Buttons */
@@ -214,24 +243,24 @@ body {
 
 /* Default State: GREEN (Mark as Read) */
 .btn-mark-read {
-    padding: 8px 16px;
-    background-color: #28a745; /* Green */
+    padding: 10px 20px;
+    background-color: #28a745;
     color: white;
-    border: 1px solid #218838;
-    border-radius: 5px;
-    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.95rem;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: background-color 0.3s;
 }
 
 .btn-mark-read:hover {
-    background-color: #218838; /* Darker Green */
+    background-color: #218838;
 }
 
 /* Closed State: RED (Read) */
 .btn-mark-read.closed {
-    background-color: #dc3545 !important; /* Red */
-    border-color: #c82333 !important;
+    background-color: #dc3545 !important;
     color: white !important;
     cursor: default;
     opacity: 0.8;
@@ -245,26 +274,30 @@ body {
     /* Layout & Container */
     .container {
         width: 100%;
-        padding: 0 15px;
+        padding: 0 20px;
         margin-bottom: 40px;
     }
 
     /* Stall Header Banner */
     .stall-header {
         height: 200px;
-        margin-top: 80px; 
+        margin-top: 80px;
+    }
+
+    .stall-header-overlay {
+        padding: 15px 20px;
     }
 
     .stall-title {
-        font-size: 24px; 
-        left: 20px;
-        bottom: 15px;
+        font-size: 1.8rem;
     }
 
     .back-arrow {
-        font-size: 20px;
-        top: 15px;
-        left: 15px;
+        font-size: 1.5rem;
+    }
+
+    .complaints-section {
+        padding: 20px 0;
     }
 
     /* Filter Controls (Stack them) */
@@ -275,7 +308,7 @@ body {
     }
 
     .filter-controls label {
-        margin-bottom: -5px;
+        margin-bottom: -8px;
     }
 
     .filter-label-spacing {
@@ -286,7 +319,6 @@ body {
     .filter-controls input[type="date"],
     .filter-controls button {
         width: 100%;
-        min-width: 0;
     }
 
     /* Complaint Cards */
@@ -295,28 +327,32 @@ body {
     }
 
     .card-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
+        flex-wrap: wrap;
+        gap: 10px;
     }
 
     .user-name {
-        margin-right: 0;
-        margin-bottom: 4px;
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
     .issue-type {
         width: 100%;
-        margin-right: 0;
         font-size: 0.95rem;
     }
 
     .date {
-        align-self: flex-start;
+        margin-left: 0;
         font-size: 0.85rem;
         color: #666;
-        margin-top: 4px;
+    }
+
+    .card-body ul {
+        margin-top: 15px;
+        margin-left: 20px;
+    }
+
+    .card-body li {
+        font-size: 1rem;
     }
 
     /* Mark as Read Button */
