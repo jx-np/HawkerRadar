@@ -3,36 +3,36 @@
         <meta name="author" content="Neo You Sheng Xavier">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Feedback form</title>
-        <link rel="icon" href="">
-        <link rel="stylesheet" href="../../css/feedback/feedback.css">
-        <link rel="stylesheet" href="../../css/Essential/navbar.css">
-        <link rel="stylesheet" href="../../css/Essential/footer.css">
+        <link rel="icon" href="/img/TabLogo.png">
+        <link rel="stylesheet" href="/css/feedback/feedback.css">
+        <link rel="stylesheet" href="/css/Essential/navbar.css">
+        <link rel="stylesheet" href="/css/Essential/footer.css">
     </head>
     <body>
         <!--Nav-->
         <header class="site-header">
         <div class="logo">
-            <a href="../../html/home/home.html" class="link-wrapper">
+            <a href="/html/home/home.html" class="link-wrapper">
             <div class="logo-box"></div>
             </a>
         </div>
 
         <nav class="nav-center">
-            <a href="../../html/home/home.html">Home</a>
-            <a href="#">Hawker Centres</a>
-            <a href="#">Order History</a>
+            <a href="/html/home/home.html">Home</a>
+            <a href="/html/user/orderhistory.html">Order History</a>
+            <a href="/html/about/about.html" class="active">About</a>
         </nav>
 
         <div class="nav-right">
-            <a href="../../html/auth/login.html">Login / Register</a>
+            <a href="/html/auth/login.html">Login / Register</a>
         </div>
         </header>
         <!--End of Header-->
 
         <!-- HEADER -->
         <section class="page-header">
-            <h1>Feedback</h1>
-            <p>Give us feedback to improve!</p>
+            <h1>Reviews</h1>
+            <p>Share your experience and help others discover great food!</p>
         </section>
 
         <!--Content of feedback form-->
@@ -64,19 +64,58 @@
                 </div>
 
                 <label>Comments:</label>
-                <textarea id="comments" placeholder="Description"></textarea>
+                <textarea id="comments" placeholder="How was the food?"></textarea>
+
+                <div class="complaint-toggle-wrapper">
+                    <input type="checkbox" id="addComplaintCheck">
+                    <label for="addComplaintCheck" class="toggle-label">Add Complaint</label>
+                </div>
+
+                <div id="complaintSection" style="display: none;">
+                    <div class="complaint-divider"></div>
+                    <h3>Complaint Details</h3>
+                    
+                    <label>Complaint Category:</label>
+                    <div class="category-container">
+                        <div class="category" data-value="Cleanliness">
+                            <span class="box"></span><span class="text">Cleanliness</span>
+                        </div>
+                        <div class="category" data-value="Food Quality">
+                            <span class="box"></span><span class="text">Food Quality</span>
+                        </div>
+                        <div class="category" data-value="Price">
+                            <span class="box"></span><span class="text">Price</span>
+                        </div>
+                        <div class="category" data-value="Service">
+                            <span class="box"></span><span class="text">Service</span>
+                        </div>
+                        <div class="category" data-value="Waiting Time">
+                            <span class="box"></span><span class="text">Waiting Time</span>
+                        </div>
+                        <div class="category" data-value="Others" id="othersCategory">
+                            <span class="box"></span><span class="text">Others</span>
+                        </div>
+                        <input type="text" id="othersInput" placeholder="Please specify..." style="display: none;">
+                    </div>
+
+                    <label>Date of Incident:</label>
+                    <input type="date" id="incidentDate">
+
+                    <label>Description of Issue:</label>
+                    <textarea id="complaintDescription" placeholder="Specific details about the complaint..." rows="4"></textarea>
+                </div>
 
                 <input type="hidden" id="ratingValue" name="rating">
 
-                <button type="submit" class="submit-btn">Submit Feedback</button>
+                <button type="submit" class="submit-btn">Submit Review</button>
             </form>
         </main>
         
         <!--Footer-->
         <footer class="site-footer">
-            <a href="../../html/Footer Stuff/ContactUs.html">Contact Us</a>
+            <a href="/html/Footer Stuff/ContactUs.html">Contact Us</a>
             <span>|</span>
-            <a href="../../html/Footer Stuff/FAQ.html">FAQs</a>
+            <a href="/html/Footer Stuff/FAQ.html">FAQs</a>
             <span>|</span>
             <a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">
                 NEA Info
