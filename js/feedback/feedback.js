@@ -1,6 +1,5 @@
 import { createFeedback, createComplaint, listStalls, listHawkerCentres } from '/js/firebase/wrapper.js';
-import { db } from '/js/firebase/realtimedb.js'; 
-import { ref, get } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+import { getCurrentUser } from '/js/modules/auth.js';
 
 // DOM Elements
 const form = document.getElementById("feedbackForm");
@@ -150,26 +149,6 @@ document.querySelectorAll(".category").forEach(item => {
     });
 });
 
-// --- Helper: Generate IDs ---
-async function generateNextId(nodeName) {
-    const snapshot = await get(ref(db, nodeName));
-    let count = 0;
-    if (snapshot.exists()) {
-        count = Object.keys(snapshot.val()).length;
-    }
-    return `7${String(count + 1).padStart(2, '0')}`;
-}
-
-async function generateNextComplaintId() {
-    const snapshot = await get(ref(db, 'complaints'));
-    let count = 0;
-    if (snapshot.exists()) {
-        count = Object.keys(snapshot.val()).length;
-    }
-    const numberPart = `7${String(count + 1).padStart(2, '0')}`;
-    return `complaint_${numberPart}`;
-}
-
 // --- Helper: Date ---
 function getFormattedDate() {
     const now = new Date();
@@ -217,11 +196,8 @@ form.addEventListener("submit", async (e) => {
         }
         const categoryString = categoriesArray.join(", ");
         
-        const complaintId = await generateNextComplaintId();
-        
         complaintData = {
-            id: complaintId,
-            userId: "anonymous",
+            userId: getCurrentUser().id,
             stallId: stallIdInput.value,
             hawkerCentre: hawkerInput.value,
             dateCreated: getFormattedDate(),
@@ -234,11 +210,12 @@ form.addEventListener("submit", async (e) => {
 
     try {
         // --- A. Submit Review ---
-        const feedbackId = await generateNextId('feedback');
+        const currentUser = getCurrentUser();
+        const userId = currentUser.id
+        
         const feedbackData = {
-            id: feedbackId,
             dateCreated: getFormattedDate(),
-            userId: "anonymous",
+            userId: userId,
             stallId: stallIdInput.value, 
             hawkerCentre: hawkerInput.value,
             rating: currentRating,
@@ -248,17 +225,17 @@ form.addEventListener("submit", async (e) => {
         const reviewResult = await createFeedback(feedbackData);
 
         // --- B. Submit Complaint (if exists) ---
-        let msg = `Review submitted! ID: ${feedbackId}`;
+        let msg = `Review submitted! ID: ${reviewResult.id}`;
         
         if (complaintData) {
             const complaintResult = await createComplaint(complaintData);
             if (complaintResult) {
-                msg += `\nComplaint submitted! ID: ${complaintData.id}`;
+                msg += `\nComplaint submitted! ID: ${complaintResult.id}`;
             }
         }
 
         if (reviewResult) {
-            alert(msg);
+            console.log(msg);
             // Reset Form
             form.reset();
             currentRating = 0;
