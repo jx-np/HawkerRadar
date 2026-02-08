@@ -1,92 +1,300 @@
-body {
-    font-family: 'Satoshi', sans-serif;
-}
 /* ==========================
-   ABOUT PAGE
-========================== */
+   GLOBAL RESET & BASE
+========================= */
+html, body {
+    height: 100%;
+}
 
-.about {
-    padding: 60px 40px;
-    max-width: 900px;
+body {
+    margin: 0;
+    font-family: 'Satoshi', sans-serif;
+    background-color: #fff;
+    color: #333;
+    line-height: 1.6;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* ==========================
+   CONTAINER
+========================= */
+.container {
+    width: min(100%, 1400px);
     margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
     box-sizing: border-box;
 }
 
 /* ==========================
-   HEADINGS
-========================== */
+   HERO / INTRO
+========================= */
+.intro {
+    min-height: 100svh; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* vertical center */
+    align-items: center;     /* horizontal center */
+    text-align: center;
+    padding: 0 20px; /* reduce horizontal padding on smaller screens */
+}
 
-.about h1 {
-    font-size: clamp(36px, 4vw, 48px);
-    color: #FF3838;
-    margin-bottom: 24px;
-    font-weight: 700;
+.intro h1 {
+    font-size: clamp(72px, 12vw, 140px); /* responsive, max and min caps */
+    color: #ff3b3b;
+    margin: 0 0 6px 0; /* smaller gap to subtitle */
+    font-weight: 900;
+    line-height: 1.1;
+}
+
+#greeting {
+    transition: opacity 0.5s ease-in-out; /* smooth fade */
+}
+
+.intro .subtitle {
+    font-size: clamp(18px, 2.5vw, 24px); 
+    color: #ff3b3b;
+    margin: 0;
+}
+
+/* ==========================
+   ABOUT SECTIONS
+========================= */
+.about {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    align-items: center;
+    gap: 48px;
+    margin: 80px 0;
 }
 
 .about h2 {
-    font-size: clamp(22px, 2.2vw, 28px);
+    font-size: clamp(22px, 3vw, 28px);
     color: #FF3838;
-    margin-top: 48px;
     margin-bottom: 16px;
-    font-weight: 700;
-    border-bottom: 2px solid #FF3838;
-    padding-bottom: 8px;
 }
-
-/* ==========================
-   TEXT
-========================== */
 
 .about p {
-    font-size: clamp(15px, 1.4vw, 18px);
-    line-height: 1.75;
-    color: #444;
-    margin-bottom: 20px;
-    max-width: 70ch; /* keeps paragraphs readable */
+    font-size: clamp(14px, 1.4vw, 16px);
+    color: #555;
+    margin-bottom: 14px;
+    max-width: 480px;
+}
+
+/* Swap layout direction for larger screens */
+.about-right {
+    grid-template-areas: "text image";
+}
+
+.about-left {
+    grid-template-areas: "image text";
 }
 
 /* ==========================
-   RESPONSIVE
+   IMAGE BOX
+========================= */
+.image-box {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background-color: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ==========================
+   QUALITY SECTION
+========================= */
+.quality {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.quality h2 {
+    font-size: clamp(20px, 3vw, 26px);
+    color: #FF3838;
+    margin-bottom: 48px;
+}
+
+.quality-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 32px;
+}
+
+.quality-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.quality-item img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: #e0e0e0;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.quality-item p {
+    font-size: 14px;
+    color: #555;
+    text-align: center;
+    max-width: 220px;
+}
+
+/* ==========================
+   BACK TO TOP BUTTON (FINAL)
 ========================== */
+#backToTop {
+    display: block !important;          /* override inline display:none */
+    margin: 40px auto 120px;            /* space above + safe space from footer */
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    transition: color 0.25s ease, transform 0.25s ease;
+}
 
-@media (max-width: 768px) {
+#backToTop:hover {
+    color: #C00000;
+    transform: translateY(-2px);
+}
+
+/* ==========================
+   CTA
+========================= */
+.cta {
+    text-align: center;
+    margin: 60px 0;
+}
+
+.cta-text {
+    font-size: clamp(18px, 3vw, 24px);
+    color: #FF3838;
+    font-weight: 500;
+}
+
+/* ==========================
+   RESPONSIVE IMPROVEMENTS
+========================= */
+@media (max-width: 1200px) {
     .about {
-        padding: 40px 20px;
+        gap: 40px;
+        margin: 60px 0;
     }
-
-    .about h1 {
-        text-align: center;
+    .quality-grid {
+        gap: 28px;
     }
+}
 
-    .about h2 {
+@media (max-width: 900px) {
+    .about {
+        grid-template-columns: 1fr;
+        gap: 40px;
         text-align: center;
     }
 
     .about p {
         max-width: 100%;
     }
+
+    .quality-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .quality-item p {
+        max-width: 100%;
+    }
+
+    .intro {
+        padding: 0 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .intro h1 {
+        font-size: clamp(48px, 10vw, 100px);
+    }
+    .intro .subtitle {
+        font-size: clamp(16px, 4vw, 20px);
+    }
+    .about h2,
+    .quality h2 {
+        font-size: clamp(20px, 4vw, 24px);
+    }
+    .cta-text {
+        font-size: clamp(16px, 4vw, 20px);
+    }
+    .about {
+        gap: 32px;
+    }
+    .quality-grid {
+        gap: 32px;
+    }
+    #backToTop {
+        margin: 32px auto 140px;         /* extra footer clearance on mobile */
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 400px) {
+    .intro h1 {
+        font-size: 36px;
+    }
+    .intro .subtitle {
+        font-size: 16px;
+    }
+    .about h2,
+    .quality h2 {
+        font-size: 20px;
+    }
+    .cta-text {
+        font-size: 16px;
+        padding: 0 10px;
+    }
+    .container {
+        padding: 0 12px;
+    }
 }
 
 /* ==========================
-   FONTS
-========================== */
+   FONTS (Satoshi)
+========================= */
 @font-face {
     font-family: 'Satoshi';
-    src: url('../../fonts/Satoshi-Regular.otf') format('woff2');
+    src: url('../fonts/Satoshi-Regular.woff2') format('woff2');
     font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Satoshi';
-    src: url('../../fonts/Satoshi-Bold.otf') format('woff2');
+    src: url('../fonts/Satoshi-Bold.woff2') format('woff2');
     font-weight: 700;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Satoshi';
-    src: url('../../fonts/Satoshi-BlackItalic.otf') format('woff2');
+    src: url('../fonts/Satoshi-BlackItalic.woff2') format('woff2');
     font-weight: 900;
     font-style: italic;
 }
