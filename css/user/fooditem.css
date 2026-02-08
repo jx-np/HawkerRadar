@@ -1,0 +1,134 @@
+/* /css/user/fooditem.css - Food Item Management Page */
+
+/* Extends stall_dish.css styling */
+
+/* ADD ITEM SECTION */
+.add-item-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.add-item-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: var(--accent-soft);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 32px;
+  color: var(--accent);
+  font-weight: 700;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  box-shadow: var(--shadow);
+}
+
+.add-item-btn:hover {
+  transform: scale(1.1);
+  background: var(--accent-soft-2);
+  box-shadow: 0 8px 20px rgba(255, 56, 56, 0.2);
+}
+
+.add-item-btn:active {
+  transform: scale(0.95);
+}
+
+/* DISH ROW EDIT BUTTON */
+.dish-row__edit {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  margin-left: 8px;
+  color: var(--accent);
+  transition: transform 0.2s;
+}
+
+.dish-row__edit:hover {
+  transform: scale(1.15);
+}
+
+.dish-row__edit .material-symbols-outlined {
+  font-size: 22px;
+}
+
+/* DISH ROW REMOVE BUTTON */
+.dish-row__remove {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  margin-top: 8px;
+  color: rgba(0, 0, 0, 0.4);
+  transition: color 0.2s, transform 0.2s;
+}
+
+.dish-row__remove:hover {
+  color: var(--accent);
+  transform: scale(1.15);
+}
+
+.dish-row__remove .material-symbols-outlined {
+  font-size: 28px;
+}
+
+/* EDIT MODE STYLING */
+.dish-row.edit-mode {
+  background: var(--accent-soft-2);
+  border-color: var(--accent);
+}
+
+/* EMPTY STATE */
+.food-items-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+
+.food-items-empty .material-symbols-outlined {
+  font-size: 64px;
+  color: rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.food-items-empty p {
+  font-size: 16px;
+  margin: 0;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .add-item-btn {
+    width: 54px;
+    height: 54px;
+    font-size: 28px;
+  }
+
+  .stall-section__title {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-item-wrap {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+
+  .add-item-btn {
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+  }
+}
