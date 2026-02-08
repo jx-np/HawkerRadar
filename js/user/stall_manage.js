@@ -93,13 +93,14 @@ async function loadUserStalls() {
 }
 
 function createStallCard(stall) {
-    const card = document.createElement('a');
-    // Link to your management page created earlier
-    card.href = `/html/vendor/vendormanage.html?stallId=${stall.id}`;
+    // 1. Change element from 'a' to 'div' so we can have multiple buttons inside
+    const card = document.createElement('div'); 
     card.className = 'stall-card';
 
     const imgUrl = stall.storeImage || "https://placehold.co/400x300?text=No+Image";
 
+    // 2. We add the Complaints button ABOVE the Manage Stall button
+    // Note: Update the href URL to match your actual complaints page path
     card.innerHTML = `
         <img src="${imgUrl}" alt="${stall.name}" class="card-img">
         <div class="card-body">
@@ -108,7 +109,17 @@ function createStallCard(stall) {
                 <div>ID: ${stall.id}</div>
                 <div>Unit: ${stall.unitNo || '-'}</div>
             </div>
-            <div class="card-btn">Manage Stall</div>
+            
+            <div class="action-group">
+                <a href="/html/feedback/complaint_vendor.html?stall=${stall.id}" class="btn-complaints">
+                    <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;"></span> 
+                    View Complaints
+                </a>
+
+                <a href="/html/vendor/vendormanage.html?stallId=${stall.id}" class="card-btn">
+                    Manage Stall
+                </a>
+            </div>
         </div>
     `;
     el.grid.appendChild(card);

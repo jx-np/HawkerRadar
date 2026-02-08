@@ -77,7 +77,8 @@ body {
     border-radius: 12px;
     overflow: hidden;
     transition: transform 0.2s, box-shadow 0.2s;
-    text-decoration: none;
+    /* Changed to default cursor since the card itself isn't the link anymore */
+    cursor: default; 
     color: inherit;
     display: flex;
     flex-direction: column;
@@ -115,8 +116,38 @@ body {
     margin-bottom: 15px;
 }
 
+/* Container for the two buttons */
+.action-group {
+    margin-top: auto; /* Pushes the buttons to the bottom of the card */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Complaints Button Style */
+.btn-complaints {
+    display: block;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #C00000;
+    background-color: #fff0f0;
+    border: 1px solid #ffcccc;
+    padding: 8px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.btn-complaints:hover {
+    background-color: #ffe0e0;
+    border-color: #C00000;
+}
+
+/* Manage Stall Button */
 .card-btn {
-    margin-top: auto;
+    display: block;
+    text-decoration: none;
     background-color: #28a745;
     color: white;
     text-align: center;
@@ -124,6 +155,12 @@ body {
     border-radius: 6px;
     font-weight: 700;
     font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.card-btn:hover {
+    background-color: #218838;
 }
 
 /* ==========================
