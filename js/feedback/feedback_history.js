@@ -8,7 +8,7 @@ import { formatDate } from '/js/utils/helpers.js';
  * - Renders entries into .history-list in feedback_history.html
  */
 
-const historyList = document.querySelector('.history-list');
+// Select the history list at runtime (after DOM ready) to avoid null when module loads early
 
 function sanitizeHTML(str) {
     if (!str) return '';
@@ -26,6 +26,7 @@ function truncate(text, length = 200) {
 }
 
 async function loadFeedbackHistory() {
+    const historyList = document.querySelector('.history-list');
     if (!historyList) return;
 
     historyList.innerHTML = ''; // clear placeholder items
@@ -57,8 +58,12 @@ async function loadFeedbackHistory() {
         const allStalls = await listStalls();
         const stallMap = allStalls || {};
 
-        // sort by datetime descending
-        feedbackArray.sort((a, b) => new Date(b.FbkDateTime) - new Date(a.FbkDateTime));
+        // sort by datetime descending using available date fields
+        feedbackArray.sort((a, b) => {
+            const aDate = new Date(a.dateCreated || a.FbkDateTime || a.date || a.createdAt || 0).getTime();
+            const bDate = new Date(b.dateCreated || b.FbkDateTime || b.date || b.createdAt || 0).getTime();
+            return bDate - aDate;
+        });
 
         for (const fb of feedbackArray) {
             const rawDate = fb.dateCreated || fb.FbkDateTime || fb.date || fb.createdAt || '';
