@@ -1,6 +1,6 @@
-import { getCurrentUser } from '/js/modules/auth.js';
-import { getAllFeedback, getAllFoodStalls } from '/js/firebase/wrapper.js';
-import { formatDate } from '/js/utils/helpers.js';
+import { getCurrentUser } from '../modules/auth.js';
+import { getAllFeedback, getAllFoodStalls } from '../firebase/wrapper.js';
+import { formatDate } from '../utils/helpers.js';
 
 /*
  * feedback_history.js

@@ -1,5 +1,5 @@
 // /js/hawker.js
-import { listHawkerCentres, listStalls } from "/js/firebase/wrapper.js";
+import { listHawkerCentres, listStalls } from "../js/firebase/wrapper.js";
 // ---------- NAV RESET (prevents "back" loops between pages) ----------
 (function resetNavForHome() {
   // Home is the start of the flow; clear stale return targets from previous sessions.
@@ -137,7 +137,7 @@ hcGrid?.addEventListener("click", (e) => {
   sessionStorage.setItem("stalls:returnTo", window.location.href);
 
   // Redirect to stall page with hc query param
-  const url = new URL("/html/stall/stall.html", window.location.origin);
+  const url = new URL("./html/stall/stall.html", window.location.origin);
   url.searchParams.set("hc", hcId);
   window.location.href = url.href;
 });
@@ -189,7 +189,7 @@ featuredGrid?.addEventListener("click", async (e) => {
 
   // Redirect to dish page with stall query param
   const url = new URL(
-    "/html/stall/stall_dish.html",
+    "./html/stall/stall_dish.html",
     window.location.origin
   );
   url.searchParams.set("stall", stallId);

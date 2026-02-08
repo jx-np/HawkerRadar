@@ -1,5 +1,5 @@
-import { createFeedback, createComplaint, listStalls, listHawkerCentres } from '/js/firebase/wrapper.js';
-import { getCurrentUser } from '/js/modules/auth.js';
+import { createFeedback, createComplaint, listStalls, listHawkerCentres } from '../firebase/wrapper.js';
+import { getCurrentUser } from '../modules/auth.js';
 
 // DOM Elements
 const form = document.getElementById("feedbackForm");

@@ -4,7 +4,7 @@ import {
     listMenuItemsByStall,
     createMenuItem,
     updateMenuItem
-} from "/js/firebase/wrapper.js";
+} from "../firebase/wrapper.js";
 
 // =============================
 // Constants & Elements

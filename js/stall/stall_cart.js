@@ -9,12 +9,13 @@
 //   }
 // }
 
-import { getCurrentUser } from "/js/modules/auth.js"; 
+import { getCurrentUser } from "../modules/auth.js"; 
 
 const CART_VERSION = 1;
 
 function getCustomerId() {
-  return getCurrentUser().id
+  const user = getCurrentUser();
+  return user && user.id ? user.id : "guest";
 }
 
 function cartStorageKey() {

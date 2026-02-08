@@ -1,6 +1,6 @@
-import { listStallComplaints, getUser, getStall, updateComplaint } from "/js/firebase/wrapper.js";
+import { listStallComplaints, getUser, getStall, updateComplaint } from "../firebase/wrapper.js";
 // [!] Import auth function. Ensure this path points to where you saved your auth.js file
-import { getCurrentUser } from "/js/modules/auth.js";
+import { getCurrentUser } from "../modules/auth.js";
 
 /* ------------------------------------------------------------------
    Helpers

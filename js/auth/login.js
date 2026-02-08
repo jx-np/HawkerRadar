@@ -1,4 +1,4 @@
-import { loginUser } from '/js/modules/auth.js';
+import { loginUser } from '../modules/auth.js';
 
 // New login.html places the form inside `.auth-form` — select it flexibly
 const form = document.querySelector('.auth-form form') || document.querySelector('form');

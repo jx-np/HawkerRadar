@@ -6,8 +6,8 @@ import {
     addPaymentMethod,
     removePaymentMethod,
     getPaymentMethods
-} from '/js/firebase/wrapper.js';
-import { hasRole } from '/js/modules/auth.js';
+} from '../firebase/wrapper.js';
+import { hasRole } from '../modules/auth.js';
 
 let currentUser = null;
 let currentUserId = null;
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             updateNavbarProfileButton();
             updateStallManagementButton();
         } else {
-            window.location.href = '/html/auth/login.html';
+            window.location.href = '../../html/auth/login.html';
         }
     });
 

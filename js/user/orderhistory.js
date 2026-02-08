@@ -3,7 +3,7 @@ import {
     onAuthChanged,
     listHawkerCentres,
     getStall
-} from '/js/firebase/wrapper.js';
+} from '../firebase/wrapper.js';
 
 let currentUserId = null;
 let allOrders = {};
@@ -16,7 +16,7 @@ let stalls = {};
 document.addEventListener('DOMContentLoaded', () => {
     onAuthChanged(user => {
         if (!user) {
-            window.location.href = '/html/auth/login.html';
+            window.location.href = '../../html/auth/login.html';
             return;
         }
 

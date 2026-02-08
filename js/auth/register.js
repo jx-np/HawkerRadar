@@ -1,4 +1,4 @@
-import { registerUser } from '/js/modules/auth.js';
+import { registerUser } from '../modules/auth.js';
 
 const form = document.getElementById('registerForm');
 const msgEl = document.getElementById('registerMessage');

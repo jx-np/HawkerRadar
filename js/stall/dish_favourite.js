@@ -1,6 +1,6 @@
 // ../../js/dish_favourite.js
 // Stall Dish Page: loads stall + dishes + feedback + favorites + cart (persistent)
-import { getCurrentUser } from "/js/modules/auth.js"; 
+import { getCurrentUser } from "../modules/auth.js"; 
 
 const cfg = {
   stallBodyAttr: "data-stall-id",
@@ -68,7 +68,7 @@ function smartBack() {
     return;
   }
   window.location.replace(
-    new URL("/html/home/home.html", window.location.origin).href
+    new URL("../../html/home/home.html", window.location.origin).href
   );
 }
 document.getElementById("pageBackBtn")?.addEventListener("click", smartBack);
@@ -76,7 +76,7 @@ document.getElementById("pageBackBtn")?.addEventListener("click", smartBack);
 document.getElementById("view-cart")?.addEventListener("click", (e) => {
   e.preventDefault();
   sessionStorage.setItem("cart:returnTo", window.location.href);
-  window.location.href = new URL("/html/user/cart.html", window.location.href).href;
+  window.location.href = new URL("../../html/user/cart.html", window.location.href).href;
 });
 
 /* ---------------- Helpers ---------------- */
@@ -92,7 +92,8 @@ function getStallId() {
 }
 
 function getCustomerId() {
-  return getCurrentUser().id
+  const user = getCurrentUser();
+  return user && user.id ? user.id : "guest";
 }
 
 function safeSetText(id, text) {
@@ -132,7 +133,7 @@ function setPressed(btn, pressed) {
 /* ---------------- Wrapper loader ---------------- */
 async function loadWrapper() {
   const wrapperPath =
-    window.STALL_PAGE?.wrapperPath || "/js/firebase/wrapper.js";
+    window.STALL_PAGE?.wrapperPath || "../firebase/wrapper.js";
   const wrapperUrl = new URL(wrapperPath, document.baseURI).href;
   return import(wrapperUrl);
 }
@@ -475,7 +476,7 @@ async function fetchFeedback(wrapper, stallId) {
     if (ratingContainer) {
       ratingContainer.style.cursor = "pointer";
       ratingContainer.onclick = () => {
-        const url = new URL("/html/feedback/reviews.html", window.location.href);
+        const url = new URL("../../html/feedback/reviews.html", window.location.href);
         url.searchParams.set("stall", stallId);
         window.location.href = url.href;
       };

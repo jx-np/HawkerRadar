@@ -1,4 +1,4 @@
-import { listStallFeedback, getUser, getStall } from "/js/firebase/wrapper.js";
+import { listStallFeedback, getUser, getStall } from "../firebase/wrapper.js";
 
 /* ------------------------------------------------------------------
    Helpers

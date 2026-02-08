@@ -1,4 +1,4 @@
-import { isAuthenticated } from "/js/modules/auth.js";
+import { isAuthenticated } from "../modules/auth.js";
 
 // Site-wide navbar hide/unhide on scroll
 const navbar = document.querySelector('.site-header');
@@ -11,7 +11,7 @@ authLink.style.visibility = 'hidden';
 
 if (isAuthenticated()) {
     authLink.textContent = 'My Profile';
-    authLink.href = '/html/user/profile.html';
+    authLink.href = '../../html/user/profile.html';
 }
 authLink.style.visibility = 'visible';
 

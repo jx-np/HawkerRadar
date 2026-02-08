@@ -1,4 +1,4 @@
-import { listStalls, listHawkerCentres } from "/js/firebase/wrapper.js";
+import { listStalls, listHawkerCentres } from "../js/firebase/wrapper.js";
 
 const featuredGrid = document.querySelector(".feature-stall-grid");
 
@@ -31,7 +31,7 @@ async function loadFeaturedStalls() {
         featuredGrid.innerHTML += `
         <div class="feature-stall-card">
             <div class="feature-stall-image"
-                style="background-image: url('/img/${imageNumber}.jpg');">
+                style="background-image: url('../../img/${imageNumber}.jpg');">
             </div>
             <div class="feature-stall-info">
             <strong>${stall.name}</strong>

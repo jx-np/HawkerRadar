@@ -1,6 +1,6 @@
 // Dish detail page
 // URL: dish.html?stall=<stallId>&item=<menuItemId>
-import { getCurrentUser } from "/js/modules/auth.js"; 
+import { getCurrentUser } from "../modules/auth.js"; 
 
 const CART_VERSION = 1;
 
@@ -17,7 +17,8 @@ window.addEventListener("load", applyHeaderOffset);
 
 /* ---------- helpers ---------- */
 function getCustomerId() {
-  return getCurrentUser().id
+  const user = getCurrentUser();
+  return user && user.id ? user.id : "guest";
 }
 
 function cartStorageKey() {
@@ -80,7 +81,7 @@ function setImgWithFallback(imgEl, primary, fallback, alt = "") {
 }
 
 async function loadWrapper() {
-  const wrapperPath = window.DISH_PAGE?.wrapperPath || "/js/firebase/wrapper.js";
+  const wrapperPath = window.DISH_PAGE?.wrapperPath || "../firebase/wrapper.js";
   const wrapperUrl = new URL(wrapperPath, document.baseURI).href;
   return import(wrapperUrl);
 }
@@ -227,7 +228,7 @@ async function fetchMenuItem(wrapper, stallId, itemId) {
       })();
 
     sessionStorage.setItem("cart:returnTo", stallMenuUrl);
-    window.location.href = new URL("/html/user/cart.html", window.location.href).href;
+    window.location.href = new URL("../../html/user/cart.html", window.location.href).href;
   });
 
   if (!itemId) {

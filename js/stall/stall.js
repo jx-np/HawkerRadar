@@ -1,7 +1,7 @@
 import {
   getHawkerCentre,
   listStallsByHawkerCentre,
-} from "/js/firebase/wrapper.js";
+} from "../firebase/wrapper.js";
 
 function applyHeaderOffset() {
   const header = document.querySelector(".site-header");
@@ -169,7 +169,7 @@ function renderStalls(hcId, stalls, favSet) {
   if (el.pageBackBtn) {
     el.pageBackBtn.addEventListener("click", () => {
       const returnTo = sessionStorage.getItem("stalls:returnTo");
-      const fallbackHome = new URL("/html/home/home.html", window.location.origin).href;
+      const fallbackHome = new URL("../../html/home/home.html", window.location.origin).href;
       window.location.replace(returnTo || fallbackHome);
     });
   }

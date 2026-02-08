@@ -1,5 +1,5 @@
-import { getPaymentMethods } from "/js/firebase/wrapper.js";
-import { getCurrentUser } from "/js/modules/auth.js";
+import { getPaymentMethods } from "../firebase/wrapper.js";
+import { getCurrentUser } from "../modules/auth.js";
 
 const CART_VERSION = 1;
 
@@ -28,19 +28,20 @@ function smartBack() {
 
   const lastStallId = sessionStorage.getItem("lastStallId");
   if (lastStallId) {
-    const u = new URL("/html/stall/stall_dish.html", window.location.origin);
+    const u = new URL("../../html/stall/stall_dish.html", window.location.origin);
     u.searchParams.set("stall", String(lastStallId));
     window.location.replace(u.href);
     return;
   }
 
-  window.location.replace(new URL("/html/home/home.html", window.location.origin).href);
+  window.location.replace(new URL("../../html/home/home.html", window.location.origin).href);
 }
 document.getElementById("pageBackBtn")?.addEventListener("click", smartBack);
 
 // ---------- cart storage ----------
 function getCustomerId() {
-  return getCurrentUser().id
+  const user = getCurrentUser();
+  return user && user.id ? user.id : "guest";
 }
 
 function cartStorageKey() {
@@ -88,7 +89,7 @@ function calcFees(subtotal) {
 
 // ---------- firebase wrapper ----------
 async function loadWrapper() {
-  const wrapperPath = window.CART_PAGE?.wrapperPath || "/js/firebase/wrapper.js";
+  const wrapperPath = window.CART_PAGE?.wrapperPath || "../firebase/wrapper.js";
   const wrapperUrl = new URL(wrapperPath, document.baseURI).href;
   return import(wrapperUrl);
 }

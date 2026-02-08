@@ -7,7 +7,7 @@ import {
     remove,
     child,
     push as firebasePush
-} from '/js/firebase/realtimedb.js';
+} from '../firebase/realtimedb.js';
 
 import {
     getAuth,

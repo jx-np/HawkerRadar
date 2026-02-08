@@ -1,16 +1,16 @@
 import { 
     onAuthChanged, 
     getStall 
-} from "/js/firebase/wrapper.js";
+} from "../firebase/wrapper.js";
 
-import { hasRole } from "/js/modules/auth.js";
+import { hasRole } from "../modules/auth.js";
 
 import { 
     db, 
     ref, 
     get, 
     update 
-} from "/js/firebase/realtimedb.js"; 
+} from "../firebase/realtimedb.js"; 
 // Make sure path to realtimedb.js is correct based on your folder structure
 
 const el = {
@@ -33,7 +33,7 @@ async function init() {
         if (user) {
             // no vendor role check for page??
             if (!hasRole('vendor')) {
-                window.location.href = "/html/user/profile.html";
+                window.location.href = "../../html/user/profile.html";
                 return;
             }
             
@@ -42,7 +42,7 @@ async function init() {
             await loadUserStalls();
         } else {
             // Not logged in
-            window.location.href = "/html/auth/login.html";
+            window.location.href = "../../html/auth/login.html";
         }
     });
 
@@ -111,12 +111,12 @@ function createStallCard(stall) {
             </div>
             
             <div class="action-group">
-                <a href="/html/feedback/complaint_vendor.html?stall=${stall.id}" class="btn-complaints">
+                <a href="../../html/feedback/complaint_vendor.html?stall=${stall.id}" class="btn-complaints">
                     <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;"></span> 
                     View Complaints
                 </a>
 
-                <a href="/html/vendor/vendormanage.html?stallId=${stall.id}" class="card-btn">
+                <a href="../../html/vendor/vendormanage.html?stallId=${stall.id}" class="card-btn">
                     Manage Stall
                 </a>
             </div>
