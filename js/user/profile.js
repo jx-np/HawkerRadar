@@ -54,17 +54,25 @@ async function loadUserProfile() {
 }
 
 function loadProfilePhoto() {
-    const photoKey = `profilePhoto_${currentUserId}`;
-    const savedPhoto = localStorage.getItem(photoKey);
-    
-    if (savedPhoto) {
-        document.getElementById('profilePhoto').src = savedPhoto;
+    if (currentUser && currentUser.profilePhoto) {
+        document.getElementById('profilePhoto').src = currentUser.profilePhoto;
     }
 }
 
-function saveProfilePhoto(base64Image) {
-    const photoKey = `profilePhoto_${currentUserId}`;
-    localStorage.setItem(photoKey, base64Image);
+async function saveProfilePhoto(base64Image) {
+    try {
+        await updateUser(currentUserId, {
+            profilePhoto: base64Image,
+            updatedAt: new Date().toISOString()
+        });
+
+        // Keep local state in sync
+        currentUser.profilePhoto = base64Image;
+
+    } catch (error) {
+        console.error('Failed to save profile photo:', error);
+        alert('Failed to save profile photo. Please try again.');
+    }
 }
 
 function setupEventListeners() {
@@ -117,7 +125,7 @@ function updateNavbarProfileButton() {
     }
 }
 
-function handlePhotoUpload(file) {
+async function handlePhotoUpload(file) {
     if (file.size > 5 * 1024 * 1024) {
         alert('Image size should be less than 5MB');
         return;
@@ -129,20 +137,18 @@ function handlePhotoUpload(file) {
     }
 
     const reader = new FileReader();
-    
-    reader.onload = function(e) {
+
+    reader.onload = async function(e) {
         const base64Image = e.target.result;
-        
         document.getElementById('profilePhoto').src = base64Image;
-        
-        saveProfilePhoto(base64Image);
+        await saveProfilePhoto(base64Image);
         showNotification('Profile photo updated successfully!');
     };
-    
+
     reader.onerror = function() {
         alert('Failed to read image file. Please try again.');
     };
-    
+
     reader.readAsDataURL(file);
 }
 
