@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+	<head>
+        <meta name="author" content="Pan Zhenkai">
+		<meta name="author" content="Generated" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Stall — Menu</title>
+
+		<link rel="stylesheet" href="/css/Essential/navbar.css" />
+		<link rel="stylesheet" href="/css/Essential/footer.css" />
+		<link rel="stylesheet" href="/css/Stall/stall_dish.css" />
+		<link rel="stylesheet" href="/css/user/fooditem.css" />
+
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+		/>
+	</head>
+
+	<body>
+		<!-- Header -->
+		<header class="site-header">
+			<div class="logo">
+				<a href="/html/home/home.html" class="link-wrapper">
+					<div class="logo-box"></div>
+				</a>
+			</div>
+
+			<nav class="nav-links">
+				<div class="nav-center">
+					<a href="/html/home/home.html">Home</a>
+					<a href="#">Hawker Centres</a>
+					<a href="#">Order History</a>
+				</div>
+
+				<div class="nav-right">
+					<a href="/html/auth/login.html">Login / Register</a>
+				</div>
+			</nav>
+		</header>
+
+		<main class="stall-page">
+			<!-- HERO -->
+			<section class="stall-hero">
+				<div class="stall-hero__banner-shell">
+					<button class="page-back-btn" id="pageBackBtn" type="button" aria-label="Back">
+						<span class="material-symbols-outlined" aria-hidden="true">arrow_back_2</span>
+					</button>
+
+					<div class="stall-hero__banner-wrap">
+						<img id="stallBanner" class="stall-hero__banner" src="" alt="Stall banner" />
+					</div>
+				</div>
+
+				<div class="stall-hero__meta">
+					<div>
+						<h1 id="stallName" class="stall-hero__name">XYZ Stall</h1>
+						<p id="stallUnit" class="stall-hero__number">Hawker Centre — Stall Number</p>
+						<p id="stallDesc" class="stall-hero__desc">Short description or tagline</p>
+					</div>
+
+					<div>
+						<button class="stall-hero__fav-btn" aria-pressed="false" aria-label="Favorite stall">
+							<span class="material-symbols-outlined" aria-hidden="true">edit</span>
+						</button>
+					</div>
+				</div>
+			</section>
+
+			<!-- DISHES -->
+			<section class="stall-section">
+				<h2 class="stall-section__title">Dishes</h2>
+
+				<ul id="dish-list" class="dish-list">
+					<!-- rows injected by JS; template below for cloning -->
+				</ul>
+			</section>
+
+			<div class="add-item-wrap">
+				<button class="add-item-btn" id="addDishBtn" type="button">
+					<span class="material-symbols-outlined" aria-hidden="true">add</span>
+				</button>
+			</div>
+
+			<!-- Dish row template -->
+			<template id="tpl-dish-row">
+				<li class="dish-row" data-item-code="">
+					<button class="dish-row__fav-btn" type="button" aria-pressed="false" aria-label="Favorite dish">
+						<span class="material-symbols-outlined" aria-hidden="true">favorite</span>
+					</button>
+
+					<div class="dish-row__img-wrap" aria-hidden="true">
+						<img class="dish-row__thumb" src="" alt="Dish image" />
+					</div>
+
+					<div>
+						<h3 class="dish-row__name">Dish Name</h3>
+						<p class="dish-row__desc">Description</p>
+						<p class="dish-row__desc"><strong>Cuisine:</strong> <span class="dish-row__cuisine">Category</span></p>
+					</div>
+
+					<div class="dish-row__right">
+						<p class="dish-row__price">$0.00
+							<button class="dish-row__edit" type="button" aria-label="Edit dish">
+								<span class="material-symbols-outlined" aria-hidden="true">edit</span>
+							</button>
+						</p>
+
+						<div class="dish-row__qty-controls" data-action="qty">
+							<button class="dish-row__minus-btn" data-action="cart-minus" type="button" aria-label="Decrease amount">
+								<span class="material-symbols-outlined" aria-hidden="true">remove</span>
+							</button>
+							<div class="dish-row__qty-num">0</div>
+							<button class="dish-row__add-btn" data-action="cart-plus" type="button" aria-label="Add to cart">+</button>
+						</div>
+
+						<button class="dish-row__remove" type="button" aria-label="Delete dish">
+							<span class="material-symbols-outlined" aria-hidden="true">remove_circle</span>
+						</button>
+					</div>
+				</li>
+			</template>
+		</main>
+
+		<!-- Footer --> 
+		<footer class="site-footer">
+			<a href="/html/Footer Stuff/ContactUs.html">Contact Us</a>
+			<span>|</span>
+			<a href="/html/Footer Stuff/FAQ.html">FAQs</a>
+			<span>|</span>
+			<a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">NEA Info</a>
+		</footer>
+
+		<script type="module" src="/js/stall_cart.js"></script>
+		<script type="module" src="/js/fooditem.js"></script>
+	</body>
+</html>
