@@ -179,9 +179,7 @@ async function handleAddDish(e) {
         name: document.getElementById('newDishName').value.trim(),
         description: document.getElementById('newDishDesc').value.trim(),
         price: parseFloat(document.getElementById('newDishPrice').value),
-        category: document.getElementById('newDishCategory').value.trim(),
         image: document.getElementById('newDishImage').value.trim(),
-        available: true // Default to available
     };
 
     try {
