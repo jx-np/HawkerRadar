@@ -7,11 +7,11 @@
 
     <title>Stall • Dishes</title>
 
-    <link rel="icon" href="/img/TabLogo.png">
+    <link rel="icon" href="" />
     <link rel="stylesheet" href="/css/Essential/navbar.css" />
     <link rel="stylesheet" href="/css/Essential/footer.css" />
-    <link rel="stylesheet" href="/css/stall/stall_dish.css" />
-    <link rel="stylesheet" href="/css/home/main_home.css">
+    <link rel="stylesheet" href="/css/feedback/stall.css" />
+    <link rel="stylesheet" href="/css/Stall/stall_dish.css" />
 
     <!-- Material Symbols (full set; avoids missing icon issues) -->
     <link
@@ -22,178 +22,175 @@
 
   <!-- StallID can come from body attr OR URL ?stall=301 -->
   <body>
-    <div class="container">
-        <header class="site-header">
-        <div class="logo">
-          <a href="/html/home/home.html" class="link-wrapper">
-            <div class="logo-box"></div>
-          </a>
-        </div>
+    <!-- Header = MAKE SURE TO COPY -->
+    <header class="site-header">
+      <div class="logo">
+        <a href="/html/home/home.html" class="link-wrapper">
+          <div class="logo-box"></div>
+        </a>
+      </div>
 
-        <nav class="nav-center">
-          <a href="/html/home/home.html">Home</a>
-          <a href="/html/user/orderhistory.html">Order History</a>
-          <a href="/html/about/about.html" class="active">About</a>
-        </nav>
+      <nav class="nav-center">
+        <a href="/html/home/home.html">Home</a>
+        <a href="#">Hawker Centres</a>
+        <a href="#">Order History</a>
+      </nav>
 
-        <div class="nav-right">
-          <a href="/html/auth/login.html">Login / Register</a>
-        </div>
-      </header>
-      <!--End of Header-->
+      <div class="nav-right">
+        <a href="/html/auth/login.html">Login / Register</a>
+      </div>
+    </header>
+    <!--End of Header-->
 
-      <!-- PAGE CONTENT -->
-      <main class="stall-page" id="stall-page">
-        <!-- HERO -->
-        <section class="stall-hero" id="stall-hero" aria-label="Stall header">
-          <!-- ✅ shell so back button can sit OUTSIDE banner -->
-          <div class="stall-hero__banner-shell">
-            <button class="page-back-btn" id="pageBackBtn" type="button" aria-label="Back">
-              <span class="material-symbols-outlined" aria-hidden="true">arrow_back_2</span>
+    <!-- PAGE CONTENT -->
+    <main class="stall-page" id="stall-page">
+      <!-- HERO -->
+      <section class="stall-hero" id="stall-hero" aria-label="Stall header">
+        <!-- ✅ shell so back button can sit OUTSIDE banner -->
+        <div class="stall-hero__banner-shell">
+          <button class="page-back-btn" id="pageBackBtn" type="button" aria-label="Back">
+            <span class="material-symbols-outlined" aria-hidden="true">arrow_back_2</span>
+          </button>
+
+          <div class="stall-hero__banner-wrap">
+            <img
+              class="stall-hero__banner"
+              id="stall-banner"
+              src="/images/stalls/stall-banner-placeholder.jpg"
+              alt="Stall banner"
+            />
+
+            <!-- Heart on top-right of the banner -->
+            <button
+              class="stall-hero__fav-btn"
+              id="stall-fav-btn"
+              type="button"
+              aria-pressed="false"
+              aria-label="Favorite this stall"
+            >
+              <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
             </button>
+          </div>
+        </div>
 
-            <div class="stall-hero__banner-wrap">
-              <img
-                class="stall-hero__banner"
-                id="stall-banner"
-                src=""
-                alt="Stall banner"
-              />
+        <!-- Below-banner meta row -->
+        <div class="stall-hero__meta">
+          <div class="stall-hero__info">
+            <h1 class="stall-hero__name" id="stall-name">Loading…</h1>
+            <p class="stall-hero__number" id="stall-unit">Stall Unit: —</p>
+            <p class="stall-hero__desc" id="stall-desc"></p>
+          </div>
 
-              <!-- Heart on top-right of the banner -->
-              <button
-                class="stall-hero__fav-btn"
-                id="stall-fav-btn"
-                type="button"
-                aria-pressed="false"
-                aria-label="Favorite this stall"
-              >
-                <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
+          <div class="stall-hero__rating" id="stall-rating" aria-label="Stall rating">
+            <span class="stall-hero__star" aria-hidden="true">☆</span>
+            <span class="stall-hero__rating-value" id="stall-rating-value">4.5</span>
+            <span class="stall-hero__rating-count" id="stall-rating-count">(000)</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAVORITES -->
+      <section class="stall-section favorites" id="favorites" aria-label="Favorites">
+        <h2 class="stall-section__title">Favorites</h2>
+        <div class="favorites__scroller" id="hc-favorites-scroller"></div>
+      </section>
+
+      <!-- DISHES -->
+      <section class="stall-section dishes" id="dishes" aria-label="Dishes">
+        <h2 class="stall-section__title">Dishes</h2>
+        <ul class="dish-list" id="dish-list"></ul>
+      </section>
+
+      <!-- CART BAR -->
+      <aside class="cart-bar" id="cart-bar" aria-label="Cart summary">
+        <span class="cart-bar__count" id="cart-count">00</span>
+
+        <!-- ✅ cart page location you said -->
+        <a class="cart-bar__view" id="view-cart" href="../user/cart.html">Checkout</a>
+
+        <span class="cart-bar__total" id="cart-total">$00.00</span>
+      </aside>
+
+      <!-- Templates -->
+      <template id="tpl-favorite-card">
+        <article class="favorite-card" data-item-code="">
+          <button
+            class="favorite-card__fav-btn"
+            type="button"
+            data-action="toggle-favorite"
+            aria-pressed="true"
+            aria-label="Unfavorite dish"
+          >
+            <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
+          </button>
+
+          <button class="favorite-card__menu-btn" type="button" aria-label="Dish options">▾</button>
+
+          <h3 class="favorite-card__name"></h3>
+          <p class="favorite-card__desc"></p>
+
+          <div class="favorite-card__img-wrap">
+            <img class="favorite-card__image" src="" alt="" />
+          </div>
+
+          <p class="favorite-card__price"></p>
+        </article>
+      </template>
+
+      <template id="tpl-dish-row">
+        <li class="dish-row" data-item-code="">
+          <button
+            class="dish-row__fav-btn"
+            type="button"
+            data-action="toggle-favorite"
+            aria-pressed="false"
+            aria-label="Favorite dish"
+          >
+            <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
+          </button>
+
+          <div class="dish-row__img-wrap">
+            <img class="dish-row__thumb" src="" alt="" />
+          </div>
+
+          <div class="dish-row__info">
+            <h3 class="dish-row__name"></h3>
+            <p class="dish-row__desc"></p>
+          </div>
+
+          <div class="dish-row__right">
+            <p class="dish-row__price"></p>
+
+            <div class="dish-row__qty-controls" aria-label="Quantity controls">
+              <button class="dish-row__minus-btn" type="button" data-action="cart-minus" aria-label="Remove one">
+                −
+              </button>
+
+              <span class="dish-row__qty-num" aria-label="Quantity">0</span>
+
+              <button class="dish-row__add-btn" type="button" data-action="cart-plus" aria-label="Add one">
+                +
               </button>
             </div>
           </div>
+        </li>
+      </template>
+    </main>
 
-          <!-- Below-banner meta row -->
-          <div class="stall-hero__meta">
-            <div class="stall-hero__info">
-              <h1 class="stall-hero__name" id="stall-name">Loading…</h1>
-              <p class="stall-hero__number" id="stall-unit">Stall Unit: —</p>
-              <p class="stall-hero__desc" id="stall-desc"></p>
-            </div>
+    <!-- Footer -->
+    <footer class="site-footer">
+      <a href="/html/Footer Stuff/ContactUs.html">Contact Us</a>
+      <span>|</span>
+      <a href="/html/Footer Stuff/FAQ.html">FAQs</a>
+      <span>|</span>
+      <a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">
+        NEA Info
+      </a>
+    </footer>
 
-            <div class="stall-hero__rating" id="stall-rating" aria-label="Stall rating">
-              <span class="stall-hero__star" aria-hidden="true">☆</span>
-              <span class="stall-hero__rating-value" id="stall-rating-value">4.5</span>
-              <span class="stall-hero__rating-count" id="stall-rating-count">(000)</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- FAVORITES -->
-        <section class="stall-section favorites" id="favorites" aria-label="Favorites">
-          <h2 class="stall-section__title">Favorites</h2>
-          <div class="favorites__scroller" id="hc-favorites-scroller"></div>
-        </section>
-
-        <!-- DISHES -->
-        <section class="stall-section dishes" id="dishes" aria-label="Dishes">
-          <h2 class="stall-section__title">Dishes</h2>
-          <ul class="dish-list" id="dish-list"></ul>
-        </section>
-
-        <!-- CART BAR -->
-        <aside class="cart-bar" id="cart-bar" aria-label="Cart summary">
-          <span class="cart-bar__count" id="cart-count">00</span>
-
-          <!-- ✅ cart page location you said -->
-          <a class="cart-bar__view" id="view-cart" href="/html/user/cart.html">Checkout</a>
-
-          <span class="cart-bar__total" id="cart-total">$00.00</span>
-        </aside>
-
-        <!-- Templates -->
-        <template id="tpl-favorite-card">
-          <article class="favorite-card" data-item-code="">
-            <button
-              class="favorite-card__fav-btn"
-              type="button"
-              data-action="toggle-favorite"
-              aria-pressed="true"
-              aria-label="Unfavorite dish"
-            >
-              <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
-            </button>
-            <h3 class="favorite-card__name"></h3>
-            <p class="favorite-card__desc"></p>
-
-            <div class="favorite-card__img-wrap">
-              <img class="favorite-card__image" src="" alt="" />
-            </div>
-
-            <p class="favorite-card__price"></p>
-          </article>
-        </template>
-
-        <template id="tpl-dish-row">
-          <li class="dish-row" data-item-code="">
-            <button
-              class="dish-row__fav-btn"
-              type="button"
-              data-action="toggle-favorite"
-              aria-pressed="false"
-              aria-label="Favorite dish"
-            >
-              <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
-            </button>
-
-            <div class="dish-row__img-wrap">
-              <img class="dish-row__thumb" src="" alt="" />
-            </div>
-
-            <div class="dish-row__info">
-              <h3 class="dish-row__name"></h3>
-              <p class="dish-row__desc"></p>
-            </div>
-
-            <div class="dish-row__right">
-              <p class="dish-row__price"></p>
-
-              <div class="dish-row__qty-controls" aria-label="Quantity controls">
-                <button class="dish-row__minus-btn" type="button" data-action="cart-minus" aria-label="Remove one">
-                  −
-                </button>
-
-                <span class="dish-row__qty-num" aria-label="Quantity">0</span>
-
-                <button class="dish-row__add-btn" type="button" data-action="cart-plus" aria-label="Add one">
-                  +
-                </button>
-              </div>
-            </div>
-          </li>
-        </template>
-      </main>
-
-      <!-- Footer -->
-      <footer class="site-footer">
-        <a href="/html/Footer Stuff/ContactUs.html">Contact Us</a>
-        <span>|</span>
-        <a href="/html/Footer Stuff/FAQ.html">FAQs</a>
-        <span>|</span>
-        <a href="https://www.nea.gov.sg/our-services/hawker-management" target="_blank" rel="noopener noreferrer">
-          NEA Info
-        </a>
-      </footer>
-    </div>
-    
     <script>
       window.STALL_PAGE = { wrapperPath: "/js/firebase/wrapper.js" };
     </script>
-<<<<<<< HEAD
     <script type="module" src="/js/dish_favourite.js"></script>
-=======
-    <script type="module" src="/js/utils/navbar.js"></script>
-    <script type="module" src="/js/stall/dish_favourite.js"></script>
->>>>>>> 6d394557df39708c047bdb5c649685cad8aed308
   </body>
 </html>

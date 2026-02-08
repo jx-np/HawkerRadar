@@ -2,9 +2,6 @@ import {
     onAuthChanged, 
     getStall 
 } from "/js/firebase/wrapper.js";
-
-import { hasRole } from "/js/modules/auth.js";
-
 import { 
     db, 
     ref, 
@@ -31,12 +28,6 @@ let currentUser = null;
 async function init() {
     onAuthChanged(async (user) => {
         if (user) {
-            // no vendor role check for page??
-            if (!hasRole('vendor')) {
-                window.location.href = "/html/user/profile.html";
-                return;
-            }
-            
             currentUser = user;
             console.log("Vendor ID:", user.uid);
             await loadUserStalls();

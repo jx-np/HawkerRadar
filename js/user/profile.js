@@ -1,217 +1,402 @@
-// js/user/profile.js
-// User profile page — load and update user profile from Firebase
-
-import { getCurrentUser, isAuthenticated, updateProfile, disableAccount } from "/js/modules/auth.js";
-import { getUserById, listenToUserProfile } from "/js/firebase/wrapper.js";
-
-function applyHeaderOffset() {
-  const header = document.querySelector(".site-header");
-  if (!header) return;
-  const h = Math.ceil(header.getBoundingClientRect().height);
-  document.documentElement.style.setProperty("--site-header-h", `${h}px`);
-}
-applyHeaderOffset();
-window.addEventListener("resize", applyHeaderOffset);
-window.addEventListener("load", applyHeaderOffset);
-
-const $ = (sel, root = document) => root.querySelector(sel);
+import { 
+    getUser, 
+    updateUser, 
+    onAuthChanged,
+    logout,
+    addPaymentMethod,
+    removePaymentMethod,
+    getPaymentMethods
+} from '/js/firebase/wrapper.js';
 
 let currentUser = null;
-let unsubscribeListener = null;
+let currentUserId = null;
+
+document.addEventListener('DOMContentLoaded', async () => {
+    onAuthChanged(async (user) => {
+        if (user) {
+            currentUserId = user.uid;
+            await loadUserProfile();
+            loadProfilePhoto();
+            updateNavbarProfileButton();
+        } else {
+            window.location.href = '/html/auth/login.html';
+        }
+    });
+
+    setupEventListeners();
+});
 
 async function loadUserProfile() {
-  const user = getCurrentUser();
-  
-  if (!user || !isAuthenticated()) {
-    // Redirect to login if not authenticated
-    window.location.href = "../auth/login.html";
-    return;
-  }
-
-  currentUser = user;
-
-  try {
-    // Try to get full user details from Firebase
-    let userProfile = null;
     try {
-      userProfile = await getUserById(user.userId);
-    } catch (err) {
-      console.warn("Could not fetch full profile from Firebase:", err);
+        currentUser = await getUser(currentUserId);
+        
+        if (!currentUser) {
+            console.error('User not found');
+            return;
+        }
+
+        document.getElementById('displayName').textContent = currentUser.name || 'Your Name';
+        document.getElementById('displayEmail').textContent = currentUser.email || 'email@example.com';
+        document.getElementById('displayUsername').textContent = currentUser.username || currentUser.name || 'Username';
+
+        document.getElementById('profileNameInput').value = currentUser.name || '';
+        document.getElementById('profileEmailInput').value = currentUser.email || '';
+        document.getElementById('profilePhoneInput').value = currentUser.contactNo || '';
+        document.getElementById('profileAddressInput').value = currentUser.address || '';
+
+        loadPaymentMethods();
+
+    } catch (error) {
+        console.error('Error loading profile', error);
     }
-
-    // Use Firebase profile data if available, fallback to currentUser data
-    const profileData = userProfile || user;
-
-    // Populate display section
-    $("#displayName").textContent = profileData.displayName || profileData.name || "User";
-    $("#displayEmail").textContent = profileData.email || user.email || "N/A";
-    $("#displayUsername").textContent = `"${profileData.username || profileData.displayName?.split(" ")[0] || "User"}"`;
-
-    // Set profile photo if available
-    const profilePhotoEl = $("#profilePhoto");
-    if (profilePhotoEl && profileData.photoURL) {
-      profilePhotoEl.src = profileData.photoURL;
-    }
-
-    // Populate form inputs
-    $("#profileNameInput").value = profileData.displayName || profileData.name || "";
-    $("#profileEmailInput").value = profileData.email || user.email || "";
-    $("#profilePhoneInput").value = profileData.phone || profileData.phoneNumber || "";
-    $("#profileAddressInput").value = profileData.address || "";
-
-    console.log("User profile loaded:", profileData);
-  } catch (err) {
-    console.error("Error loading user profile:", err);
-    alert("Error loading profile data");
-  }
 }
 
-function attachEventListeners() {
-  // Save Profile Button
-  const saveBtn = $("#saveProfileBtn");
-  if (saveBtn) {
-    saveBtn.addEventListener("click", async (e) => {
-      e.preventDefault();
+function loadProfilePhoto() {
+    const photoKey = `profilePhoto_${currentUserId}`;
+    const savedPhoto = localStorage.getItem(photoKey);
+    
+    if (savedPhoto) {
+        document.getElementById('profilePhoto').src = savedPhoto;
+    }
+}
 
-      if (!currentUser) {
-        alert("User not authenticated");
+function saveProfilePhoto(base64Image) {
+    const photoKey = `profilePhoto_${currentUserId}`;
+    localStorage.setItem(photoKey, base64Image);
+}
+
+function setupEventListeners() {
+    document.getElementById('uploadPhotoBtn').addEventListener('click', () => {
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handlePhotoUpload(file);
+            }
+        });
+        
+        fileInput.click();
+    });
+
+    document.getElementById('saveProfileBtn').addEventListener('click', saveProfileChanges);
+
+    document.getElementById('addCardBtn').addEventListener('click', addNewCard);
+
+    document.querySelectorAll('.change-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const input = e.target.parentElement.querySelector('input');
+            if (input) {
+                input.removeAttribute('readonly');
+                input.focus();
+            }
+        });
+    });
+
+    const navbarProfileBtn = document.getElementById('navbarProfileBtn');
+    if (navbarProfileBtn && navbarProfileBtn.textContent === 'Log out') {
+        navbarProfileBtn.addEventListener('click', () => {
+            logout();
+        });
+    }
+}
+
+function updateNavbarProfileButton() {
+    const navbarProfileBtn = document.querySelector('.nav-right a');
+    if (navbarProfileBtn) {
+        navbarProfileBtn.textContent = 'Log out';
+        navbarProfileBtn.href = '/html/auth/login.html';
+        navbarProfileBtn.onclick = function() {
+            logout();
+        };
+    }
+}
+
+function handlePhotoUpload(file) {
+    if (file.size > 5 * 1024 * 1024) {
+        alert('Image size should be less than 5MB');
         return;
-      }
+    }
 
-      try {
-        saveBtn.disabled = true;
-        saveBtn.textContent = "Saving...";
+    if (!file.type.startsWith('image/')) {
+        alert('Please select a valid image file');
+        return;
+    }
 
-        // Collect form data
-        const updates = {
-          displayName: $("#profileNameInput").value || currentUser.displayName,
-          email: $("#profileEmailInput").value || currentUser.email,
-          phone: $("#profilePhoneInput").value,
-          address: $("#profileAddressInput").value,
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        const base64Image = e.target.result;
+        
+        document.getElementById('profilePhoto').src = base64Image;
+        
+        saveProfilePhoto(base64Image);
+        showNotification('Profile photo updated successfully!');
+    };
+    
+    reader.onerror = function() {
+        alert('Failed to read image file. Please try again.');
+    };
+    
+    reader.readAsDataURL(file);
+}
+
+async function saveProfileChanges() {
+    try {
+        const updatedData = {
+            name: document.getElementById('profileNameInput').value.trim(),
+            email: document.getElementById('profileEmailInput').value.trim(),
+            contactNo: document.getElementById('profilePhoneInput').value.trim(),
+            address: document.getElementById('profileAddressInput').value.trim(),
+            updatedAt: new Date().toISOString()
         };
 
-        // Call Firebase updateProfile
-        await updateProfile(currentUser.userId, updates);
-
-        // Update currentUser with new data
-        currentUser = { ...currentUser, ...updates };
-
-        // Refresh display
-        $("#displayName").textContent = updates.displayName;
-        $("#displayEmail").textContent = updates.email;
-
-        saveBtn.textContent = "Changes Saved!";
-        setTimeout(() => {
-          saveBtn.textContent = "Save Changes";
-          saveBtn.disabled = false;
-        }, 2000);
-
-        console.log("Profile updated successfully");
-      } catch (err) {
-        console.error("Error updating profile:", err);
-        alert("Failed to save profile changes");
-        saveBtn.textContent = "Save Changes";
-        saveBtn.disabled = false;
-      }
-    });
-  }
-
-  // Upload Photo Button (placeholder implementation)
-  const uploadBtn = $("#uploadPhotoBtn");
-  if (uploadBtn) {
-    uploadBtn.addEventListener("click", () => {
-      // Create hidden file input
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = "image/*";
-      input.addEventListener("change", async (e) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        try {
-          uploadBtn.disabled = true;
-          uploadBtn.textContent = "Uploading...";
-
-          // Note: Actual file upload to Firebase Storage would go here
-          // For now, we'll create a data URL preview
-          const reader = new FileReader();
-          reader.onload = (event) => {
-            const dataURL = event.target?.result;
-            if (dataURL) {
-              $("#profilePhoto").src = dataURL;
-              console.log("Photo preview updated (upload to Firebase Storage not yet implemented)");
-            }
-          };
-          reader.readAsDataURL(file);
-
-          uploadBtn.textContent = "Photo Updated";
-          setTimeout(() => {
-            uploadBtn.textContent = "Upload New Photo";
-            uploadBtn.disabled = false;
-          }, 1500);
-        } catch (err) {
-          console.error("Error uploading photo:", err);
-          alert("Failed to upload photo");
-          uploadBtn.textContent = "Upload New Photo";
-          uploadBtn.disabled = false;
+        if (!updatedData.name) {
+            alert('Name is required');
+            return;
         }
-      });
-      input.click();
-    });
-  }
 
-  // Change links (edit mode toggle)
-  const changeLinks = document.querySelectorAll(".change-link");
-  changeLinks.forEach((link) => {
-    link.addEventListener("click", (e) => {
-      e.preventDefault();
-      const infoGroup = link.closest(".info-group");
-      if (infoGroup) {
-        const input = infoGroup.querySelector("input");
-        if (input) {
-          input.focus();
-          input.select();
+        if (!updatedData.email) {
+            alert('Email is required');
+            return;
         }
-      }
-    });
-  });
 
-  // Add Card Button (placeholder)
-  const addCardBtn = $("#addCardBtn");
-  if (addCardBtn) {
-    addCardBtn.addEventListener("click", () => {
-      alert("Add card functionality coming soon");
-    });
-  }
-}
+        const emailRegex = /^.+@.+$/;
+        if (!emailRegex.test(updatedData.email)) {
+            alert('Please enter a valid email address');
+            return;
+        }
 
-async function init() {
-  // Load user profile from Firebase
-  await loadUserProfile();
+        await updateUser(currentUserId, updatedData);
 
-  // Attach all event listeners
-  attachEventListeners();
+        document.getElementById('displayName').textContent = updatedData.name;
+        document.getElementById('displayEmail').textContent = updatedData.email;
+        document.getElementById('displayUsername').textContent = updatedData.name;
 
-  // Set up real-time listener for profile changes
-  if (currentUser) {
-    if (unsubscribeListener) {
-      unsubscribeListener();
+        showNotification('Profile updated');
+
+        await loadUserProfile();
+
+    } catch (error) {
+        console.error('Error saving profile:', error);
+        alert('Failed to save profile changes. Please try again.');
     }
-    unsubscribeListener = listenToUserProfile(currentUser.userId, async (profileData) => {
-      console.log('User profile updated in real-time:', profileData);
-      // Update currentUser with new data
-      currentUser = { ...currentUser, ...profileData };
-      // Reload UI with new data
-      await loadUserProfile();
-    });
-
-    // Clean up listener on page unload
-    window.addEventListener('beforeunload', () => {
-      if (unsubscribeListener) {
-        unsubscribeListener();
-      }
-    });
-  }
 }
 
-document.addEventListener("DOMContentLoaded", init);
+function loadPaymentMethods() {
+    const container = document.getElementById('paymentCardsContainer');
+    container.innerHTML = '';
+
+    const paymentMethods = currentUser.paymentMethods || {};
+    const paymentArray = Object.entries(paymentMethods);
+
+    if (paymentArray.length === 0) {
+        container.innerHTML = '<p class="no-cards">No payment methods added yet.</p>';
+        return;
+    }
+
+    paymentArray.forEach(([cardId, card]) => {
+        const cardElement = createPaymentCardElement(cardId, card);
+        container.appendChild(cardElement);
+    });
+}
+
+function createPaymentCardElement(cardId, card) {
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'payment-card';
+    cardDiv.dataset.cardId = cardId;
+
+    const cardType = card.type || 'Card';
+    const maskedNumber = card.lastFourDigits ? `**** ${card.lastFourDigits}` : '**** ****';
+    const cardHolder = card.cardHolder || 'Card Holder';
+    const expiryDate = card.expiryDate || 'MM/YY';
+
+    cardDiv.innerHTML = `
+        <div class="card-header">
+            <span class="card-type">${cardType}</span>
+            <button class="delete-card-btn" data-card-id="${cardId}">×</button>
+        </div>
+        <div class="card-number">${maskedNumber}</div>
+        <div class="card-footer">
+            <span class="card-holder">${cardHolder}</span>
+            <span class="card-expiry">${expiryDate}</span>
+        </div>
+    `;
+
+    const deleteBtn = cardDiv.querySelector('.delete-card-btn');
+    deleteBtn.addEventListener('click', () => deleteCard(cardId));
+
+    return cardDiv;
+}
+
+function addNewCard() {
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Payment Method</h2>
+                <button class="close-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Card Type</label>
+                    <select id="cardType">
+                        <option value="Visa">Visa</option>
+                        <option value="Mastercard">Mastercard</option>
+                        <option value="Amex">American Express</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Card Number</label>
+                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                </div>
+                <div class="form-group">
+                    <label>Card Holder Name</label>
+                    <input type="text" id="cardHolder" placeholder="JOHN DOE">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Expiry Date</label>
+                        <input type="text" id="expiryDate" placeholder="MM/YY" maxlength="5">
+                    </div>
+                    <div class="form-group">
+                        <label>CVV</label>
+                        <input type="text" id="cvv" placeholder="123" maxlength="4">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn">Cancel</button>
+                <button class="save-card-btn">Add Card</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const cardNumberInput = modal.querySelector('#cardNumber');
+    cardNumberInput.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/\s/g, '');
+        let formatted = value.match(/.{1,4}/g)?.join(' ') || value;
+        e.target.value = formatted;
+    });
+
+    const expiryInput = modal.querySelector('#expiryDate');
+    expiryInput.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length >= 2) {
+            value = value.slice(0, 2) + '/' + value.slice(2, 4);
+        }
+        e.target.value = value;
+    });
+
+    const cvvInput = modal.querySelector('#cvv');
+    cvvInput.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/\D/g, '');
+    });
+
+    modal.querySelector('.close-modal').addEventListener('click', () => modal.remove());
+    modal.querySelector('.cancel-btn').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+
+    modal.querySelector('.save-card-btn').addEventListener('click', () => saveNewCard(modal));
+}
+
+async function saveNewCard(modal) {
+    const cardType = modal.querySelector('#cardType').value;
+    const cardNumber = modal.querySelector('#cardNumber').value.replace(/\s/g, '');
+    const cardHolder = modal.querySelector('#cardHolder').value.trim();
+    const expiryDate = modal.querySelector('#expiryDate').value;
+    const cvv = modal.querySelector('#cvv').value;
+
+    if (!cardNumber || cardNumber.length < 13) {
+        alert('Please enter a valid card number');
+        return;
+    }
+
+    if (!cardHolder) {
+        alert('Please enter card holder name');
+        return;
+    }
+
+    if (!expiryDate || !expiryDate.match(/^\d{2}\/\d{2}$/)) {
+        alert('Please enter expiry date in MM/YY format');
+        return;
+    }
+
+    if (!cvv || cvv.length < 3) {
+        alert('Please enter a valid CVV');
+        return;
+    }
+
+    try {
+        const lastFourDigits = cardNumber.slice(-4);
+
+        const paymentMethod = {
+            type: cardType,
+            lastFourDigits: lastFourDigits,
+            cardHolder: cardHolder,
+            expiryDate: expiryDate
+        };
+
+        await addPaymentMethod(currentUserId, paymentMethod);
+
+        // Reload user to get updated payment methods
+        currentUser = await getUser(currentUserId);
+
+        loadPaymentMethods();
+        modal.remove();
+        showNotification('Payment method added');
+
+    } catch (error) {
+        console.error('Error saving card:', error);
+        alert('Failed to add payment method. Please try again.');
+    }
+}
+
+async function deleteCard(cardId) {
+    if (!confirm('Are you sure you want to remove this payment method?')) {
+        return;
+    }
+
+    try {
+        await removePaymentMethod(currentUserId, cardId);
+
+        // Reload user to get updated payment methods
+        currentUser = await getUser(currentUserId);
+
+        loadPaymentMethods();
+        showNotification('Payment method removed');
+
+    } catch (error) {
+        console.error('Error deleting card:', error);
+        alert('Failed to remove payment method. Please try again.');
+    }
+}
+
+function showNotification(message) {
+    // notification
+    const notification = document.createElement('div');
+    notification.className = 'notification success';
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
+}

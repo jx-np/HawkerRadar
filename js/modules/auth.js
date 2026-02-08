@@ -1,12 +1,6 @@
-import { 
-    registerUserWithEmail, 
-    loginWithEmail, 
-    logout as firebaseLogout,
-    getUser,
-    updateUser,
-    onAuthChanged
-} from "/js/firebase/wrapper.js";
-import { log, ValidateEmail, internalError } from "/js/utils/helpers.js";
+import { db, ref, set, get, query, equalTo, orderByChild, update } from "../firebase/realtimedb.js";
+import { hashPassword, verifyPassword } from "../utils/passwordHash.js";
+import { log, ValidateEmail, generateId, getCurrentTimestamp, internalError } from "../utils/helpers.js";
 
 // session localstorage
 const SESSION_KEY = 'session';
@@ -15,151 +9,185 @@ const CURRENT_USER_KEY = 'currentUser';
 // enums
 export const USER_ROLES = {
     CUSTOMER: 'customer',
-    STALL_OWNER: 'vendor',
+    STALL_OWNER: 'stallOwner',
     OPERATOR: 'operator'
 };
 
-let cachedUser = null;
+/*
+================================
+    Register User
+================================
+*/
 
-// auth listener
-onAuthChanged((firebaseUser) => {
-    if (firebaseUser) {
-        // when log in get info from database
-        getUser(firebaseUser.uid).then((userData) => {
-            if (userData) {
-                cachedUser = userData;
-                localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(userData));
-            }
-        });
-    } else {
-        // logout
-        cachedUser = null;
-        localStorage.removeItem(CURRENT_USER_KEY);
-        localStorage.removeItem(SESSION_KEY);
-    }
-});
+/* if you dont know how to use this its just create something like this
 
-/**
- * Register a new user with Firebase Auth and database profile
- * @param {Object} userData - {email, password, name, role, contactNo}
- * @example
- * const result = await registerUser({
- *     email: 'john@example.com',
- *     password: 'password123',
- *     name: 'John Doe',
- *     role: 'customer',
- *     contactNo: '+6581234567'
- * });
- */
+userData = {email, password, fullName, role, phone}
+
+registerUser(userData)
+
+*/
 export async function registerUser(userData) {
     try {
-        const { email, password, name, fullName, role = 'customer', contactNo, phone } = userData;
-        const displayName = name || fullName;
-        const phoneNumber = contactNo || phone;
+        const { email, password, fullName, role, phone = '' } = userData;
 
-        if (!email || !password || !displayName) {
-            return internalError(null, "Missing fields. [email, password, name]");
+        if (!email || !password || !fullName || !role) {
+            return internalError(null, "Missing fields. [email,password,fullName,Role]");
         }
 
         if (!ValidateEmail(email)) {
             return internalError(null, "Invalid email");
         }
 
-        // if stallowner must set as vendor everything else will be a normal customer for now.
-        const roles = {};
-        if (role === 'vendor') {
-            roles.vendor = true;
-        } else {
-            roles.customer = true;
+        if (!Object.values(USER_ROLES).includes(role)) {
+            return internalError(null, "Invalid user role");
         }
 
-        const user = await registerUserWithEmail({
-            email,
-            password,
-            name: displayName,
-            contactNo: phoneNumber,
-            roles
-        });
-
-        log('AUTH', `new register: ${email}`);
+        // chk if exists already
+        const usersRef = ref(db, 'users');
+        const snapshot = await get(usersRef);
         
-        cachedUser = user;
-        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+        if (snapshot.exists()) {
+            const users = snapshot.val();
+            for (const userId in users) {
+                if (users[userId].email === email) {
+                    return internalError(null, "Email already exists");
+                }
+            }
+        }
 
-        return { id: user.id, email: user.email, name: user.name, roles: user.roles };
+        const userId = generateId();
+        const hashedPassword = await hashPassword(password);
+
+        const newUser = {
+            userId,
+            email,
+            passwordHash: hashedPassword,
+            fullName,
+            role,
+            phone,
+            createdAt: getCurrentTimestamp(),
+            updatedAt: getCurrentTimestamp(),
+            isActive: true
+        };
+
+        await set(ref(db, `users/${userId}`), newUser);
+
+        log('AUTH', `new register: ${email} (${role})`);
+        
+        return { userId, email, fullName, role };
 
     } catch (error) {
         log('AUTH', `failed: ${error.message}`, error);
-        return internalError(error, `Failed to register: ${error.message}`);
+        return internalError(error, `Failed to register`)
     }
 }
 
-/**
- * Login user with email and password
- * @param {string} email 
- * @param {string} password 
- * @returns {Object} User object or error
- */
+/* ================================
+    Login User
+
+    return {
+        userId
+        email
+        fullName
+        role
+        sessionToken
+    };
+
+Returns internalError if failed
+
+================================ */
 export async function loginUser(email, password) {
     try {
         if (!email || !password) {
             return internalError(null, "Email and password are required");
         }
 
-        // Login via Firebase Auth
-        const authUser = await loginWithEmail(email, password);
+        // find by email
+        const usersRef = ref(db, 'users');
+        const snapshot = await get(usersRef);
         
-        if (!authUser) {
+        if (!snapshot.exists()) {
             return internalError(null, "Invalid email or password");
         }
 
-        // Fetch user profile from database
-        const user = await getUser(authUser.uid);
+        let foundUser = null;
+        let foundUserId = null;
 
-        if (!user) {
-            return internalError(null, "User profile not found");
+        console.log("??")
+
+        snapshot.forEach((childSnap) => {
+            const user = childSnap.val();
+            if (user.email === email) {
+                foundUser = user;
+                foundUserId = childSnap.key;
+            }
+        });
+
+        if (!foundUser) {
+            return internalError(null, "Invalid email or password");
         }
 
-        // Store in localStorage for quick access
-        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-        
-        // Generate and store session token
+        if (!foundUser.isActive) {
+            return internalError(null, "Account is disabled");
+        }
+
+        // verify password
+        const isPasswordValid = await verifyPassword(password, foundUser.passwordHash, foundUserId);
+
+        if (!isPasswordValid) {
+            return internalError(null, "Invalid email or password");
+        }
+
+        // generate session
         const sessionToken = generateSessionToken();
         const sessionData = {
-            userId: authUser.uid,
-            email: authUser.email,
+            userId: foundUserId,
+            email: foundUser.email,
+            fullName: foundUser.fullName,
+            role: foundUser.role,
             sessionToken,
-            loginTime: new Date().toISOString(),
-            expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+            loginTime: getCurrentTimestamp(),
+            expiresAt: getCurrentTimestamp() + (24 * 60 * 60 * 1000)
         };
-        localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
 
-        cachedUser = user;
+        // store in localStorage
+        localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify({
+            userId: foundUserId,
+            email: foundUser.email,
+            fullName: foundUser.fullName,
+            role: foundUser.role,
+            phone: foundUser.phone
+        }));
+
+        // update lastlog in realtimedb
+        await update(ref(db, `users/${foundUserId}`), {
+            lastLogin: getCurrentTimestamp(),
+            updatedAt: getCurrentTimestamp()
+        });
 
         log('AUTH', `logged in: ${email}`);
 
         return {
-            id: authUser.uid,
-            email: authUser.email,
-            name: user.name,
-            roles: user.roles,
+            userId: foundUserId,
+            email: foundUser.email,
+            fullName: foundUser.fullName,
+            role: foundUser.role,
             sessionToken
         };
 
     } catch (error) {
-        log('AUTH', `login error: ${error.message}`, error);
-        return internalError(error, `Login failed: ${error.message}`);
+        log('AUTH', `error: ${error.message}`, error);
+        return internalError(error, error.message);
     }
 }
 
-export async function logoutUser() {
+export function logoutUser() {
     try {
         const currentUser = getCurrentUser();
         
-        await firebaseLogout();
         localStorage.removeItem(SESSION_KEY);
         localStorage.removeItem(CURRENT_USER_KEY);
-        cachedUser = null;
         
         if (currentUser) {
             log('AUTH', `User logged out: ${currentUser.email}`);
@@ -173,41 +201,24 @@ export async function logoutUser() {
     }
 }
 
-/**
- * Get the currently logged in user
- * @returns {Object|null} User object or null if not authenticated
- */
+// use this to get currently logged in user, with session token included
 export function getCurrentUser() {
     try {
-        // Try cache first
-        if (cachedUser) {
-            return cachedUser;
+        const sessionData = localStorage.getItem(SESSION_KEY);
+        if (!sessionData) return null;
+
+        const session = JSON.parse(sessionData);
+
+        // validate session
+        if (session.expiresAt < getCurrentTimestamp()) {
+            logoutUser();
+            return null;
         }
 
-        // Try localStorage
-        const stored = localStorage.getItem(CURRENT_USER_KEY);
-        if (stored) {
-            const user = JSON.parse(stored);
-            
-            // Validate session
-            const sessionData = localStorage.getItem(SESSION_KEY);
-            if (sessionData) {
-                const session = JSON.parse(sessionData);
-                const expiresAt = new Date(session.expiresAt).getTime();
-                if (expiresAt < Date.now()) {
-                    logoutUser();
-                    return null;
-                }
-            }
-
-            cachedUser = user;
-            return user;
-        }
-
-        return null;
+        return JSON.parse(localStorage.getItem(CURRENT_USER_KEY));
 
     } catch (error) {
-        log('AUTH', `session retrieval fail: ${error.message}`);
+        log('AUTH', `session retrival fail: ${error.message}`);
         return null;
     }
 }
@@ -216,15 +227,11 @@ export function isAuthenticated() {
     return getCurrentUser() !== null;
 }
 
-/**
- * Check if current user has a specific role
- * @param {string} roleCheck - Role to check for
- * @returns {boolean}
- */
+// rolecheck is like the role to check if this guy has it
+// like hasRole('owner');
 export function hasRole(roleCheck) {
     const user = getCurrentUser();
-    if (!user || !user.roles) return false;
-    return user.roles[roleCheck] === true;
+    return user && user.role === roleCheck;
 }
 
 export function getSessionToken() {
@@ -243,8 +250,7 @@ export function isSessionValid() {
         if (!sessionData) return false;
 
         const session = JSON.parse(sessionData);
-        const expiresAt = new Date(session.expiresAt).getTime();
-        return expiresAt > Date.now();
+        return session.expiresAt > getCurrentTimestamp();
 
     } catch (error) {
         return false;
@@ -254,21 +260,16 @@ export function isSessionValid() {
 function generateSessionToken() {
     return Math.random().toString(36).substring(2, 15) + 
             Math.random().toString(36).substring(2, 15) + 
-            Date.now().toString(36);
+            getCurrentTimestamp().toString(36);
 }
 
-/**
- * Update user profile
- * @param {string} userId 
- * @param {Object} updates - Allowed: fullName, name, phone, contactNo, address
- */
 export async function updateProfile(userId, updates) {
     try {
         if (!userId) {
             return internalError(null, "User ID is required");
         }
 
-        const allowedUpdates = ['fullName', 'name', 'phone', 'contactNo', 'address'];
+        const allowedUpdates = ['fullName', 'phone', 'address'];
         const filteredUpdates = {};
 
         for (const key of allowedUpdates) {
@@ -281,17 +282,12 @@ export async function updateProfile(userId, updates) {
             return internalError(null, "No valid updates provided");
         }
 
-        const updated = await updateUser(userId, filteredUpdates);
+        filteredUpdates.updatedAt = getCurrentTimestamp();
+
+        await update(ref(db, `users/${userId}`), filteredUpdates);
 
         log('AUTH', `user updated: ${userId}`);
-        
-        // Update cache
-        if (cachedUser && cachedUser.id === userId) {
-            cachedUser = { ...cachedUser, ...filteredUpdates };
-            localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(cachedUser));
-        }
-
-        return updated;
+        return true;
 
     } catch (error) {
         log('AUTH', `user update error: ${error.message}`);
@@ -299,21 +295,19 @@ export async function updateProfile(userId, updates) {
     }
 }
 
-/**
- * Get user by ID
- * @param {string} userId 
- */
 export async function getUserById(userId) {
     try {
         if (!userId) {
             return internalError(null, "User ID is required");
         }
 
-        const user = await getUser(userId);
+        const snapshot = await get(ref(db, `users/${userId}`));
 
-        if (!user) {
+        if (!snapshot.exists()) {
             return internalError(null, "User not found");
         }
+
+        const user = snapshot.val();
 
         return user;
 
@@ -323,26 +317,18 @@ export async function getUserById(userId) {
     }
 }
 
-/**
- * Disable user account
- * @param {string} userId 
- */
 export async function disableAccount(userId) {
     try {
         if (!userId) {
             return internalError(null, "User ID is required");
         }
 
-        await updateUser(userId, {
-            roles: { customer: false, vendor: false },
+        await update(ref(db, `users/${userId}`), {
             isActive: false,
-            deactivatedAt: new Date().toISOString()
+            deactivatedAt: getCurrentTimestamp()
         });
 
-        if (cachedUser && cachedUser.id === userId) {
-            await logoutUser();
-        }
-
+        logoutUser();
         log('AUTH', `Account disabled: ${userId}`);
 
         return true;
@@ -351,4 +337,8 @@ export async function disableAccount(userId) {
         log('AUTH', `disable account failed error: ${error.message}`);
         return internalError(null, error.message);
     }
+}
+
+export async function testfunction123(params) {
+    return params;
 }
