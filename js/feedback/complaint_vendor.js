@@ -1,6 +1,15 @@
 import { listStallComplaints, getUser, getStall, updateComplaint } from "/js/firebase/wrapper.js";
 // [!] Import auth function. Ensure this path points to where you saved your auth.js file
-import { getCurrentUser } from "/js/modules/auth.js"; 
+import { getCurrentUser } from "/js/modules/auth.js";
+
+/* ------------------------------------------------------------------
+   Helpers
+------------------------------------------------------------------- */
+
+function maskName(name) {
+    if (!name || name.length <= 2) return name;
+    return name[0] + '*'.repeat(name.length - 2) + name[name.length - 1];
+}
 
 // --- 1. Helper: Get Stall ID from URL or Session ---
 function getStallId() {
@@ -96,12 +105,14 @@ async function initPage() {
         if (rawComplaints.length > 0) {
             const processingPromises = rawComplaints.map(async (item) => {
                 let userName = "Unknown User";
+                let profilePhoto = null;
                 
                 if (item.userId) {
                     try {
                         const user = await getUser(item.userId);
                         if (user) {
                             userName = user.name || user.email || "Anonymous";
+                            profilePhoto = user.profilePhoto || null;
                         }
                     } catch (err) {
                         console.error("Failed to fetch user", item.userId);
@@ -110,7 +121,8 @@ async function initPage() {
 
                 return {
                     ...item,
-                    customerName: userName,
+                    customerName: maskName(userName),
+                    profilePhoto,
                     category: item.category || "General",
                     comments: item.comments || "No details provided.",
                     date: item.dateCreated,
@@ -129,6 +141,62 @@ async function initPage() {
     }
 }
 
+// --- Build Complaint Card ---
+function buildComplaintCard(complaint) {
+    const dateObj = new Date(complaint.date);
+    const dateStr = isNaN(dateObj) ? "Unknown Date" : dateObj.toLocaleDateString();
+
+    const isClosed = complaint.status === 'closed';
+    const btnClass = isClosed ? 'btn-mark-read closed' : 'btn-mark-read';
+    const btnText = isClosed ? 'Read' : 'Mark as Read';
+
+    const avatar = complaint.profilePhoto
+        ? `<img src="${complaint.profilePhoto}" alt="avatar" class="profile-photo" />`
+        : `<div class="avatar-circle"></div>`;
+
+    const card = document.createElement('article');
+    card.className = 'complaint-card';
+
+    card.innerHTML = `
+        <div class="card-header">
+            <div class="avatar">${avatar}</div>
+            <span class="user-name">${complaint.customerName}</span>
+            <span class="issue-type">
+                <span class="issue-label">Issue Type:</span> ${complaint.category}
+            </span>
+            <span class="date">${dateStr}</span>
+        </div>
+        <div class="card-body">
+            <ul>
+                <li>${complaint.description}</li>
+            </ul>
+            <div class="card-actions">
+                <button class="${btnClass}" data-id="${complaint.id}">${btnText}</button>
+            </div>
+        </div>
+    `;
+
+    // Attach Click Listener
+    const btn = card.querySelector('.btn-mark-read');
+    btn.addEventListener('click', async () => {
+        if (btn.classList.contains('closed')) return;
+
+        try {
+            await updateComplaint(complaint.id, { status: 'closed' });
+            
+            btn.textContent = "Read";
+            btn.classList.add('closed');
+            complaint.status = 'closed';
+            
+        } catch (error) {
+            console.error("Failed to mark as read:", error);
+            alert("Error updating status.");
+        }
+    });
+
+    return card;
+}
+
 // --- Render Function ---
 function renderComplaints(data) {
     complaintsList.innerHTML = '';
@@ -141,57 +209,9 @@ function renderComplaints(data) {
     // Sort by Date (Newest first)
     const sortedData = [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    sortedData.forEach(complaint => {
-        const dateObj = new Date(complaint.date);
-        const dateStr = isNaN(dateObj) ? "Unknown Date" : dateObj.toLocaleDateString();
-
-        // Determine State (Green = Active/Unread, Red = Read/Closed)
-        const isClosed = complaint.status === 'closed';
-        const btnClass = isClosed ? 'btn-mark-read closed' : 'btn-mark-read';
-        const btnText = isClosed ? 'Read' : 'Mark as Read';
-
-        const card = document.createElement('article');
-        card.classList.add('complaint-card');
-
-        card.innerHTML = `
-            <div class="card-header">
-                <div class="avatar"></div>
-                <span class="user-name">${complaint.customerName}</span>
-                <span class="issue-type">
-                    <span class="issue-label">Issue Type:</span> ${complaint.category}
-                </span>
-                <span class="date">${dateStr}</span>
-            </div>
-            <div class="card-body">
-                <ul>
-                    <li>${complaint.description}</li>
-                </ul>
-                <div class="card-actions">
-                    <button class="${btnClass}" data-id="${complaint.id}">${btnText}</button>
-                </div>
-            </div>
-        `;
-
-        // Attach Click Listener
-        const btn = card.querySelector('.btn-mark-read');
-        btn.addEventListener('click', async () => {
-            if (btn.classList.contains('closed')) return;
-
-            try {
-                await updateComplaint(complaint.id, { status: 'closed' });
-                
-                btn.textContent = "Read";
-                btn.classList.add('closed');
-                complaint.status = 'closed';
-                
-            } catch (error) {
-                console.error("Failed to mark as read:", error);
-                alert("Error updating status.");
-            }
-        });
-
-        complaintsList.appendChild(card);
-    });
+    for (const complaint of sortedData) {
+        complaintsList.appendChild(buildComplaintCard(complaint));
+    }
 }
 
 // --- Filter Logic ---
