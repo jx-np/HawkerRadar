@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>About – Hawker Centre</title>
+    <meta name="author" content="Marc Edward Domingo Rasco">
+    <title>About</title>
     <link rel="icon" href="/img/TabLogo.png">
+
     <!-- CSS -->
     <link rel="stylesheet" href="/css/Essential/navbar.css">
     <link rel="stylesheet" href="/css/Essential/about.css">
     <link rel="stylesheet" href="/css/Essential/footer.css">
 </head>
-
 <body>
-<div class="container">
 
     <!-- Header -->
     <header class="site-header">
@@ -28,41 +27,99 @@
         </nav>
 
         <div class="nav-right">
-            <a href="../../html/auth/login.html">Login / Register</a>
+            <a href="/html/auth/login.html">Login / Register</a>
         </div>
     </header>
     <!-- End Header -->
 
-    <!-- About Section -->
-    <section class="about">
-        <h1>What is a Hawker Centre?</h1>
+    <!-- HERO / INTRO -->
+        <section class="intro">
+            <h1 id="greeting">HELLO!</h1>
+            <p class="subtitle">Welcome to HawkerRadar!</p>
+        </section>
 
-        <p>
-            Hawker centres are an essential part of Singapore’s culture and daily life.
-            They are open-air food complexes that house many individual food stalls,
-            each specialising in different cuisines such as Chinese, Malay, Indian,
-            and other local favourites.
-        </p>
+    <!-- Main content -->
+    <main class="container">
+        <!-- WHAT ARE WE -->
+        <section class="about about-left">
+            <div class="image-box">
+                <img src="../../img/HawkRadar Logo V2 W Red BG.png" alt="HawkerRadar overview">
+            </div>
 
-        <p>
-            These centres provide affordable, high-quality meals to the public and
-            serve as important social spaces where people from all walks of life gather
-            to eat, work, and connect.
-        </p>
+            <div class="text-box">
+                <h2>What are we?</h2>
+                <p>
+                      HawkerRadar is your go-to platform for discovering the best hawker food across Singapore. 
+                      From west to east, north to central, we’ve got every corner covered. 
+                      Built by food lovers for food lovers.
+                </p>
+                <p>
+                    We help you find trusted stalls, crowd favourites, and hidden gems,
+                    all in one simple and easy-to-use place.
+                </p>
+            </div>
+        </section>
 
-        <h2>About This Platform</h2>
+        <!-- OUR GOAL -->
+        <section class="about about-right">
+            <div class="text-box">
+                <h2>Our goal</h2>
+                <p>
+                    Our mission is to make choosing great hawker food effortless.
+                    Whether you’re nearby, exploring a new neighbourhood, or just craving
+                    something specific, HawkerRadar points you in the right direction.
+                </p>
+                <p>
+                    We want to support local hawkers while giving users reliable,
+                    community-driven recommendations they can trust.
+                </p>
+            </div>
 
-        <p>
-            This Hawker Centre Management System is designed to make discovering hawker
-            centres and stalls easier. Users can explore available centres, browse
-            stalls, and manage their orders through a single, organised platform.
-        </p>
+            <div class="image-box">
+                <img src="../../img/about/Our goal.jpg" alt="Our mission illustration">
+            </div>
+        </section>
 
-        <p>
-            Our goal is to modernise the hawker experience while preserving the
-            tradition and accessibility that make hawker centres unique.
-        </p>
-    </section>
+        <!-- QUALITY ASSURANCE -->
+        <section class="quality">
+            <h2>Don’t fret — we ensure the highest standards</h2>
+
+            <div class="quality-grid">
+                <div class="quality-item">
+                    <img src="../../img/about/Verified Stalls.jpg" alt="Verified stalls">
+                    <p>
+                        Carefully curated stalls with verified information so you always
+                        know what you’re getting.
+                    </p>
+                </div>
+
+                <div class="quality-item">
+                    <img src="../../img/about/Community reviews.jpg" alt="Community reviews">
+                    <p>
+                        Honest reviews given by real people, we say 'NO' to ai-generated biasness.
+                    </p>
+                </div>
+
+                <div class="quality-item">
+                    <img src="../../img/about/Consistent Quality.jpg" alt="Consistent quality">
+                    <p>
+                        Consistent quality checks to ensure stalls meet expectations over
+                        time.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLOSING CTA -->
+        <section class="cta">
+            <p class="cta-text">
+                Don’t stress lah, makan shiok, HawkerRadar got you.
+            </p>
+        </section>
+
+        <button id="backToTop" style="display:none;">Back To Top</button>
+
+    </main>
 
     <!-- Footer -->
     <footer class="site-footer">
@@ -75,6 +132,8 @@
         </a>
     </footer>
 
-</div>
+    <script type="module" src="/js/utils/navbar.js"></script>
+    <script type="module" src="/js/utils/footer.js"></script>
+    <script type="module" src="/js/about.js"></script>
 </body>
 </html>
