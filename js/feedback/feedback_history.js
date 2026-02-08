@@ -1,6 +1,6 @@
-import { getCurrentUser } from '/js/modules/auth.js';
-import { getAllFeedback, getAllFoodStalls } from '/js/firebase/wrapper.js';
-import { formatDate } from '/js/utils/helpers.js';
+import { getCurrentUser } from '../modules/auth.js';
+import { getAllFeedback, getAllFoodStalls } from '../firebase/wrapper.js';
+import { formatDate } from '../utils/helpers.js';
 
 /*
  * feedback_history.js
@@ -38,15 +38,15 @@ async function loadFeedbackHistory() {
     }
 
     try {
-        const userFeedback = await listUserFeedback(currentUser.id);
+        const allFeedback = await getAllFeedback();
 
-        if (!userFeedback) {
+        if (!allFeedback) {
             historyList.innerHTML = `<div class="no-feedback">No feedback found.</div>`;
             return;
         }
 
-        // turn into array
-        const feedbackArray = Object.values(userFeedback);
+        // turn into array and filter by current user
+        const feedbackArray = Object.values(allFeedback).filter(fb => fb.CustomerID === currentUser.userId);
 
         if (feedbackArray.length === 0) {
             historyList.innerHTML = `<div class="no-feedback">You have not submitted any feedback yet.</div>`;

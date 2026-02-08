@@ -1,51 +1,37 @@
-/* /css/stall/dish.css - themed like stall page */
+/* ===========================
+   dish.css
+   Dish detail page (based on your Dish wireframe)
+   =========================== */
 
 :root{
-  --page-max: 1000px;
-  --pad: 40px;
+  --page-max: 860px;
+  --pad: 22px;
 
-  --accent:#FF3838;
-  --accent-soft:#FFD6D6;
-  --accent-border:#FFB2B2;
+  /* set by JS */
+  --site-header-h: 0px;
 
-  --btn-grad: linear-gradient(to bottom, #FFE08F, #F9E7B2);
-  --btn-border:#FFF1CB;
+  --panel: #ededed;
+  --img: #d7d7d7;
+  --text: #111;
+  --muted: rgba(0,0,0,0.65);
+  --shadow: 0 1px 0 rgba(0,0,0,0.12);
 
-  --text:#111;
-  --muted:#666;
-  --shadow: 0 4px 12px rgba(0,0,0,0.12);
+  --banner-h: 240px;
+  --radius: 10px;
 
-  --banner-h: 280px;
-  --radius: 12px;
+  --divider: 1px solid rgba(0,0,0,0.18);
 
   --footer-safe: 56px;
   --bottom-h: 64px;
-
-  --site-header-h: 90px;
 }
 
 *{ box-sizing: border-box; }
 
-html, body{ height:100%; }
-
 body{
   margin: 0;
-  font-family: 'Satoshi', sans-serif;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   color: var(--text);
-  background: #fff;
-  padding-top: var(--site-header-h, 90px);
-  display:flex;
-  flex-direction:column;
-}
-
-/* fallback if main_home.css not loaded */
-.container{
-  width: min(100%, 1400px);
-  margin: 0 auto;
-  box-sizing: border-box;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  padding-top: var(--site-header-h);
 }
 
 .material-symbols-outlined{
@@ -54,7 +40,12 @@ body{
   font-style: normal;
   display: inline-block;
   line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
   white-space: nowrap;
+  direction: ltr;
+  font-feature-settings: "liga";
+  -webkit-font-feature-settings: "liga";
   -webkit-font-smoothing: antialiased;
   font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 32;
   font-size: 32px;
@@ -62,51 +53,38 @@ body{
 [aria-pressed="true"] .material-symbols-outlined,
 .is-favorited .material-symbols-outlined{
   font-variation-settings: 'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 32;
-  color: var(--accent);
 }
 
 .dish-page{
-  width: 100%;
   max-width: var(--page-max);
   margin: 0 auto;
   padding: var(--pad);
   padding-bottom: calc(var(--footer-safe) + var(--bottom-h) + 26px);
-  flex: 1;
 }
 
 /* HERO */
-.dish-hero__banner-shell{
-  position: relative;
-}
+.dish-hero__banner-shell{ position: relative; overflow: visible; }
 
 .page-back-btn{
   position: absolute;
-  top: 14px;
-  left: 14px;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
+  top: 0;
+  left: 0;
+  transform: translate(-140%, 0);
+  background: transparent;
   border: none;
-  background: rgba(0,0,0,0.55);
+  padding: 0;
   cursor: pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
   z-index: 10;
 }
-.page-back-btn .material-symbols-outlined{
-  font-size: 28px;
-  color: #fff;
-}
-.page-back-btn:hover{ opacity: 0.85; }
+.page-back-btn .material-symbols-outlined{ font-size: 34px; }
+.page-back-btn:hover{ opacity: 0.75; }
 
 .dish-hero__banner-wrap{
   position: relative;
   border-radius: var(--radius);
   overflow: hidden;
-  background: #ddd;
+  background: var(--img);
   box-shadow: var(--shadow);
-  border: 1px solid rgba(255,56,56,0.18);
 }
 
 .dish-hero__banner{
@@ -114,6 +92,7 @@ body{
   height: var(--banner-h);
   object-fit: cover;
   display: block;
+  background: var(--img);
 }
 
 .dish-hero__fav-btn{
@@ -122,62 +101,54 @@ body{
   right: 14px;
   width: 54px;
   height: 54px;
-  border-radius: 50%;
-  border: 1px solid rgba(255,56,56,0.25);
-  background: rgba(255,255,255,0.75);
+  border: none;
+  background: transparent;
   cursor: pointer;
   display: grid;
   place-items: center;
 }
-.dish-hero__fav-btn:hover{ background:#fff; }
 
 .dish-hero__name{
   position: absolute;
   left: 16px;
   bottom: 16px;
   margin: 0;
-  font-size: 34px;
-  font-weight: 700;
-  color: var(--accent);
-  background: rgba(255,255,255,0.80);
-  padding: 10px 12px;
-  border-radius: 12px;
+  font-size: 32px;
+  font-weight: 900;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+  color: #111;
+  background: rgba(255,255,255,0.65);
+  padding: 8px 12px;
+  border-radius: 10px;
 }
 
-/* CONTENT CARD */
+/* SECTION */
 .dish-section{
-  margin-top: 24px;
-  background: #fff;
-  border: 1px solid var(--accent-border);
-  border-radius: 12px;
-  padding: 18px;
+  margin-top: 16px;
+  border-top: var(--divider);
+  padding-top: 14px;
 }
 
 .dish-section__title{
-  margin: 0 0 12px;
-  border-bottom: 2px solid var(--accent);
-  padding-bottom: 10px;
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: .4px;
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 900;
 }
 
 .dish-desc{
   margin: 0 0 14px;
   color: var(--muted);
-  line-height: 1.45;
+  line-height: 1.4;
 }
 
 .dish-price-row{
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  padding: 12px 0;
-  border-top: 1px solid rgba(255,56,56,0.18);
+  padding: 10px 0;
+  border-top: var(--divider);
 }
-.dish-price-label{ font-weight: 700; }
+.dish-price-label{ font-weight: 800; }
 .dish-price{ font-size: 18px; }
 
 .dish-qty-row{
@@ -186,9 +157,10 @@ body{
   gap: 12px;
   align-items: center;
   padding: 14px 0;
-  border-top: 1px solid rgba(255,56,56,0.18);
+  border-top: var(--divider);
 }
-.dish-qty-label{ font-weight: 700; }
+
+.dish-qty-label{ font-weight: 800; }
 
 .dish-qty-controls{
   justify-self: end;
@@ -201,15 +173,12 @@ body{
   width: 40px;
   height: 40px;
   border-radius: 999px;
-  border: 2px solid rgba(255,56,56,0.65);
-  background: #fff;
+  border: 2px solid rgba(0,0,0,0.55);
+  background: transparent;
   cursor: pointer;
   font-size: 22px;
   font-weight: 900;
   line-height: 1;
-}
-.dish-qty-btn:hover{
-  background: var(--accent-soft);
 }
 
 .dish-qty-num{
@@ -228,15 +197,11 @@ body{
 .dish-view-cart{
   display: inline-block;
   margin-top: 10px;
-  padding: 10px 16px;
-  border-radius: 999px;
-  border: 1.5px solid var(--btn-border);
-  background: var(--btn-grad);
-  font-weight: 800;
-  color: #111;
+  color: var(--text);
+  font-weight: 900;
   text-decoration: none;
 }
-.dish-view-cart:hover{ background:#FFF1CB; }
+.dish-view-cart:hover{ opacity: 0.75; }
 
 /* BOTTOM BAR */
 .dish-bottom{
@@ -252,48 +217,19 @@ body{
   width: 100%;
   height: var(--bottom-h);
   border-radius: 999px;
-  border: 1.5px solid var(--btn-border);
-  background: var(--btn-grad);
+  border: none;
+  background: #e6e6e6;
   font-weight: 900;
   font-size: 16px;
   cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  transition: transform .2s, box-shadow .2s, opacity .2s;
 }
-.dish-add-btn:hover:not(:disabled){
-  background:#FFF1CB;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-}
+
 .dish-add-btn:disabled{
   opacity: 0.6;
   cursor: not-allowed;
-  box-shadow: none;
 }
 
 @media (max-width: 520px){
-  :root{ --pad: 16px; --banner-h: 240px; }
+  :root{ --pad: 16px; --banner-h: 220px; }
   .dish-hero__name{ font-size: 28px; }
-}
-
-/* ==========================
-   FONTS
-========================== */
-@font-face {
-  font-family: 'Satoshi';
-  src: url('../../fonts/Satoshi-Regular.otf') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Satoshi';
-  src: url('../../fonts/Satoshi-Bold.otf') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Satoshi';
-  src: url('../../fonts/Satoshi-BlackItalic.otf') format('woff2');
-  font-weight: 900;
-  font-style: italic;
 }

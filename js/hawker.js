@@ -1,19 +1,5 @@
 // /js/hawker.js
 import { listHawkerCentres, listStalls } from "/js/firebase/wrapper.js";
-// ---------- NAV RESET (prevents "back" loops between pages) ----------
-(function resetNavForHome() {
-  // Home is the start of the flow; clear stale return targets from previous sessions.
-  try {
-    sessionStorage.removeItem("stallList:returnTo");
-    sessionStorage.removeItem("dish:returnTo");
-    sessionStorage.removeItem("cart:returnTo");
-    sessionStorage.removeItem("stallMenu:url");
-    sessionStorage.removeItem("lastStallId");
-    sessionStorage.removeItem("lastHcId");
-  } catch {
-    // ignore
-  }
-})();
 
 // Grab DOM elements used across the page
 const regionSelect = document.getElementById("region");
@@ -57,6 +43,8 @@ function renderHawkerCentres(centres) {
 async function init() {
   const centres = await listHawkerCentres();
   if (!centres) return;
+
+  console.log(centres);
 
   renderHawkerCentres(centres);
 
@@ -193,7 +181,5 @@ featuredGrid?.addEventListener("click", async (e) => {
     window.location.origin
   );
   url.searchParams.set("stall", stallId);
-  // ensure stall_dish back arrow returns to Home when coming from Featured Stalls
-  sessionStorage.setItem("stallList:returnTo", window.location.href);
   window.location.href = url.href;
 });

@@ -1,104 +1,102 @@
-/* /css/stall/stall_dish.css - themed like stall page */
+/* ===========================
+   stall_dish.css (PAGE ONLY)
+   - Overrides standard stall.css without changing navbar/footer styles
+   - Big wireframe sizing
+   - Cart qty controls (+ / remove icon)
+   - Fixed navbar offset via --site-header-h (set by JS)
+   =========================== */
 
 :root{
-  --page-max: 1200px;
-  --pad: 40px;
+  --page-max: 820px;
+  --pad: 22px;
 
-  --accent:#FF3838;
-  --accent-soft:#FFD6D6;
-  --accent-soft-2:#FFF5F5;
-  --accent-border:#FFB2B2;
+  /* This is set by applyHeaderOffset() in JS */
+  --site-header-h: 0px;
 
-  --btn-grad: linear-gradient(to bottom, #FFE08F, #F9E7B2);
-  --btn-border:#FFF1CB;
+  /* Hero */
+  --hero-banner-h: 240px;
+  --hero-radius: 10px;
 
-  --text:#111;
-  --muted:#666;
-  --shadow: 0 4px 12px rgba(0,0,0,0.12);
+  /* Section */
+  --section-gap: 18px;
+  --divider: 1px solid rgba(0,0,0,0.18);
 
-  --hero-banner-h: 280px;
-  --hero-radius: 12px;
+  /* Colors */
+  --panel: #ededed;
+  --img: #d7d7d7;
+  --text: #111;
+  --muted: rgba(0,0,0,0.65);
 
-  --cart-h: 58px;
-  --footer-safe: 56px;
-  --cart-gap: 12px;
+  /* Favorites cards */
+  --fav-card-w: 240px;
+  --fav-card-h: 150px;
 
-  --dish-thumb-w: 160px;
-  --dish-thumb-h: 110px;
+  /* Dish rows */
+  --dish-thumb-w: 140px;
+  --dish-thumb-h: 96px;
   --heart-col: 52px;
 
-  --site-header-h: 90px;
+  /* Cart pill */
+  --cart-h: 58px;
+  --footer-safe: 56px; /* adjust if footer is fixed */
+  --cart-gap: 12px;
+
+  --shadow: 0 1px 0 rgba(0,0,0,0.12);
 }
 
-*{ box-sizing: border-box; }
-
-html, body{ height:100%; }
-
+/* Prevent hero clipping under fixed navbar */
 body{
-  margin: 0;
-  font-family: 'Satoshi', sans-serif;
-  background: #fff;
-  color: var(--text);
-  padding-top: var(--site-header-h, 90px);
-  display:flex;
-  flex-direction:column;
+  padding-top: var(--site-header-h, 0px);
 }
 
-/* fallback if main_home.css not loaded */
-.container{
-  width: min(100%, 1400px);
-  margin: 0 auto;
-  box-sizing: border-box;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background: #fff;
-}
-
+/* Page container */
 .stall-page{
-  width: 100%;
   max-width: var(--page-max);
   margin: 0 auto;
   padding: var(--pad);
   padding-bottom: calc(var(--footer-safe) + var(--cart-h) + 34px);
-  flex: 1;
 }
 
-/* Material Symbols */
+/* ===========================
+   Material Symbols
+   =========================== */
 .material-symbols-outlined{
   font-family: "Material Symbols Outlined";
   font-weight: normal;
   font-style: normal;
   display: inline-block;
   line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
   white-space: nowrap;
+  direction: ltr;
+
+  font-feature-settings: "liga";
+  -webkit-font-feature-settings: "liga";
   -webkit-font-smoothing: antialiased;
+
   font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 32;
   font-size: 32px;
 }
 [aria-pressed="true"] .material-symbols-outlined,
 .is-favorited .material-symbols-outlined{
   font-variation-settings: 'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 32;
-  color: var(--accent);
 }
 
-/* HERO */
+/* ===========================
+   HERO
+   =========================== */
 .stall-hero{
   display: grid;
-  gap: 14px;
-}
-
-.stall-hero__banner-shell{
-  position: relative;
+  gap: 10px;
 }
 
 .stall-hero__banner-wrap{
   position: relative;
   border-radius: var(--hero-radius);
   overflow: hidden;
-  background: #ddd;
+  background: var(--img);
   box-shadow: var(--shadow);
-  border: 1px solid rgba(255,56,56,0.18);
 }
 
 .stall-hero__banner{
@@ -106,28 +104,8 @@ body{
   height: var(--hero-banner-h);
   display: block;
   object-fit: cover;
+  background: var(--img);
 }
-
-.page-back-btn{
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(0,0,0,0.55);
-  cursor: pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index: 20;
-}
-.page-back-btn .material-symbols-outlined{
-  font-size: 28px;
-  color: #fff;
-}
-.page-back-btn:hover{ opacity: 0.85; }
 
 .stall-hero__fav-btn{
   position: absolute;
@@ -135,14 +113,12 @@ body{
   right: 14px;
   width: 54px;
   height: 54px;
-  border-radius: 50%;
-  border: 1px solid rgba(255,56,56,0.25);
-  background: rgba(255,255,255,0.75);
+  border: none;
+  background: transparent;
   cursor: pointer;
   display: grid;
   place-items: center;
 }
-.stall-hero__fav-btn:hover{ background:#fff; }
 
 .stall-hero__meta{
   display: grid;
@@ -153,14 +129,20 @@ body{
 
 .stall-hero__name{
   margin: 0;
-  font-size: 38px;
-  font-weight: 700;
-  color: var(--accent);
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.05;
 }
 
-.stall-hero__number,
+.stall-hero__number{
+  margin: 6px 0 0;
+  font-size: 16px;
+  color: var(--muted);
+}
+
 .stall-hero__desc{
   margin: 6px 0 0;
+  font-size: 15px;
   color: var(--muted);
 }
 
@@ -171,30 +153,64 @@ body{
   font-size: 18px;
   font-weight: 800;
   white-space: nowrap;
-  background: var(--accent-soft-2);
-  border: 1px solid rgba(255,56,56,0.20);
-  border-radius: 999px;
-  padding: 10px 14px;
 }
 
-.stall-hero__star{ font-size: 22px; }
+.stall-hero__star{
+  font-size: 22px;
+  line-height: 1;
+}
+/* ✅ shell enables button OUTSIDE the banner */
+.stall-hero__banner-shell{
+  position: relative;
+  overflow: visible;
+}
 
-/* SECTIONS */
+/* ✅ icon-only back arrow OUTSIDE banner (top-left) */
+.page-back-btn{
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  /* pushes it outside the banner */
+  transform: translate(-140%, 0);
+
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  width: auto;
+  height: auto;
+
+  cursor: pointer;
+  z-index: 20;
+}
+.page-back-btn .material-symbols-outlined{
+  font-size: 34px;
+  line-height: 1;
+}
+.page-back-btn:hover{ opacity: 0.75; }
+
+/* ===========================
+   SECTIONS
+   =========================== */
 .stall-section{
-  margin-top: 40px;
+  margin-top: var(--section-gap);
 }
 
 .stall-section__title{
-  margin: 0 0 18px;
-  border-bottom: 2px solid var(--accent);
-  padding-bottom: 10px;
-  font-size: 26px;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: .4px;
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 800;
 }
 
-/* FAVORITES */
+/* ===========================
+   FAVORITES
+   =========================== */
+.favorites{
+  border-top: var(--divider);
+  padding-top: 12px;
+}
+
 .favorites__scroller{
   display: flex;
   gap: 16px;
@@ -204,73 +220,14 @@ body{
 }
 
 .favorite-card{
-  flex: 0 0 260px;
-  height: 170px;
-  background: var(--accent-soft);
-  border: 1px solid var(--accent-border);
-  border-radius: 12px;
+  flex: 0 0 var(--fav-card-w);
+  height: var(--fav-card-h);
+  background: var(--panel);
+  border-radius: 6px;
   box-shadow: var(--shadow);
   position: relative;
   padding: 12px;
   scroll-snap-align: start;
-  transition: transform .2s, box-shadow .2s;
-}
-.favorite-card:hover{
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.14);
-}
-
-.favorite-card__img-wrap{
-  position: absolute;
-  left: 12px;
-  bottom: 12px;
-  width: 140px;
-  height: 78px;
-  background: #ddd;
-  overflow: hidden;
-  border-radius: 10px;
-}
-.favorite-card__image{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.favorite-card__name{
-  position: absolute;
-  top: 16px;
-  left: 62px;
-  right: 44px;
-  margin: 0;
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--accent);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.favorite-card__desc{
-  position: absolute;
-  top: 44px;
-  left: 62px;
-  right: 12px;
-  margin: 0;
-  font-size: 13px;
-  color: var(--muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.favorite-card__price{
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  margin: 0;
-  font-size: 16px;
-  font-weight: 900;
 }
 
 .favorite-card__fav-btn{
@@ -286,34 +243,93 @@ body{
   place-items: center;
 }
 
-/* DISH LIST */
+.favorite-card__menu-btn{
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+  color: rgba(0,0,0,0.7);
+}
+
+.favorite-card__name{
+  position: absolute;
+  top: 16px;
+  left: 62px;
+  right: 44px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.favorite-card__desc{
+  position: absolute;
+  top: 42px;
+  left: 62px;
+  right: 12px;
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.favorite-card__img-wrap{
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  width: 130px;
+  height: 68px;
+  background: var(--img);
+  overflow: hidden;
+}
+
+.favorite-card__image{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.favorite-card__price{
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+/* ===========================
+   DISH LIST + QTY CONTROLS
+   =========================== */
+.dishes{
+  border-top: var(--divider);
+  padding-top: 12px;
+}
+
 .dish-list{
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  border-top: var(--divider);
 }
 
 .dish-row{
   display: grid;
-  grid-template-columns: var(--heart-col) var(--dish-thumb-w) 1fr 210px;
+  grid-template-columns: var(--heart-col) var(--dish-thumb-w) 1fr 190px;
   gap: 16px;
+  padding: 18px 0;
+  border-bottom: var(--divider);
   align-items: start;
-
-  background: #fff;
-  border: 1px solid var(--accent-border);
-  border-radius: 12px;
-  padding: 16px;
-
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-  transition: transform .2s, box-shadow .2s, border-color .2s;
-}
-.dish-row:hover{
-  transform: translateY(-2px);
-  border-color: var(--accent);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.12);
 }
 
 .dish-row__fav-btn{
@@ -330,10 +346,10 @@ body{
 .dish-row__img-wrap{
   width: var(--dish-thumb-w);
   height: var(--dish-thumb-h);
-  background: #ddd;
+  background: var(--img);
   overflow: hidden;
-  border-radius: 12px;
 }
+
 .dish-row__thumb{
   width: 100%;
   height: 100%;
@@ -345,7 +361,6 @@ body{
   margin: 0;
   font-size: 18px;
   font-weight: 900;
-  color: var(--accent);
 }
 
 .dish-row__desc{
@@ -353,7 +368,7 @@ body{
   font-size: 14px;
   color: var(--muted);
 }
-.dish-row__desc:empty{ display:none; }
+.dish-row__desc:empty{ display: none; }
 
 .dish-row__right{
   display: grid;
@@ -379,26 +394,28 @@ body{
   width: 38px;
   height: 38px;
   border-radius: 999px;
-  border: 2px solid rgba(255,56,56,0.65);
-  background: #fff;
+  border: 2px solid rgba(0,0,0,0.55);
+  background: transparent;
   cursor: pointer;
   display: grid;
   place-items: center;
   line-height: 1;
 }
-.dish-row__minus-btn:hover,
-.dish-row__add-btn:hover{
-  background: var(--accent-soft);
+
+/* Minus uses Material remove (opsz 24 look) */
+.dish-row__minus-btn .material-symbols-outlined{
+  font-size: 22px;
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
 }
 
+/* Plus is text */
 .dish-row__add-btn{
-  background: var(--btn-grad);
-  border: 1.5px solid var(--btn-border);
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 900;
-}
-.dish-row__add-btn:hover{
-  background: #FFF1CB;
 }
 
 .dish-row__qty-num{
@@ -408,14 +425,16 @@ body{
   font-size: 16px;
 }
 
-/* Hide minus + qty until qty >= 1 */
+/* Hide minus + qty until qty >= 1 (JS toggles .has-qty on row) */
 .dish-row:not(.has-qty) .dish-row__minus-btn,
 .dish-row:not(.has-qty) .dish-row__qty-num{
   visibility: hidden;
   pointer-events: none;
 }
 
-/* CART BAR */
+/* ===========================
+   CART BAR (pill)
+   =========================== */
 .cart-bar{
   position: fixed;
   left: 50%;
@@ -423,24 +442,19 @@ body{
   bottom: calc(var(--footer-safe) + var(--cart-gap));
   width: min(var(--page-max), calc(100% - (var(--pad) * 2)));
   height: var(--cart-h);
-
-  background: var(--accent-soft);
-  border: 1px solid var(--accent-border);
+  background: #dedede;
   border-radius: 999px;
-
   display: grid;
-  grid-template-columns: 88px 1fr 140px;
+  grid-template-columns: 88px 1fr 120px;
   align-items: center;
-  padding: 0 14px;
-
+  padding: 0 18px;
   box-shadow: var(--shadow);
   z-index: 50;
 }
 
 .cart-bar__count{
   justify-self: start;
-  background: rgba(255,255,255,0.75);
-  border: 1px solid rgba(255,56,56,0.18);
+  background: #cfcfcf;
   border-radius: 999px;
   padding: 10px 16px;
   font-size: 16px;
@@ -452,16 +466,10 @@ body{
 .cart-bar__view{
   justify-self: center;
   text-decoration: none;
-  color: #111;
-  font-size: 14px;
+  color: var(--text);
+  font-size: 16px;
   font-weight: 900;
-
-  padding: 10px 18px;
-  border-radius: 999px;
-  border: 1.5px solid var(--btn-border);
-  background: var(--btn-grad);
 }
-.cart-bar__view:hover{ background:#FFF1CB; }
 
 .cart-bar__total{
   justify-self: end;
@@ -469,34 +477,23 @@ body{
   font-weight: 900;
 }
 
-/* clickable rows */
+/* ===========================
+   Responsive
+   =========================== */
+@media (max-width: 520px){
+  :root{
+    --pad: 16px;
+    --hero-banner-h: 220px;
+    --fav-card-w: 220px;
+    --dish-thumb-w: 130px;
+    --dish-thumb-h: 92px;
+    --heart-col: 48px;
+  }
+  .stall-hero__name{ font-size: 30px; }
+  .dish-row{
+    grid-template-columns: var(--heart-col) var(--dish-thumb-w) 1fr 180px;
+  }
+}
+
 .dish-row { cursor: pointer; }
 .dish-row [data-action] { cursor: pointer; }
-
-@media (max-width: 768px){
-  :root{ --pad: 16px; --hero-banner-h: 240px; --dish-thumb-w: 140px; --dish-thumb-h: 100px; }
-  .dish-row{ grid-template-columns: var(--heart-col) var(--dish-thumb-w) 1fr 190px; }
-  .stall-hero__name{ font-size: 32px; }
-}
-
-/* ==========================
-   FONTS
-========================== */
-@font-face {
-  font-family: 'Satoshi';
-  src: url('../../fonts/Satoshi-Regular.otf') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Satoshi';
-  src: url('../../fonts/Satoshi-Bold.otf') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Satoshi';
-  src: url('../../fonts/Satoshi-BlackItalic.otf') format('woff2');
-  font-weight: 900;
-  font-style: italic;
-}
